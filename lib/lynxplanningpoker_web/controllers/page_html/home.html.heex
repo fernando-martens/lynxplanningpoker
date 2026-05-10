@@ -1,5 +1,5 @@
 <Layouts.flash_group flash={@flash} />
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col overflow-x-hidden">
   <header class="max-w-6xl mx-auto w-full px-6 py-6 flex justify-between items-center">
     <div class="flex items-center gap-2">
       <svg
@@ -11,10 +11,9 @@
       >
         <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,152a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm39.21-98.53a63.66,63.66,0,0,0-31.21-13V40.37a87.6,87.6,0,0,1,48.28,20ZM120,64.52a63.66,63.66,0,0,0-31.21,13L71.72,60.4a87.6,87.6,0,0,1,48.28-20ZM77.47,88.79a63.66,63.66,0,0,0-13,31.21H40.37a87.6,87.6,0,0,1,20-48.28ZM64.52,136a63.66,63.66,0,0,0,13,31.21L60.4,184.28a87.6,87.6,0,0,1-20-48.28Zm24.27,42.53A63.66,63.66,0,0,0,120,191.48v24.15a87.6,87.6,0,0,1-48.28-20ZM136,191.48a63.66,63.66,0,0,0,31.21-12.95l17.07,17.07a87.6,87.6,0,0,1-48.28,20Zm42.53-24.27A63.66,63.66,0,0,0,191.48,136h24.15a87.6,87.6,0,0,1-20,48.28ZM191.48,120a63.66,63.66,0,0,0-12.95-31.21L195.6,71.72a87.6,87.6,0,0,1,20,48.28Z">
         </path>
-      </svg>
-      <span class="text-xl font-bold tracking-tight">Lynx planning poker</span>
+      </svg> <span class="text-xl font-bold tracking-tight">Lynx planning poker</span>
     </div>
-
+    
     <nav class="hidden md:flex items-center gap-4 font-semibold">
       <a href="#" class="flex items-center gap-2 hover:opacity-70 transition">
         <.icon name="hero-home" class="size-5" /> Home
@@ -34,53 +33,36 @@
       </a>
     </nav>
   </header>
-
+  
   <main class="flex-grow flex flex-col items-center justify-center px-6 text-center ">
-    <div class="relative mb-8 flex flex-col items-center">
+    <div class="lynx-wrapper relative mb-8 flex flex-col items-center w-full">
       <div
-        class="absolute -bottom-3 w-64 h-12 bg-secondary rounded-[50%]"
+        class=" absolute -bottom-3 w-64 h-12 bg-[var(--floor-lynx)] rounded-[50%]"
         style="z-index: 0;"
       >
       </div>
-
+      
       <img
         src="/images/lynx.svg"
         alt="Lynx Mascot"
         class="relative w-48 h-48 md:w-56 md:h-56 object-contain z-10"
       />
     </div>
-
-    <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-tight">
-      Lynx planning poker
-    </h1>
-
-    <p class="text-lg md:text-xl font-semibold mb-6">
-      Free, fast, and no sign-up needed.
-    </p>
-
+    
+    <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-tight">Lynx planning poker</h1>
+    
+    <p class="text-lg md:text-xl font-semibold mb-6">Free, fast, and no sign-up needed.</p>
+    
     <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
       <button class="bg-primary text-white px-8 py-4 rounded-full text-lg font-bold hover:brightness-85 transition shadow-lg cursor-pointer">
-        Create a room +
+        Create a room <.icon name="hero-plus" class="size-5" />
       </button>
       <button class="bg-secondary px-8 py-4 rounded-full text-lg font-bold hover:brightness-85 transition flex items-center justify-center gap-2 cursor-pointer">
-        Join a room
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-        </svg>
+        Join a room <.icon name="hero-arrow-right-end-on-rectangle" class="size-5" />
       </button>
     </div>
   </main>
-
+  
   <footer class="py-10 text-center text-sm font-bold">
     <a
       href="mailto:contact@lynx.com"

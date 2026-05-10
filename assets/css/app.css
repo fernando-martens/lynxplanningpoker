@@ -2,6 +2,7 @@
    https://tailwindcss.com/docs/configuration */
 
 @import "tailwindcss" source(none);
+@import "./home.css";
 @source "../css";
 @source "../js";
 @source "../../lib/lynxplanningpoker_web";
@@ -27,12 +28,14 @@
   prefersdark: true;
   color-scheme: "dark";
 
-  --color-brand-deep: oklch(40% 0.12 273.65);
+  --color-brand-deep: oklch(38.91% 0.209 273.30);
   --color-brand-gray: oklch(25% 0.01 286.32);
 
-  --color-base-100: oklch(18% 0.01 252.42);
-  --color-base-200: oklch(15% 0.01 253.1);
-  --color-base-300: oklch(12% 0.01 254.09);
+  --floor-lynx: oklch(27.62% 0.076 279.17);
+
+  --color-base-100: oklch(14.2% 0.03 260);
+  --color-base-200: oklch(17% 0.028 260);
+  --color-base-300: oklch(21% 0.025 260);
   --color-base-content: oklch(98% 0.01 256.847);
 
   --color-primary: var(--color-brand-deep);
@@ -66,10 +69,10 @@
   prefersdark: false;
   color-scheme: "light";
 
-  --color-brand-deep: oklch(25.33% 0.053 273.65);
+  --color-brand-deep: oklch(42.18% 0.209 273.19);
   --color-brand-gray: oklch(90.11% 0.004 286.32);
 
-  --color-lynx: oklch(85% 0.04 85);
+  --floor-lynx: oklch(92.42% 0.024 285.92);
 
   --color-base-100: oklch(98% 0 0);
   --color-base-200: oklch(96% 0.001 286.375);

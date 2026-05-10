@@ -1,0 +1,16 @@
+.lynx-wrapper::before {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle,
+      rgba(108, 99, 255, 0.18) 0%,
+      rgba(108, 99, 255, 0.08) 40%,
+      transparent 70%);
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(10px);
+  z-index: 0;
+}
