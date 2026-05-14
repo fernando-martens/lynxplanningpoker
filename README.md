@@ -16,3 +16,8 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 * Docs: https://hexdocs.pm/phoenix
 * Forum: https://elixirforum.com/c/phoenix-forum
 * Source: https://github.com/phoenixframework/phoenix
+
+
+$ docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+$ mix ecto.create
+$ mix ecto.migrate

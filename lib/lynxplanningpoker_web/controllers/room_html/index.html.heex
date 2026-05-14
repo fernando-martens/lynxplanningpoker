@@ -1,0 +1,47 @@
+<Layouts.flash_group flash={@flash} />
+<.app_header />
+
+<main class="mx-auto max-w-lg px-6 py-8">
+  <section>
+    <div class="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-base-200 shadow-inner">
+      <img src="/images/lynx.svg" alt="Lynx Mascot" class="h-20 w-20 object-contain" />
+    </div>
+
+    <div class="mt-8 text-center">
+      <h1 class="text-4xl font-semibold tracking-tight">Who are you?</h1>
+      <p class="mt-3 text-base text-base-content/70">Say your name and create your room</p>
+    </div>
+
+    <.form for={@changeset} action={@action} class="mt-5 space-y-6">
+      <div class="space-y-2">
+        <.input
+          name="room[name]"
+          id="room-name"
+          type="text"
+          value=""
+          label="Your name"
+          placeholder="Enter your name"
+          class="input input-bordered w-full"
+          required
+        />
+        <p class="text-sm text-base-content/60">Visible to everyone in the room</p>
+      </div>
+
+      <div class="rounded-[1.5rem] border border-base-200/70 bg-base-200 p-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <.input
+            type="checkbox"
+            name="room[captcha]"
+            id="room-captcha"
+            label="Verify you are human"
+          />
+          <span class="text-xs uppercase tracking-[0.2em] text-base-content/70">Cloudflare</span>
+        </div>
+      </div>
+
+      <.button type="submit" class="w-full py-5 text-lg font-semibold">
+        Join your room
+      </.button>
+    </.form>
+  </section>
+</main>
