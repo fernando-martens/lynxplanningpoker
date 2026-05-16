@@ -18,10 +18,11 @@ defmodule LynxplanningpokerWeb.RoomController do
 
     case Rooms.create_room(room_params) do
       {:ok, room} ->
-        # Create a user with the provided name in this room
+        # Create a user with the provided name in this room as the host
         case Users.create_user(%{
                room_id: room.id,
-               name: user_name
+               name: user_name,
+               is_host: true
              }) do
           {:ok, user} ->
             conn

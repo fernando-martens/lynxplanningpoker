@@ -8,6 +8,7 @@ defmodule Lynxplanningpoker.Users.User do
     field :name, :string
     field :vote, :integer
     field :vote_changed_after_reveal, :boolean, default: false
+    field :is_host, :boolean, default: false
     field :has_voted, :boolean, virtual: true, default: false
     belongs_to :room, Lynxplanningpoker.Rooms.Room, type: :binary_id
 
@@ -17,7 +18,7 @@ defmodule Lynxplanningpoker.Users.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal])
+    |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal, :is_host])
     |> validate_required([:room_id, :name])
     |> foreign_key_constraint(:room_id)
   end

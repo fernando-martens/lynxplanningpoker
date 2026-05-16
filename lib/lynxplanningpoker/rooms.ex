@@ -87,7 +87,19 @@ defmodule Lynxplanningpoker.Rooms do
 
   """
   def delete_room(%Room{} = room) do
-    Repo.delete(room)
+    case Repo.delete(room) do
+      {:ok, deleted_room} = result ->
+        Phoenix.PubSub.broadcast(
+          Lynxplanningpoker.PubSub,
+          room_topic(deleted_room.id),
+          {:room_deleted, deleted_room.id}
+        )
+
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """

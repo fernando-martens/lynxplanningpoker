@@ -243,6 +243,69 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
   end
 
+  describe "end_planning / leave_room events" do
+    test "host header shows 'Encerrar planning' button", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, host} = Users.update_user(alice, %{is_host: true})
+
+      conn = logged_in_conn(conn, host.id)
+      {:ok, _view, html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert html =~ "Encerrar planning"
+      refute html =~ "Sair"
+    end
+
+    test "non-host header shows 'Sair' button", %{conn: conn} do
+      {room, _alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, bob.id)
+      {:ok, _view, html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert html =~ "Sair"
+      refute html =~ "Encerrar planning"
+    end
+
+    test "host clicking 'Encerrar planning' deletes the room", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, host} = Users.update_user(alice, %{is_host: true})
+
+      conn = logged_in_conn(conn, host.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert {:error, {:live_redirect, %{to: "/"}}} =
+               view |> element("button", "Encerrar planning") |> render_click()
+
+      assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(room.id) end
+    end
+
+    test "non-host clicking 'Sair' redirects to home and keeps the room", %{conn: conn} do
+      {room, _alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, bob.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert {:error, {:live_redirect, %{to: "/"}}} =
+               view |> element("button", "Sair") |> render_click()
+
+      assert Rooms.get_room!(room.id)
+    end
+
+    test "all clients are redirected to home when the room is deleted", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, _host} = Users.update_user(alice, %{is_host: true})
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, bob.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      Rooms.delete_room(Rooms.get_room!(room.id))
+
+      assert_redirect(view, "/")
+    end
+  end
+
   describe "PubSub updates" do
     test "updates the participant list when another user joins the room", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")

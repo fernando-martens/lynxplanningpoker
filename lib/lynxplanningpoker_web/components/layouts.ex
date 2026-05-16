@@ -210,6 +210,7 @@ defmodule LynxplanningpokerWeb.Layouts do
   Renders the shared application header used on public pages.
   """
   attr :class, :string, default: nil
+  attr :is_host, :boolean, default: false
 
   def room_header(assigns) do
     assigns = assign(assigns, :class, assigns.class || "")
@@ -237,9 +238,15 @@ defmodule LynxplanningpokerWeb.Layouts do
           <.button phx-click="reset">
             <.icon name="hero-arrow-path" class="size-5" /> Recomeçar
           </.button>
-          <.button navigate="#" variant="red">
-            <.icon name="hero-x-circle" class="size-5" /> Sair
-          </.button>
+          <%= if @is_host do %>
+            <.button phx-click="end_planning" variant="red">
+              <.icon name="hero-x-circle" class="size-5" /> Encerrar planning
+            </.button>
+          <% else %>
+            <.button phx-click="leave_room" variant="red">
+              <.icon name="hero-x-circle" class="size-5" /> Sair
+            </.button>
+          <% end %>
           <div class="flex items-center gap-2">
             <.theme_toggle />
           </div>

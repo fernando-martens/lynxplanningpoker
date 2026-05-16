@@ -118,6 +118,40 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   @impl true
+  def handle_event("end_planning", _params, socket) do
+    if socket.assigns.current_user && socket.assigns.current_user.is_host do
+      Rooms.delete_room(socket.assigns.room)
+
+      {:noreply,
+       socket
+       |> put_flash(:info, "Planning encerrada.")
+       |> push_navigate(to: ~p"/")}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("leave_room", _params, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, "Você saiu da sala.")
+     |> push_navigate(to: ~p"/")}
+  end
+
+  @impl true
+  def handle_info({:room_deleted, room_id}, socket) do
+    if socket.assigns.room.id == room_id do
+      {:noreply,
+       socket
+       |> put_flash(:info, "A sala foi encerrada pelo host.")
+       |> push_navigate(to: ~p"/")}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
   def handle_info({:users_updated, room_id}, socket) do
     if socket.assigns.room.id == room_id do
       users =
@@ -188,9 +222,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     assigns = assign(assigns, :user_positions, user_positions(assigns.users))
 
     ~H"""
-    <Layouts.room_header />
+    <Layouts.room_header is_host={@current_user && @current_user.is_host} />
 
     <div class="room-scene">
+      <div class="room-loading-overlay" aria-hidden="true">
+        <div class="room-loading-spinner"></div>
+      </div>
+
       <%!-- Game area --%>
       <div class="room-game-area">
         <div class="room-table">
