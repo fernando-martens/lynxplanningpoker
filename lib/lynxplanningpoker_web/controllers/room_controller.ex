@@ -18,6 +18,8 @@ defmodule LynxplanningpokerWeb.RoomController do
 
     case Rooms.create_room(room_params) do
       {:ok, room} ->
+        cleanup_previous_session(conn)
+
         # Create a user with the provided name in this room as the host
         case Users.create_user(%{
                room_id: room.id,
@@ -40,13 +42,16 @@ defmodule LynxplanningpokerWeb.RoomController do
   end
 
   def show(conn, %{"id" => id}) do
-    case Rooms.get_room(id) do
-      nil ->
+    cond do
+      is_nil(Rooms.get_room(id)) ->
         conn
         |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
         |> redirect(to: ~p"/")
 
-      _room ->
+      already_in_room?(conn, id) ->
+        redirect(conn, to: ~p"/rooms/#{id}")
+
+      true ->
         render(conn, :invite, room_id: id)
     end
   end
@@ -64,6 +69,8 @@ defmodule LynxplanningpokerWeb.RoomController do
   end
 
   defp do_accept_invite(conn, room, user_name) do
+    cleanup_previous_session(conn)
+
     case Users.create_user(%{
            room_id: room.id,
            name: user_name
@@ -76,6 +83,37 @@ defmodule LynxplanningpokerWeb.RoomController do
       {:error, _changeset} ->
         render(conn, :invite, room_id: room.id)
     end
+  end
+
+  defp already_in_room?(conn, room_id) do
+    with user_id when not is_nil(user_id) <- get_session(conn, :current_user_id),
+         user when not is_nil(user) <- safe_get_user(user_id) do
+      user.room_id == room_id
+    else
+      _ -> false
+    end
+  end
+
+  defp cleanup_previous_session(conn) do
+    with user_id when not is_nil(user_id) <- get_session(conn, :current_user_id),
+         user when not is_nil(user) <- safe_get_user(user_id) do
+      if user.is_host do
+        case Rooms.get_room(user.room_id) do
+          nil -> :ok
+          room -> Rooms.delete_room(room)
+        end
+      else
+        Users.delete_user(user)
+      end
+    end
+
+    :ok
+  end
+
+  defp safe_get_user(user_id) do
+    Users.get_user!(user_id)
+  rescue
+    Ecto.NoResultsError -> nil
   end
 
   def leave(conn, _params) do
