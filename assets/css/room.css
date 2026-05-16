@@ -301,7 +301,6 @@
 .room-card--selected {
   background: var(--room-card-selected);
   border-color: var(--room-card-selected);
-  transform: translateY(-10px) scale(1.05);
   box-shadow:
     0 0 0 3px var(--room-card-bg),
     0 0 0 5px var(--room-card-selected),

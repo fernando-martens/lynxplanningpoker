@@ -34,7 +34,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   @impl true
-  def handle_event("vote", %{"value" => value}, socket) do
+  def handle_event("vote", %{"card" => value}, socket) do
     case socket.assigns.current_user do
       nil ->
         {:noreply, socket}
@@ -192,7 +192,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             <%= for card <- @cards do %>
               <button
                 phx-click="vote"
-                phx-value-value={to_string(card)}
+                phx-value-card={to_string(card)}
                 class={"room-card #{if to_string(@my_vote) == to_string(card), do: "room-card--selected", else: ""}"}
               >
                 <span class="room-card-paw room-card-paw--tl"><.paw_icon /></span>
