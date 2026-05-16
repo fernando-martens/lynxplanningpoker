@@ -229,6 +229,31 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     ~H"""
     <Layouts.room_header is_host={@current_user && @current_user.is_host} />
 
+    <.modal id="invite-modal" title={gettext("Invitation link")}>
+      <div class="flex flex-col sm:flex-row gap-2 items-stretch">
+        <input
+          id="invite-url"
+          type="text"
+          readonly
+          value={url(~p"/rooms/invite/#{@room.id}")}
+          class="flex-1 input input-bordered rounded-xl border border-base-300 bg-base-100 px-4 py-3 text-sm"
+          onclick="this.select()"
+        />
+        <button
+          type="button"
+          class="btn rounded-xl bg-base-200 hover:bg-base-300 px-4 py-3 inline-flex items-center justify-center gap-2 whitespace-nowrap"
+          phx-click={JS.dispatch("phx:copy", to: "#invite-url")}
+        >
+          <.icon name="hero-document-duplicate" class="size-4" />
+          {gettext("Copy")}
+        </button>
+      </div>
+
+      <p class="mt-3 text-xs text-base-content/60">
+        {gettext("Anyone with this link can join the room")}
+      </p>
+    </.modal>
+
     <div class="room-scene">
       <div class="room-loading-overlay" aria-hidden="true">
         <div class="room-loading-spinner"></div>

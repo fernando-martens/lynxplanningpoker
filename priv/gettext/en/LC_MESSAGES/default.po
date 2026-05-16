@@ -62,6 +62,21 @@ msgstr "Pricing"
 msgid "Restart"
 msgstr "Restart"
 
+msgid "Invite"
+msgstr "Invite"
+
+msgid "Invitation link"
+msgstr "Invitation link"
+
+msgid "Copy"
+msgstr "Copy"
+
+msgid "Anyone with this link can join the room"
+msgstr "Anyone with this link can join the room"
+
+msgid "Close"
+msgstr "Close"
+
 msgid "End planning"
 msgstr "End planning"
 

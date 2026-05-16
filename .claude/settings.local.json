@@ -24,7 +24,10 @@
       "PowerShell(mix test 2>&1 | Out-String; \"EXIT=$LASTEXITCODE\")",
       "PowerShell(mix compile --warnings-as-errors 2>&1 | Out-String; \"EXIT=$LASTEXITCODE\")",
       "PowerShell(mix test 2>&1 | Select-Object -Last 10 | Out-String; \"EXIT=$LASTEXITCODE\")",
-      "PowerShell(mix test 2>&1 | Select-Object -Last 6 | Out-String; \"EXIT=$LASTEXITCODE\")"
+      "PowerShell(mix test 2>&1 | Select-Object -Last 6 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Select-Object -Last 8 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Select-Object -Last 4 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Select-Object -Last 5 | Out-String; \"EXIT=$LASTEXITCODE\")"
     ]
   }
 }

@@ -87,6 +87,72 @@ defmodule LynxplanningpokerWeb.CoreComponents do
   end
 
   @doc """
+  Renders a centered modal dialog.
+
+  ## Examples
+
+      <.modal id="invite-modal" title="Invitation link">
+        <p>Modal body</p>
+      </.modal>
+
+      <.button phx-click={show_modal("invite-modal")}>Open</.button>
+
+  Open/close is purely client-side via `JS` commands — use `show_modal/1` to
+  open from any element and `hide_modal/1` to close (the modal already handles
+  backdrop click, ESC and the built-in close button).
+  """
+  attr :id, :string, required: true
+  attr :title, :string, default: nil
+  slot :inner_block, required: true
+
+  def modal(assigns) do
+    ~H"""
+    <div
+      id={@id}
+      class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
+      phx-window-keydown={hide_modal(@id)}
+      phx-key="escape"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={"#{@id}-title"}
+    >
+      <div
+        class="absolute inset-0 bg-black/50"
+        phx-click={hide_modal(@id)}
+        aria-hidden="true"
+      >
+      </div>
+      <div class="relative w-full max-w-lg rounded-2xl border border-base-300 bg-base-100 shadow-xl p-6">
+        <button
+          type="button"
+          class="absolute top-3 right-3 btn btn-ghost btn-circle btn-sm"
+          phx-click={hide_modal(@id)}
+          aria-label={gettext("Close")}
+        >
+          <.icon name="hero-x-mark" class="size-4" />
+        </button>
+
+        <h2 :if={@title} id={"#{@id}-title"} class="text-lg font-bold mb-4">
+          {@title}
+        </h2>
+
+        {render_slot(@inner_block)}
+      </div>
+    </div>
+    """
+  end
+
+  @doc "Returns a `JS` command that opens the modal with the given id."
+  def show_modal(js \\ %JS{}, id) when is_binary(id) do
+    JS.show(js, to: "##{id}", display: "flex")
+  end
+
+  @doc "Returns a `JS` command that closes the modal with the given id."
+  def hide_modal(js \\ %JS{}, id) when is_binary(id) do
+    JS.hide(js, to: "##{id}")
+  end
+
+  @doc """
   Renders a button with navigation support.
 
   ## Examples

@@ -62,6 +62,21 @@ msgstr "Tarifs"
 msgid "Restart"
 msgstr "Recommencer"
 
+msgid "Invite"
+msgstr "Inviter"
+
+msgid "Invitation link"
+msgstr "Lien d'invitation"
+
+msgid "Copy"
+msgstr "Copier"
+
+msgid "Anyone with this link can join the room"
+msgstr "Toute personne disposant de ce lien peut rejoindre la salle"
+
+msgid "Close"
+msgstr "Fermer"
+
 msgid "End planning"
 msgstr "Terminer le planning"
 

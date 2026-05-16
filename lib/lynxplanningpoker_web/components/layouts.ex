@@ -367,6 +367,9 @@ defmodule LynxplanningpokerWeb.Layouts do
           <.button phx-click="reset">
             <.icon name="hero-arrow-path" class="size-5" /> {gettext("Restart")}
           </.button>
+          <.button phx-click={show_modal("invite-modal")}>
+            <.icon name="hero-user-plus" class="size-5" /> {gettext("Invite")}
+          </.button>
           <%= if @is_host do %>
             <.button phx-click="end_planning" variant="red">
               <.icon name="hero-x-circle" class="size-5" /> {gettext("End planning")}
