@@ -8,16 +8,27 @@ defmodule Lynxplanningpoker.RoomsTest do
     test "creates a room with valid attrs" do
       assert {:ok, %Room{} = room} = Rooms.create_room(%{is_active: true})
       assert room.is_active == true
+      assert room.revealed == false
       assert is_binary(room.id)
     end
 
-    test "defaults is_active to false when not provided" do
-      assert {:ok, %Room{is_active: false}} = Rooms.create_room(%{})
+    test "defaults is_active and revealed to false when not provided" do
+      assert {:ok, %Room{is_active: false, revealed: false}} = Rooms.create_room(%{})
+    end
+
+    test "accepts an explicit revealed value" do
+      assert {:ok, %Room{revealed: true}} =
+               Rooms.create_room(%{is_active: true, revealed: true})
     end
 
     test "returns error changeset when is_active is explicitly nil" do
       assert {:error, %Ecto.Changeset{} = changeset} = Rooms.create_room(%{is_active: nil})
       assert %{is_active: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when revealed is explicitly nil" do
+      assert {:error, %Ecto.Changeset{} = changeset} = Rooms.create_room(%{revealed: nil})
+      assert %{revealed: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "returns error changeset when is_active is not a valid boolean string" do
@@ -58,9 +69,33 @@ defmodule Lynxplanningpoker.RoomsTest do
       assert updated.is_active == false
     end
 
+    test "toggles revealed flag" do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+      assert {:ok, %Room{revealed: true}} = Rooms.update_room(room, %{revealed: true})
+    end
+
     test "returns error when invalid" do
       {:ok, room} = Rooms.create_room(%{is_active: true})
       assert {:error, %Ecto.Changeset{}} = Rooms.update_room(room, %{is_active: nil})
+    end
+
+    test "broadcasts the updated room to subscribers" do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+      :ok = Rooms.subscribe_to_room(room.id)
+
+      {:ok, updated} = Rooms.update_room(room, %{revealed: true})
+
+      assert_receive {:room_updated, %Room{} = broadcast_room}
+      assert broadcast_room.id == updated.id
+      assert broadcast_room.revealed == true
+    end
+
+    test "does not broadcast when the update fails" do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+      :ok = Rooms.subscribe_to_room(room.id)
+
+      assert {:error, %Ecto.Changeset{}} = Rooms.update_room(room, %{is_active: nil})
+      refute_receive {:room_updated, _}, 50
     end
   end
 

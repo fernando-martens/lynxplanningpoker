@@ -7,6 +7,7 @@ defmodule Lynxplanningpoker.Users.User do
   schema "users" do
     field :name, :string
     field :vote, :integer
+    field :has_voted, :boolean, virtual: true, default: false
     belongs_to :room, Lynxplanningpoker.Rooms.Room, type: :binary_id
 
     timestamps(type: :utc_datetime)

@@ -56,7 +56,7 @@ defmodule Lynxplanningpoker.Rooms do
   end
 
   @doc """
-  Updates a room.
+  Updates a room and broadcasts the change to room subscribers.
 
   ## Examples
 
@@ -71,6 +71,7 @@ defmodule Lynxplanningpoker.Rooms do
     room
     |> Room.changeset(attrs)
     |> Repo.update()
+    |> notify_room_update()
   end
 
   @doc """
@@ -101,4 +102,25 @@ defmodule Lynxplanningpoker.Rooms do
   def change_room(%Room{} = room, attrs \\ %{}) do
     Room.changeset(room, attrs)
   end
+
+  @doc """
+  Subscribes to room updates for a given room.
+  """
+  def subscribe_to_room(room_id) do
+    Phoenix.PubSub.subscribe(Lynxplanningpoker.PubSub, room_topic(room_id))
+  end
+
+  defp notify_room_update({:ok, %Room{} = room} = result) do
+    Phoenix.PubSub.broadcast(
+      Lynxplanningpoker.PubSub,
+      room_topic(room.id),
+      {:room_updated, room}
+    )
+
+    result
+  end
+
+  defp notify_room_update({:error, _} = error), do: error
+
+  defp room_topic(room_id), do: "room:#{room_id}"
 end

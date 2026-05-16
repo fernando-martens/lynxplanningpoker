@@ -25,6 +25,27 @@ defmodule Lynxplanningpoker.Users do
   end
 
   @doc """
+  Lists users by room as seen by a given viewer.
+
+  When the room is not revealed, every other user's `vote` is hidden (replaced by
+  `nil`) so the value never reaches the client. The viewer always sees their own
+  vote. The virtual `has_voted` field always reflects whether the user has cast a
+  vote, regardless of whether its value is visible.
+  """
+  def list_users_by_room(room_id, viewer_user_id, revealed?) do
+    room_id
+    |> list_users_by_room()
+    |> Enum.map(fn user ->
+      visible_vote =
+        if revealed? or user.id == viewer_user_id do
+          user.vote
+        end
+
+      %{user | vote: visible_vote, has_voted: not is_nil(user.vote)}
+    end)
+  end
+
+  @doc """
   Gets a single user.
   """
   def get_user!(id), do: Repo.get!(User, id)

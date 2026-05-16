@@ -79,11 +79,8 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert Users.get_user!(user.id).vote == nil
     end
 
-    test "shows the paw icon on the avatar of users who voted but votes stay hidden", %{
-      conn: conn
-    } do
+    test "shows the current user's own vote on their card before reveal", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
-      {:ok, _bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
@@ -91,7 +88,27 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       html = render(view)
 
       assert html =~ "room-user-avatar--voted"
+      assert html =~ "room-user-vote-num"
+      assert html =~ ">8<"
+    end
+
+    test "hides other users' vote numbers when the room is not revealed", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(bob, %{vote: 13})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert html =~ "room-user-avatar--voted"
       refute html =~ "room-user-vote-num"
+
+      # The hidden vote value must not reach the client at all — assert via
+      # socket assigns that Bob's vote was scrubbed before being sent.
+      assigns = :sys.get_state(view.pid).socket.assigns
+      bob_seen = Enum.find(assigns.users, &(&1.id == bob.id))
+      assert bob_seen.vote == nil
+      assert bob_seen.has_voted == true
     end
   end
 
@@ -111,10 +128,24 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert html =~ ">8<"
       assert html =~ "Recomeçar"
     end
+
+    test "persists revealed state on the room and propagates via PubSub", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(bob, %{vote: 13})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button", "Reveal") |> render_click()
+
+      assert Rooms.get_room!(room.id).revealed == true
+      assert render(view) =~ ">13<"
+    end
   end
 
   describe "reset event" do
-    test "clears every user's vote and hides the values again", %{conn: conn} do
+    test "clears every user's vote, resets revealed and hides the values again", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
       {:ok, _} = Users.update_user(alice, %{vote: 5})
@@ -124,10 +155,12 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button", "Reveal") |> render_click()
-      html = view |> element("button", "Recomeçar") |> render_click()
+      view |> element("button", "Recomeçar") |> render_click()
+      html = render(view)
 
       assert Users.get_user!(alice.id).vote == nil
       assert Users.get_user!(bob.id).vote == nil
+      assert Rooms.get_room!(room.id).revealed == false
       assert html =~ "Reveal"
       refute html =~ "room-user-vote-num"
     end
@@ -153,6 +186,21 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
       {:ok, _} = Users.update_user(bob, %{vote: 13})
       assert render(view) =~ "room-user-avatar--voted"
+    end
+
+    test "reveals votes when another client triggers reveal on the same room", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(bob, %{vote: 21})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      refute render(view) =~ "room-user-vote-num"
+
+      {:ok, _} = Rooms.update_room(Rooms.get_room!(room.id), %{revealed: true})
+
+      assert render(view) =~ "room-user-vote-num"
     end
   end
 end

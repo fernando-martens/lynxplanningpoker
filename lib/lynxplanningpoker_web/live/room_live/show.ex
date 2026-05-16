@@ -9,12 +9,15 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   @impl true
   def mount(%{"id" => id}, session, socket) do
     room = Rooms.get_room!(id)
-    users = Users.list_users_by_room(id)
     current_user_id = session["current_user_id"]
+    users = Users.list_users_by_room(id, current_user_id, room.revealed)
     current_user = current_user_id && Enum.find(users, &(&1.id == current_user_id))
 
     if current_user do
-      if connected?(socket), do: Users.subscribe_to_room(id)
+      if connected?(socket) do
+        Users.subscribe_to_room(id)
+        Rooms.subscribe_to_room(id)
+      end
 
       socket =
         socket
@@ -23,7 +26,6 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
         |> assign(:current_user_id, current_user.id)
         |> assign(:current_user, current_user)
         |> assign(:cards, @cards)
-        |> assign(:revealed, false)
 
       {:ok, socket}
     else
@@ -46,7 +48,14 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
         case Users.update_user(current_user, %{vote: vote_value}) do
           {:ok, updated_user} ->
-            {:noreply, assign(socket, :current_user, updated_user)}
+            updated_user = %{updated_user | has_voted: not is_nil(updated_user.vote)}
+
+            users =
+              Enum.map(socket.assigns.users, fn user ->
+                if user.id == updated_user.id, do: updated_user, else: user
+              end)
+
+            {:noreply, socket |> assign(:current_user, updated_user) |> assign(:users, users)}
 
           {:error, _changeset} ->
             {:noreply, socket}
@@ -56,7 +65,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def handle_event("reveal", _params, socket) do
-    {:noreply, assign(socket, :revealed, true)}
+    case Rooms.update_room(socket.assigns.room, %{revealed: true}) do
+      {:ok, room} -> {:noreply, assign(socket, :room, room)}
+      {:error, _changeset} -> {:noreply, socket}
+    end
   end
 
   @impl true
@@ -65,15 +77,42 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       Users.update_user(user, %{vote: nil})
     end)
 
-    {:noreply, assign(socket, :revealed, false)}
+    case Rooms.update_room(socket.assigns.room, %{revealed: false}) do
+      {:ok, room} -> {:noreply, assign(socket, :room, room)}
+      {:error, _changeset} -> {:noreply, socket}
+    end
   end
 
   @impl true
   def handle_info({:users_updated, room_id}, socket) do
     if socket.assigns.room.id == room_id do
-      users = Users.list_users_by_room(room_id)
+      users =
+        Users.list_users_by_room(
+          room_id,
+          socket.assigns.current_user_id,
+          socket.assigns.room.revealed
+        )
+
       current_user = Enum.find(users, &(&1.id == socket.assigns.current_user_id))
       {:noreply, socket |> assign(:users, users) |> assign(:current_user, current_user)}
+    else
+      {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({:room_updated, %Lynxplanningpoker.Rooms.Room{} = room}, socket) do
+    if socket.assigns.room.id == room.id do
+      users =
+        Users.list_users_by_room(room.id, socket.assigns.current_user_id, room.revealed)
+
+      current_user = Enum.find(users, &(&1.id == socket.assigns.current_user_id))
+
+      {:noreply,
+       socket
+       |> assign(:room, room)
+       |> assign(:users, users)
+       |> assign(:current_user, current_user)}
     else
       {:noreply, socket}
     end
@@ -101,6 +140,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   def render(assigns) do
     assigns = assign(assigns, :user_positions, user_positions(assigns.users))
     assigns = assign(assigns, :my_vote, current_vote(assigns.current_user))
+    assigns = assign(assigns, :revealed, assigns.room.revealed)
 
     ~H"""
     <Layouts.room_header />
@@ -112,15 +152,14 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           <%!-- Users positioned around campfire --%>
           <%= for {user, x, y} <- @user_positions do %>
             <div class="room-user" style={"left:#{x}%;top:#{y}%"}>
-              <div class={"room-user-avatar #{if user.vote != nil, do: "room-user-avatar--voted", else: ""}"}>
-                <%= if @revealed && user.vote != nil do %>
-                  <span class="room-user-vote-num">{to_string(user.vote)}</span>
-                <% else %>
-                  <%= if user.vote != nil do %>
+              <div class={"room-user-avatar #{if user.has_voted, do: "room-user-avatar--voted", else: ""}"}>
+                <%= cond do %>
+                  <% user.vote != nil -> %>
+                    <span class="room-user-vote-num">{to_string(user.vote)}</span>
+                  <% user.has_voted -> %>
                     <.paw_icon />
-                  <% else %>
+                  <% true -> %>
                     <span class="room-user-initials">{initials(user.name)}</span>
-                  <% end %>
                 <% end %>
               </div>
               <span class="room-user-name">{user.name}</span>

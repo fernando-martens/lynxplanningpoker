@@ -9,7 +9,9 @@
       "Bash(grep -o 'phx-click=\"vote\"[^>]*phx-value-value=\"[^\"]*\"' /tmp/room.html | head -3; echo \"---\"; grep -o 'room-card[^\"]*' /tmp/room.html | head -5)",
       "Read(//tmp/**)",
       "Bash(mix test *)",
-      "Bash(mix assets.build)"
+      "Bash(mix assets.build)",
+      "Bash(date /t)",
+      "Bash(mix ecto.migrate)"
     ]
   }
 }

@@ -77,6 +77,69 @@ defmodule Lynxplanningpoker.UsersTest do
     end
   end
 
+  describe "list_users_by_room/3" do
+    test "hides other users' vote values when the room is not revealed" do
+      room = create_room!()
+      {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(alice, %{vote: 5})
+      {:ok, _} = Users.update_user(bob, %{vote: 13})
+
+      [alice_seen, bob_seen] = Users.list_users_by_room(room.id, alice.id, false)
+
+      assert alice_seen.id == alice.id
+      assert alice_seen.vote == 5
+      assert alice_seen.has_voted == true
+
+      assert bob_seen.id == bob.id
+      assert bob_seen.vote == nil
+      assert bob_seen.has_voted == true
+    end
+
+    test "exposes every vote value when the room is revealed" do
+      room = create_room!()
+      {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(alice, %{vote: 5})
+      {:ok, _} = Users.update_user(bob, %{vote: 13})
+
+      [alice_seen, bob_seen] = Users.list_users_by_room(room.id, alice.id, true)
+
+      assert alice_seen.vote == 5
+      assert alice_seen.has_voted == true
+      assert bob_seen.vote == 13
+      assert bob_seen.has_voted == true
+    end
+
+    test "marks has_voted as false for users without a vote" do
+      room = create_room!()
+      {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      {:ok, _bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      [alice_seen, bob_seen] = Users.list_users_by_room(room.id, alice.id, false)
+
+      assert alice_seen.vote == nil
+      assert alice_seen.has_voted == false
+      assert bob_seen.vote == nil
+      assert bob_seen.has_voted == false
+    end
+
+    test "hides every vote value when viewer_user_id is nil and room not revealed" do
+      room = create_room!()
+      {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      {:ok, _} = Users.update_user(alice, %{vote: 5})
+
+      [alice_seen] = Users.list_users_by_room(room.id, nil, false)
+      assert alice_seen.vote == nil
+      assert alice_seen.has_voted == true
+    end
+
+    test "returns empty list when no users in the room" do
+      room = create_room!()
+      assert Users.list_users_by_room(room.id, nil, false) == []
+    end
+  end
+
   describe "list_users/0" do
     test "lists all users across rooms" do
       room1 = create_room!()
