@@ -37,4 +37,26 @@ defmodule LynxplanningpokerWeb.RoomController do
         render(conn, :new, changeset: changeset, action: ~p"/rooms")
     end
   end
+
+  def show(conn, %{"id" => id}) do
+    _room = Rooms.get_room!(id)
+    render(conn, :invite, room_id: id)
+  end
+
+  def acceptInvite(conn, %{"id" => room_id, "name" => user_name}) do
+    room = Rooms.get_room!(room_id)
+
+    case Users.create_user(%{
+           room_id: room.id,
+           name: user_name
+         }) do
+      {:ok, _user} ->
+        conn
+        |> redirect(to: ~p"/rooms/#{room}")
+
+      {:error, _changeset} ->
+        # If user creation fails, show form again
+        render(conn, :invite, room_id: room_id)
+    end
+  end
 end

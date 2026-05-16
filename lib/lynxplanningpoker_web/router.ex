@@ -19,7 +19,12 @@ defmodule LynxplanningpokerWeb.Router do
 
     get "/", PageController, :home
     resources "/rooms", RoomController, only: [:new, :create]
-    live "/rooms/:id", RoomLive.Show, :show
+
+    scope "/rooms" do
+      get "/invite/:id", RoomController, :show
+      post "/invite/:id", RoomController, :acceptInvite
+      live "/:id", RoomLive.Show, :show
+    end
   end
 
   # Other scopes may use custom stacks.

@@ -1,0 +1,37 @@
+<Layouts.app_header />
+<main class="mx-auto max-w-lg px-6 py-8">
+  <section>
+    <div class="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-base-200 shadow-inner">
+      <img src="/images/lynx.svg" alt="Lynx Mascot" class="h-20 w-20 object-contain" />
+    </div>
+    
+    <div class="mt-8 text-center">
+      <h1 class="text-4xl font-semibold tracking-tight">You're invited!</h1>
+      
+      <p class="mt-3 text-base text-base-content/70">Enter your name to join the room</p>
+    </div>
+    
+    <.form
+      for={@changeset}
+      action={~p"/rooms/invite/#{@room_id}"}
+      method="post"
+      class="mt-5 space-y-6"
+    >
+      <div class="space-y-2">
+        <.input
+          name="name"
+          id="user-name"
+          type="text"
+          value=""
+          label="Your name"
+          placeholder="Enter your name"
+          class="input input-bordered w-full"
+          phx-mounted={JS.focus()}
+          required
+        />
+        <p class="text-xs text-base-content/60">Visible to everyone in the room</p>
+      </div>
+       <.button type="submit" class="w-full py-5 text-lg font-semibold">Join the room</.button>
+    </.form>
+  </section>
+</main>
