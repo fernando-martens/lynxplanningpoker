@@ -38,23 +38,11 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
         
         <div id="fire"></div>
       </div>
+      
+      <%= for user <- @users do %>
+        <div class="text-lg">{user.name} {if user.vote, do: to_string(user.vote), else: "-"}</div>
+      <% end %>
     </div>
-
-    <%!-- <%= for user <- @users do %>
-        <div class="rounded-3xl bg-slate-950 p-4 shadow-inner shadow-slate-900/40">
-          <div class="flex items-center justify-between gap-4">
-            <div>
-              <p class="text-base font-semibold text-slate-100">{user.name}</p>
-
-              <p class="mt-1 text-sm text-slate-500">ID: {user.user_id}</p>
-            </div>
-
-            <div class="rounded-full bg-slate-800 px-3 py-1 text-sm text-slate-300">
-              Voto: {if user.vote, do: to_string(user.vote), else: "—"}
-            </div>
-          </div>
-        </div>
-      <% end %> --%>
     """
   end
 end
