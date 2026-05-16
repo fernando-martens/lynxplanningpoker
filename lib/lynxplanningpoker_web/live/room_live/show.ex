@@ -48,7 +48,14 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
         vote_value = if current_user.vote == clicked_value, do: nil, else: clicked_value
 
-        case Users.update_user(current_user, %{vote: vote_value}) do
+        attrs =
+          if socket.assigns.room.revealed do
+            %{vote: vote_value, vote_changed_after_reveal: true}
+          else
+            %{vote: vote_value}
+          end
+
+        case Users.update_user(current_user, attrs) do
           {:ok, updated_user} ->
             updated_user = %{updated_user | has_voted: not is_nil(updated_user.vote)}
 
@@ -89,7 +96,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   @impl true
   def handle_event("reset", _params, socket) do
     Enum.each(socket.assigns.users, fn user ->
-      Users.update_user(user, %{vote: nil})
+      Users.update_user(user, %{vote: nil, vote_changed_after_reveal: false})
     end)
 
     case Rooms.update_room(socket.assigns.room, %{revealed: false}) do
@@ -199,6 +206,11 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
                   <% true -> %>
                     <span class="room-user-initials">{initials(user.name)}</span>
                 <% end %>
+                <%= if @room.revealed and user.vote_changed_after_reveal do %>
+                  <span class="room-user-edit-badge" title="Voto alterado após revelar">
+                    <.pencil_icon />
+                  </span>
+                <% end %>
               </div>
               <span class="room-user-name">{user.name}</span>
             </div>
@@ -270,6 +282,20 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       <circle cx="18" cy="7" r="2" />
       <circle cx="4" cy="12" r="1.5" />
       <path d="M12 10c-3.5 0-6 2-6 5s2 5 6 5 6-2 6-5-2.5-5-6-5z" />
+    </svg>
+    """
+  end
+
+  defp pencil_icon(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+    >
+      <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06m3.6-6.02c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83a.996.996 0 000-1.41l-2.34-2.34a.97.97 0 00-.71-.29zM14.06 6.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
     </svg>
     """
   end

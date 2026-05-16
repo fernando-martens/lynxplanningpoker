@@ -187,6 +187,7 @@
 }
 
 .room-user-avatar {
+  position: relative;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -221,6 +222,22 @@
   font-weight: 600;
   color: var(--room-user-name);
   white-space: nowrap;
+}
+
+.room-user-edit-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-warning);
+  color: var(--color-base-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  border: 2px solid var(--room-bg);
 }
 
 /* Reveal / Recomeçar button */

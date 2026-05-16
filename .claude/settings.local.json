@@ -15,7 +15,8 @@
       "Bash(stat -c '%y %n' assets/css/*.css 2>&1)",
       "Read(//c/Users/ferna/OneDrive/Documentos/Desenvolvimento/lynxplanningpoker/**)",
       "Bash(mix phx.server)",
-      "Bash(curl -s http://localhost:4000/rooms/new)"
+      "Bash(curl -s http://localhost:4000/rooms/new)",
+      "Bash(mix ecto.gen.migration add_vote_changed_after_reveal_to_users)"
     ]
   }
 }

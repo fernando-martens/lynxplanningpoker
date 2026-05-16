@@ -202,6 +202,45 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert html =~ "Reveal"
       refute html =~ "room-user-vote-num"
     end
+
+    test "clears the vote_changed_after_reveal flag", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, _} = Users.update_user(alice, %{vote: 5, vote_changed_after_reveal: true})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button", "Reveal") |> render_click()
+      view |> element("button", "Recomeçar") |> render_click()
+
+      assert Users.get_user!(alice.id).vote_changed_after_reveal == false
+    end
+  end
+
+  describe "vote_changed_after_reveal" do
+    test "voting before reveal does not set the flag", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button[phx-value-card='5']") |> render_click()
+
+      assert Users.get_user!(alice.id).vote_changed_after_reveal == false
+    end
+
+    test "changing the vote after reveal sets the flag and shows the pencil badge", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, _} = Users.update_user(alice, %{vote: 5})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button", "Reveal") |> render_click()
+      view |> element("button[phx-value-card='8']") |> render_click()
+
+      assert Users.get_user!(alice.id).vote_changed_after_reveal == true
+      assert render(view) =~ "room-user-edit-badge"
+    end
   end
 
   describe "PubSub updates" do
