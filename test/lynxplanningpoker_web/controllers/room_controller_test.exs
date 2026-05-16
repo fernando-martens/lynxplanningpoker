@@ -50,7 +50,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     test "redirects to home with a flash when the room does not exist", %{conn: conn} do
       conn = get(conn, ~p"/rooms/invite/#{Ecto.UUID.generate()}")
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "não existe"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "does not exist"
     end
   end
 

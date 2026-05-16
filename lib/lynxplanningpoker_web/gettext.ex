@@ -21,5 +21,17 @@ defmodule LynxplanningpokerWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext.Backend, otp_app: :lynxplanningpoker
+  use Gettext.Backend, otp_app: :lynxplanningpoker, default_locale: "pt_BR"
+
+  @locales ~w(en pt_BR fr)
+
+  def locales, do: @locales
+
+  def default_locale do
+    :lynxplanningpoker
+    |> Application.get_env(__MODULE__, [])
+    |> Keyword.get(:default_locale, "pt_BR")
+  end
+
+  def known?(locale), do: locale in @locales
 end

@@ -12,7 +12,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       nil ->
         {:ok,
          socket
-         |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+         |> put_flash(:error, gettext("This room does not exist or has already ended."))
          |> push_navigate(to: ~p"/")}
 
       room ->
@@ -76,7 +76,11 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
           {:error, _changeset} ->
             {:noreply,
-             put_flash(socket, :error, "Não foi possível registrar seu voto. Tente novamente.")}
+             put_flash(
+               socket,
+               :error,
+               gettext("Could not register your vote. Please try again.")
+             )}
         end
     end
   end
@@ -145,7 +149,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     if socket.assigns.room.id == room_id do
       {:noreply,
        socket
-       |> put_flash(:info, "A sala foi encerrada pelo host.")
+       |> put_flash(:info, gettext("The room was ended by the host."))
        |> redirect(to: ~p"/rooms/leave")}
     else
       {:noreply, socket}
@@ -246,7 +250,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
                     <span class="room-user-initials">{initials(user.name)}</span>
                 <% end %>
                 <%= if @room.revealed and user.vote_changed_after_reveal do %>
-                  <span class="room-user-edit-badge" title="Voto alterado após revelar">
+                  <span class="room-user-edit-badge" title={gettext("Vote changed after reveal")}>
                     <.pencil_icon />
                   </span>
                 <% end %>
@@ -262,13 +266,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div id="fire"></div>
             </div>
             <%= if @room.revealed do %>
-              <div class="room-average" aria-label="Média dos votos">
-                <span class="room-average-label">Média</span>
+              <div class="room-average" aria-label={gettext("Vote average")}>
+                <span class="room-average-label">{gettext("Average")}</span>
                 <span class="room-average-value">{vote_average(@users)}</span>
               </div>
             <% else %>
               <button phx-click="reveal" class="room-reveal-btn">
-                Reveal
+                {gettext("Reveal")}
               </button>
             <% end %>
           </div>

@@ -49,7 +49,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert {:error, {:live_redirect, %{to: "/", flash: flash}}} =
                live(conn, ~p"/rooms/#{Ecto.UUID.generate()}")
 
-      assert flash["error"] =~ "não existe"
+      assert flash["error"] =~ "does not exist"
     end
   end
 
@@ -194,7 +194,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button", "Reveal") |> render_click()
-      view |> element("button", "Recomeçar") |> render_click()
+      view |> element("button", "Restart") |> render_click()
       html = render(view)
 
       assert Users.get_user!(alice.id).vote == nil
@@ -212,7 +212,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button", "Reveal") |> render_click()
-      view |> element("button", "Recomeçar") |> render_click()
+      view |> element("button", "Restart") |> render_click()
 
       assert Users.get_user!(alice.id).vote_changed_after_reveal == false
     end
@@ -245,29 +245,29 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
   end
 
   describe "end_planning / leave_room events" do
-    test "host header shows 'Encerrar planning' button", %{conn: conn} do
+    test "host header shows 'End planning' button", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, host} = Users.update_user(alice, %{is_host: true})
 
       conn = logged_in_conn(conn, host.id)
       {:ok, _view, html} = live(conn, ~p"/rooms/#{room.id}")
 
-      assert html =~ "Encerrar planning"
-      refute html =~ "Sair"
+      assert html =~ "End planning"
+      refute html =~ "Leave"
     end
 
-    test "non-host header shows 'Sair' button", %{conn: conn} do
+    test "non-host header shows 'Leave' button", %{conn: conn} do
       {room, _alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
       conn = logged_in_conn(conn, bob.id)
       {:ok, _view, html} = live(conn, ~p"/rooms/#{room.id}")
 
-      assert html =~ "Sair"
-      refute html =~ "Encerrar planning"
+      assert html =~ "Leave"
+      refute html =~ "End planning"
     end
 
-    test "host clicking 'Encerrar planning' deletes the room", %{conn: conn} do
+    test "host clicking 'End planning' deletes the room", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, host} = Users.update_user(alice, %{is_host: true})
 
@@ -275,12 +275,12 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
-               view |> element("button", "Encerrar planning") |> render_click()
+               view |> element("button", "End planning") |> render_click()
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(room.id) end
     end
 
-    test "non-host clicking 'Sair' redirects through leave endpoint", %{conn: conn} do
+    test "non-host clicking 'Leave' redirects through leave endpoint", %{conn: conn} do
       {room, _alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
@@ -288,7 +288,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
-               view |> element("button", "Sair") |> render_click()
+               view |> element("button", "Leave") |> render_click()
 
       assert Rooms.get_room!(room.id)
     end

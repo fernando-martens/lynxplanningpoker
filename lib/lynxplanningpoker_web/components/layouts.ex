@@ -120,6 +120,137 @@ defmodule LynxplanningpokerWeb.Layouts do
   end
 
   @doc """
+  Renders the settings button (cog icon) with a dropdown panel that exposes
+  the theme toggle and the language switcher. Sits in place of the bare
+  controls in the public and room headers.
+  """
+  def settings_menu(assigns) do
+    ~H"""
+    <div class="relative" phx-click-away={JS.hide(to: "#settings-panel")}>
+      <button
+        type="button"
+        class="btn btn-ghost btn-circle"
+        phx-click={JS.toggle(to: "#settings-panel")}
+        aria-label={gettext("Settings")}
+      >
+        <.icon name="hero-cog-6-tooth" class="size-5" />
+      </button>
+      <div
+        id="settings-panel"
+        class="hidden absolute right-0 top-full mt-2 z-50 w-64 rounded-2xl border border-base-300 bg-base-100 shadow-xl p-4 space-y-4"
+        role="menu"
+      >
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs font-semibold uppercase tracking-wide text-base-content/70">
+            {gettext("Theme")}
+          </span>
+          <.theme_toggle />
+        </div>
+        <div class="flex items-center justify-between gap-3">
+          <span class="text-xs font-semibold uppercase tracking-wide text-base-content/70">
+            {gettext("Language")}
+          </span>
+          <.language_switcher />
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders the language switcher as a dropdown.
+
+  The trigger shows the current locale's flag and code; clicking reveals the
+  other two options. Each option is a regular link to `/locale/:locale` which
+  sets the session locale via `LocaleController` and bounces back via the
+  `Referer` header.
+  """
+  def language_switcher(assigns) do
+    locale = Gettext.get_locale(LynxplanningpokerWeb.Gettext)
+    others = LynxplanningpokerWeb.Gettext.locales() -- [locale]
+
+    assigns =
+      assigns
+      |> assign(:locale, locale)
+      |> assign(:others, others)
+
+    ~H"""
+    <div class="relative" phx-click-away={JS.hide(to: "#language-options")}>
+      <button
+        type="button"
+        class="flex items-center gap-2 rounded-full border border-base-300 bg-base-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide cursor-pointer hover:brightness-95"
+        phx-click={JS.toggle(to: "#language-options")}
+        aria-haspopup="listbox"
+        aria-label={gettext("Language")}
+      >
+        <.flag locale={@locale} class="h-3 w-5 rounded-sm overflow-hidden" />
+        <span>{locale_label(@locale)}</span>
+        <.icon name="hero-chevron-down-micro" class="size-3 opacity-70" />
+      </button>
+      <ul
+        id="language-options"
+        class="hidden absolute right-0 top-full mt-2 z-50 w-32 rounded-xl border border-base-300 bg-base-100 shadow-lg overflow-hidden text-xs font-semibold uppercase tracking-wide"
+        role="listbox"
+      >
+        <li :for={other <- @others}>
+          <.link
+            href={~p"/locale/#{other}"}
+            class="flex items-center gap-2 px-3 py-2 hover:bg-base-200"
+            role="option"
+          >
+            <.flag locale={other} class="h-3 w-5 rounded-sm overflow-hidden" />
+            <span>{locale_label(other)}</span>
+          </.link>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
+  defp locale_label("pt_BR"), do: "PT"
+  defp locale_label("en"), do: "EN"
+  defp locale_label("fr"), do: "FR"
+  defp locale_label(_), do: "?"
+
+  attr :locale, :string, required: true
+  attr :class, :any, default: nil
+
+  defp flag(%{locale: "pt_BR"} = assigns) do
+    ~H"""
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" class={@class}>
+      <rect width="28" height="20" fill="#009c3b" />
+      <polygon points="14,3 25,10 14,17 3,10" fill="#ffdf00" />
+      <circle cx="14" cy="10" r="3.5" fill="#002776" />
+    </svg>
+    """
+  end
+
+  defp flag(%{locale: "en"} = assigns) do
+    ~H"""
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" class={@class}>
+      <rect width="28" height="20" fill="#fff" />
+      <rect y="0" width="28" height="2.86" fill="#b22234" />
+      <rect y="5.71" width="28" height="2.86" fill="#b22234" />
+      <rect y="11.43" width="28" height="2.86" fill="#b22234" />
+      <rect y="17.14" width="28" height="2.86" fill="#b22234" />
+      <rect width="11" height="11.43" fill="#3c3b6e" />
+    </svg>
+    """
+  end
+
+  defp flag(%{locale: "fr"} = assigns) do
+    ~H"""
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" class={@class}>
+      <rect width="9.33" height="20" fill="#002654" />
+      <rect x="9.33" width="9.33" height="20" fill="#fff" />
+      <rect x="18.66" width="9.33" height="20" fill="#ce1126" />
+    </svg>
+    """
+  end
+
+  defp flag(assigns), do: ~H""
+
+  @doc """
   Provides dark vs light theme toggle based on themes defined in app.css.
 
   See <head> in root.html.heex which applies the theme before page load.
@@ -185,10 +316,10 @@ defmodule LynxplanningpokerWeb.Layouts do
 
         <nav class="hidden md:flex items-center gap-2 font-semibold">
           <.button navigate="#features">
-            <.icon name="hero-book-open" class="size-5" /> Features
+            <.icon name="hero-book-open" class="size-5" /> {gettext("Features")}
           </.button>
           <.button navigate="#pricing">
-            <.icon name="hero-currency-dollar" class="size-5" /> Pricing
+            <.icon name="hero-currency-dollar" class="size-5" /> {gettext("Pricing")}
           </.button>
           <.link href="#" class="flex items-center gap-2 hover:opacity-70 transition">
             <img
@@ -197,9 +328,7 @@ defmodule LynxplanningpokerWeb.Layouts do
               class="relative w-32"
             />
           </.link>
-          <div class="flex items-center gap-2">
-            <.theme_toggle />
-          </div>
+          <.settings_menu />
         </nav>
       </div>
     </header>
@@ -236,20 +365,18 @@ defmodule LynxplanningpokerWeb.Layouts do
 
         <nav class="hidden md:flex items-center gap-2 font-semibold">
           <.button phx-click="reset">
-            <.icon name="hero-arrow-path" class="size-5" /> Recomeçar
+            <.icon name="hero-arrow-path" class="size-5" /> {gettext("Restart")}
           </.button>
           <%= if @is_host do %>
             <.button phx-click="end_planning" variant="red">
-              <.icon name="hero-x-circle" class="size-5" /> Encerrar planning
+              <.icon name="hero-x-circle" class="size-5" /> {gettext("End planning")}
             </.button>
           <% else %>
             <.button phx-click="leave_room" variant="red">
-              <.icon name="hero-x-circle" class="size-5" /> Sair
+              <.icon name="hero-x-circle" class="size-5" /> {gettext("Leave")}
             </.button>
           <% end %>
-          <div class="flex items-center gap-2">
-            <.theme_toggle />
-          </div>
+          <.settings_menu />
         </nav>
       </div>
     </header>

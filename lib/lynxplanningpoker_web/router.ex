@@ -8,6 +8,7 @@ defmodule LynxplanningpokerWeb.Router do
     plug :put_root_layout, html: {LynxplanningpokerWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug LynxplanningpokerWeb.Plugs.Locale
   end
 
   pipeline :api do
@@ -20,11 +21,16 @@ defmodule LynxplanningpokerWeb.Router do
     get "/", PageController, :home
     resources "/rooms", RoomController, only: [:new, :create]
 
+    get "/locale/:locale", LocaleController, :update
+
     scope "/rooms" do
       get "/invite/:id", RoomController, :show
       post "/invite/:id", RoomController, :acceptInvite
       get "/leave", RoomController, :leave
-      live "/:id", RoomLive.Show, :show
+
+      live_session :default, on_mount: LynxplanningpokerWeb.LiveHooks.Locale do
+        live "/:id", RoomLive.Show, :show
+      end
     end
   end
 

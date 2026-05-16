@@ -1,0 +1,126 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Free, fast, and no sign-up needed."
+msgstr "Grátis, rápido e sem cadastro."
+
+msgid "Create a room"
+msgstr "Criar uma sala"
+
+msgid "Join a room"
+msgstr "Entrar em uma sala"
+
+msgid "Got a suggestion? Send us an email"
+msgstr "Tem alguma sugestão? Envie um e-mail"
+
+msgid "Who are you?"
+msgstr "Quem é você?"
+
+msgid "Say your name and create your room"
+msgstr "Digite seu nome e crie sua sala"
+
+msgid "Your name"
+msgstr "Seu nome"
+
+msgid "Enter your name"
+msgstr "Digite seu nome"
+
+msgid "Visible to everyone in the room"
+msgstr "Visível para todos na sala"
+
+msgid "Verify you are human"
+msgstr "Confirme que você é humano"
+
+msgid "Join your room"
+msgstr "Entrar na sua sala"
+
+msgid "You're invited!"
+msgstr "Você foi convidado!"
+
+msgid "Enter your name to join the room"
+msgstr "Digite seu nome para entrar na sala"
+
+msgid "Join the room"
+msgstr "Entrar na sala"
+
+msgid "Features"
+msgstr "Funcionalidades"
+
+msgid "Pricing"
+msgstr "Preços"
+
+msgid "Restart"
+msgstr "Recomeçar"
+
+msgid "End planning"
+msgstr "Encerrar planning"
+
+msgid "Leave"
+msgstr "Sair"
+
+msgid "Settings"
+msgstr "Configurações"
+
+msgid "Theme"
+msgstr "Tema"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Portuguese"
+msgstr "Português"
+
+msgid "English"
+msgstr "Inglês"
+
+msgid "French"
+msgstr "Francês"
+
+msgid "Reveal"
+msgstr "Revelar"
+
+msgid "Average"
+msgstr "Média"
+
+msgid "Vote average"
+msgstr "Média dos votos"
+
+msgid "Vote changed after reveal"
+msgstr "Voto alterado após revelar"
+
+msgid "This room does not exist or has already ended."
+msgstr "Essa sala não existe ou já foi encerrada."
+
+msgid "Could not register your vote. Please try again."
+msgstr "Não foi possível registrar seu voto. Tente novamente."
+
+msgid "The room was ended by the host."
+msgstr "A sala foi encerrada pelo host."
+
+msgid "You left the room."
+msgstr "Você saiu da sala."
+
+msgid "We can't find the internet"
+msgstr "Sem conexão com a internet"
+
+msgid "Attempting to reconnect"
+msgstr "Tentando reconectar"
+
+msgid "Something went wrong!"
+msgstr "Algo deu errado!"
+
+msgid "close"
+msgstr "fechar"
+
+msgid "Actions"
+msgstr "Ações"

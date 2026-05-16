@@ -45,7 +45,7 @@ defmodule LynxplanningpokerWeb.RoomController do
     cond do
       is_nil(Rooms.get_room(id)) ->
         conn
-        |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+        |> put_flash(:error, gettext("This room does not exist or has already ended."))
         |> redirect(to: ~p"/")
 
       already_in_room?(conn, id) ->
@@ -60,7 +60,7 @@ defmodule LynxplanningpokerWeb.RoomController do
     case Rooms.get_room(room_id) do
       nil ->
         conn
-        |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+        |> put_flash(:error, gettext("This room does not exist or has already ended."))
         |> redirect(to: ~p"/")
 
       room ->
@@ -130,8 +130,8 @@ defmodule LynxplanningpokerWeb.RoomController do
     end
 
     conn
-    |> clear_session()
-    |> put_flash(:info, "Você saiu da sala.")
+    |> delete_session(:current_user_id)
+    |> put_flash(:info, gettext("You left the room."))
     |> redirect(to: ~p"/")
   end
 end

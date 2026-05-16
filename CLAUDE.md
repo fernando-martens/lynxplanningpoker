@@ -99,6 +99,7 @@ mix phx.routes         # lista todas as rotas
 - Sempre usar LiveView streams para coleções de dados
 - Não usar `daisyUI` — escrever componentes Tailwind manualmente
 - **Sempre ajustar os testes quando a funcionalidade for alterada.** Toda mudança em contexto, controller, LiveView ou schema deve vir acompanhada da atualização dos testes correspondentes em `test/`. Rodar `mix test` antes de finalizar — não deixar testes quebrados ou desatualizados.
+- **Internacionalização (i18n):** o app suporta três idiomas — **pt_BR** (padrão), **en** e **fr**. Toda nova label visível ao usuário (templates `.heex`, componentes, flashes em controllers/LiveViews, `title`/`aria-label`/`placeholder`) **deve** ser envolvida em `gettext("...")` (ou `dgettext("errors", "...")` para mensagens do Ecto). Para cada `msgid` novo, adicionar a tradução nos três arquivos: `priv/gettext/pt_BR/LC_MESSAGES/default.po`, `priv/gettext/en/LC_MESSAGES/default.po` e `priv/gettext/fr/LC_MESSAGES/default.po` (e também em `default.pot`). Não deixar `msgstr ""` vazio em nenhum dos três idiomas. Convenção: o `msgid` é escrito em inglês (fonte canônica do gettext) — mesmo quando o texto original na UI estava em português, traduzir o `msgid` para inglês e usar o texto pt_BR como `msgstr` do arquivo `pt_BR`.
 
 ## Testes
 

@@ -17,7 +17,14 @@
       "Bash(mix phx.server)",
       "Bash(curl -s http://localhost:4000/rooms/new)",
       "Bash(mix ecto.gen.migration add_vote_changed_after_reveal_to_users)",
-      "Bash(mix ecto.gen.migration add_is_host_to_users)"
+      "Bash(mix ecto.gen.migration add_is_host_to_users)",
+      "Bash(mix compile *)",
+      "PowerShell(mix compile --warnings-as-errors 2>&1)",
+      "PowerShell(mix compile 2>&1 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix compile --warnings-as-errors 2>&1 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Select-Object -Last 10 | Out-String; \"EXIT=$LASTEXITCODE\")",
+      "PowerShell(mix test 2>&1 | Select-Object -Last 6 | Out-String; \"EXIT=$LASTEXITCODE\")"
     ]
   }
 }

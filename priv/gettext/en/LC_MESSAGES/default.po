@@ -1,0 +1,126 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Free, fast, and no sign-up needed."
+msgstr "Free, fast, and no sign-up needed."
+
+msgid "Create a room"
+msgstr "Create a room"
+
+msgid "Join a room"
+msgstr "Join a room"
+
+msgid "Got a suggestion? Send us an email"
+msgstr "Got a suggestion? Send us an email"
+
+msgid "Who are you?"
+msgstr "Who are you?"
+
+msgid "Say your name and create your room"
+msgstr "Say your name and create your room"
+
+msgid "Your name"
+msgstr "Your name"
+
+msgid "Enter your name"
+msgstr "Enter your name"
+
+msgid "Visible to everyone in the room"
+msgstr "Visible to everyone in the room"
+
+msgid "Verify you are human"
+msgstr "Verify you are human"
+
+msgid "Join your room"
+msgstr "Join your room"
+
+msgid "You're invited!"
+msgstr "You're invited!"
+
+msgid "Enter your name to join the room"
+msgstr "Enter your name to join the room"
+
+msgid "Join the room"
+msgstr "Join the room"
+
+msgid "Features"
+msgstr "Features"
+
+msgid "Pricing"
+msgstr "Pricing"
+
+msgid "Restart"
+msgstr "Restart"
+
+msgid "End planning"
+msgstr "End planning"
+
+msgid "Leave"
+msgstr "Leave"
+
+msgid "Settings"
+msgstr "Settings"
+
+msgid "Theme"
+msgstr "Theme"
+
+msgid "Language"
+msgstr "Language"
+
+msgid "Portuguese"
+msgstr "Portuguese"
+
+msgid "English"
+msgstr "English"
+
+msgid "French"
+msgstr "French"
+
+msgid "Reveal"
+msgstr "Reveal"
+
+msgid "Average"
+msgstr "Average"
+
+msgid "Vote average"
+msgstr "Vote average"
+
+msgid "Vote changed after reveal"
+msgstr "Vote changed after reveal"
+
+msgid "This room does not exist or has already ended."
+msgstr "This room does not exist or has already ended."
+
+msgid "Could not register your vote. Please try again."
+msgstr "Could not register your vote. Please try again."
+
+msgid "The room was ended by the host."
+msgstr "The room was ended by the host."
+
+msgid "You left the room."
+msgstr "You left the room."
+
+msgid "We can't find the internet"
+msgstr "We can't find the internet"
+
+msgid "Attempting to reconnect"
+msgstr "Attempting to reconnect"
+
+msgid "Something went wrong!"
+msgstr "Something went wrong!"
+
+msgid "close"
+msgstr "close"
+
+msgid "Actions"
+msgstr "Actions"

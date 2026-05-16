@@ -17,17 +17,19 @@
 
     <h1 class="text-4xl md:text-5xl font-bold mb-3 tracking-tight">Lynx planning poker</h1>
 
-    <p class="text-lg md:text-xl font-semibold mb-6">Free, fast, and no sign-up needed.</p>
+    <p class="text-lg md:text-xl font-semibold mb-6">
+      {gettext("Free, fast, and no sign-up needed.")}
+    </p>
 
-    <div class="flex flex-col sm:flex-row gap-4 w-full max-w-md justify-center">
+    <div class="flex flex-col w-full max-w-xs sm:max-w-none sm:w-auto sm:flex-row gap-4 justify-center items-center">
       <.link
         navigate={~p"/rooms/new"}
-        class="bg-primary text-white px-8 py-4 rounded-full text-lg font-bold hover:brightness-85 transition shadow-lg inline-flex items-center justify-center gap-2"
+        class="bg-primary text-white w-full sm:w-auto px-8 py-4 rounded-full text-lg font-bold whitespace-nowrap hover:brightness-85 transition shadow-lg inline-flex items-center justify-center gap-2"
       >
-        Create a room <.icon name="hero-plus" class="size-5" />
+        {gettext("Create a room")} <.icon name="hero-plus" class="size-5" />
       </.link>
-      <button class="bg-secondary px-8 py-4 rounded-full text-lg font-bold hover:brightness-85 transition flex items-center justify-center gap-2 cursor-pointer">
-        Join a room <.icon name="hero-arrow-right-end-on-rectangle" class="size-5" />
+      <button class="bg-secondary w-full sm:w-auto px-8 py-4 rounded-full text-lg font-bold whitespace-nowrap hover:brightness-85 transition flex items-center justify-center gap-2 cursor-pointer">
+        {gettext("Join a room")} <.icon name="hero-arrow-right-end-on-rectangle" class="size-5" />
       </button>
     </div>
   </main>
@@ -37,7 +39,7 @@
       href="mailto:contact@lynx.com"
       class="flex items-center justify-center gap-2 hover:underline"
     >
-      Got a suggestion? Send us an email
+      {gettext("Got a suggestion? Send us an email")}
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"

@@ -1,0 +1,123 @@
+## This is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here has no
+## effect: edit them in PO (`.po`) files instead.
+
+msgid "Free, fast, and no sign-up needed."
+msgstr ""
+
+msgid "Create a room"
+msgstr ""
+
+msgid "Join a room"
+msgstr ""
+
+msgid "Got a suggestion? Send us an email"
+msgstr ""
+
+msgid "Who are you?"
+msgstr ""
+
+msgid "Say your name and create your room"
+msgstr ""
+
+msgid "Your name"
+msgstr ""
+
+msgid "Enter your name"
+msgstr ""
+
+msgid "Visible to everyone in the room"
+msgstr ""
+
+msgid "Verify you are human"
+msgstr ""
+
+msgid "Join your room"
+msgstr ""
+
+msgid "You're invited!"
+msgstr ""
+
+msgid "Enter your name to join the room"
+msgstr ""
+
+msgid "Join the room"
+msgstr ""
+
+msgid "Features"
+msgstr ""
+
+msgid "Pricing"
+msgstr ""
+
+msgid "Restart"
+msgstr ""
+
+msgid "End planning"
+msgstr ""
+
+msgid "Leave"
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Theme"
+msgstr ""
+
+msgid "Language"
+msgstr ""
+
+msgid "Portuguese"
+msgstr ""
+
+msgid "English"
+msgstr ""
+
+msgid "French"
+msgstr ""
+
+msgid "Reveal"
+msgstr ""
+
+msgid "Average"
+msgstr ""
+
+msgid "Vote average"
+msgstr ""
+
+msgid "Vote changed after reveal"
+msgstr ""
+
+msgid "This room does not exist or has already ended."
+msgstr ""
+
+msgid "Could not register your vote. Please try again."
+msgstr ""
+
+msgid "The room was ended by the host."
+msgstr ""
+
+msgid "You left the room."
+msgstr ""
+
+msgid "We can't find the internet"
+msgstr ""
+
+msgid "Attempting to reconnect"
+msgstr ""
+
+msgid "Something went wrong!"
+msgstr ""
+
+msgid "close"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
