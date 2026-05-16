@@ -19,6 +19,7 @@ defmodule LynxplanningpokerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/how-it-works", PageController, :how_it_works
     resources "/rooms", RoomController, only: [:new, :create]
 
     get "/locale/:locale", LocaleController, :update

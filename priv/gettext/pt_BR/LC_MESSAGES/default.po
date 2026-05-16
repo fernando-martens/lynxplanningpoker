@@ -17,8 +17,26 @@ msgstr "Grátis, rápido e sem cadastro."
 msgid "Create a room"
 msgstr "Criar uma sala"
 
-msgid "Join a room"
-msgstr "Entrar em uma sala"
+msgid "How it works"
+msgstr "Como funciona"
+
+msgid "Plan your sprints in three quick steps."
+msgstr "Planeje suas sprints em três passos rápidos."
+
+msgid "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+msgstr "Na página inicial, clique em \"Criar uma sala\", informe seu nome e você se tornará o host de uma nova sessão de planejamento."
+
+msgid "Invite your team"
+msgstr "Convide seu time"
+
+msgid "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+msgstr "Use o botão \"Convidar\" para copiar o link da sala e compartilhe com seu time. Qualquer pessoa com o link pode entrar — sem cadastro."
+
+msgid "Vote and reveal"
+msgstr "Vote e revele"
+
+msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
+msgstr "Cada jogador escolhe uma carta para estimar a tarefa. Quando todos votarem, o host revela os resultados e a média é exibida. Use \"Recomeçar\" para começar a próxima rodada."
 
 msgid "Got a suggestion? Send us an email"
 msgstr "Tem alguma sugestão? Envie um e-mail"
@@ -139,3 +157,4 @@ msgstr "fechar"
 
 msgid "Actions"
 msgstr "Ações"
+

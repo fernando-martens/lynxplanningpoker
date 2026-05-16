@@ -1,0 +1,86 @@
+<Layouts.app_header />
+<main class="mx-auto max-w-5xl px-6 py-12">
+  <section class="text-center">
+    <div class="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-base-200 shadow-inner">
+      <.icon name="hero-book-open" class="h-13 w-13 text-base-content/80" />
+    </div>
+
+    <h1 class="mt-8 text-4xl font-semibold tracking-tight ">
+      {gettext("How it works")}
+    </h1>
+    <p class="mt-3 text-base text-base-content/70">
+      {gettext("Plan your sprints in three quick steps.")}
+    </p>
+  </section>
+
+  <section class="mt-12 flex flex-col gap-6">
+    <article class="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center">
+        <div class="md:w-1/2">
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+              1
+            </span>
+            <h2 class="text-xl font-semibold">{gettext("Create a room")}</h2>
+          </div>
+          <p class="mt-3 text-sm text-base-content/70">
+            {gettext(
+              "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+            )}
+          </p>
+        </div>
+        <img
+          src="/images/how-it-works/step-1-create.svg"
+          alt={gettext("Create a room")}
+          class="w-full rounded-lg border border-base-200 md:w-1/2"
+        />
+      </div>
+    </article>
+
+    <article class="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <div class="flex flex-col gap-6 md:flex-row-reverse md:items-center">
+        <div class="md:w-1/2">
+          <div class="flex items-center gap-3 md:flex-row-reverse md:justify-start">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+              2
+            </span>
+            <h2 class="text-xl font-semibold">{gettext("Invite your team")}</h2>
+          </div>
+          <p class="mt-3 text-sm text-base-content/70 md:text-right">
+            {gettext(
+              "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+            )}
+          </p>
+        </div>
+        <img
+          src="/images/how-it-works/step-2-invite.svg"
+          alt={gettext("Invite your team")}
+          class="w-full rounded-lg border border-base-200 md:w-1/2"
+        />
+      </div>
+    </article>
+
+    <article class="rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center">
+        <div class="md:w-1/2">
+          <div class="flex items-center gap-3">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-white">
+              3
+            </span>
+            <h2 class="text-xl font-semibold">{gettext("Vote and reveal")}</h2>
+          </div>
+          <p class="mt-3 text-sm text-base-content/70">
+            {gettext(
+              "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
+            )}
+          </p>
+        </div>
+        <img
+          src="/images/how-it-works/step-3-vote.svg"
+          alt={gettext("Vote and reveal")}
+          class="w-full rounded-lg border border-base-200 md:w-1/2"
+        />
+      </div>
+    </article>
+  </section>
+</main>

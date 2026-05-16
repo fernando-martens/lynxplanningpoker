@@ -17,8 +17,26 @@ msgstr "Free, fast, and no sign-up needed."
 msgid "Create a room"
 msgstr "Create a room"
 
-msgid "Join a room"
-msgstr "Join a room"
+msgid "How it works"
+msgstr "How it works"
+
+msgid "Plan your sprints in three quick steps."
+msgstr "Plan your sprints in three quick steps."
+
+msgid "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+msgstr "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+
+msgid "Invite your team"
+msgstr "Invite your team"
+
+msgid "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+msgstr "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+
+msgid "Vote and reveal"
+msgstr "Vote and reveal"
+
+msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
+msgstr "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
 
 msgid "Got a suggestion? Send us an email"
 msgstr "Got a suggestion? Send us an email"
@@ -139,3 +157,4 @@ msgstr "close"
 
 msgid "Actions"
 msgstr "Actions"
+

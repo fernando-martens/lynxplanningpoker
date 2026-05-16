@@ -14,7 +14,25 @@ msgstr ""
 msgid "Create a room"
 msgstr ""
 
-msgid "Join a room"
+msgid "How it works"
+msgstr ""
+
+msgid "Plan your sprints in three quick steps."
+msgstr ""
+
+msgid "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+msgstr ""
+
+msgid "Invite your team"
+msgstr ""
+
+msgid "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+msgstr ""
+
+msgid "Vote and reveal"
+msgstr ""
+
+msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
 msgstr ""
 
 msgid "Got a suggestion? Send us an email"
@@ -136,3 +154,4 @@ msgstr ""
 
 msgid "Actions"
 msgstr ""
+
