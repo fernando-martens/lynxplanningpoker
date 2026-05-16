@@ -60,10 +60,23 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       conn = logged_in_conn(conn, user.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      view |> element("button[phx-value-value='5']") |> render_click()
-      assert render(view) =~ "room-card--selected"
+      view |> element("button[phx-value-card='5']") |> render_click()
+      assert render(view) =~ ~s(class="room-card room-card--selected")
 
       assert Users.get_user!(user.id).vote == 5
+    end
+
+    test "clicking the already-selected card toggles the vote off", %{conn: conn} do
+      {room, user} = setup_room_with_user()
+      conn = logged_in_conn(conn, user.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button[phx-value-card='5']") |> render_click()
+      assert Users.get_user!(user.id).vote == 5
+
+      view |> element("button[phx-value-card='5']") |> render_click()
+      assert Users.get_user!(user.id).vote == nil
+      refute render(view) =~ ~s(class="room-card room-card--selected")
     end
 
     test "clicking a non-numeric card (e.g. '?') stores nil and does not mark as selected", %{
@@ -74,20 +87,34 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       conn = logged_in_conn(conn, user.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      view |> element("button[phx-value-value='?']") |> render_click()
+      view |> element("button[phx-value-card='?']") |> render_click()
 
       assert Users.get_user!(user.id).vote == nil
     end
 
-    test "shows the current user's own vote on their card before reveal", %{conn: conn} do
+    test "hides the current user's own vote number before reveal (shows paw instead)", %{
+      conn: conn
+    } do
       {room, alice} = setup_room_with_user("Alice")
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      view |> element("button[phx-value-value='8']") |> render_click()
+      view |> element("button[phx-value-card='8']") |> render_click()
       html = render(view)
 
       assert html =~ "room-user-avatar--voted"
+      refute html =~ "room-user-vote-num"
+    end
+
+    test "reveals the current user's own vote number after reveal", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button[phx-value-card='8']") |> render_click()
+      view |> element("button", "Reveal") |> render_click()
+      html = render(view)
+
       assert html =~ "room-user-vote-num"
       assert html =~ ">8<"
     end

@@ -195,7 +195,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.4rem;
-  color: oklch(45% 0.15 270);
+  color: var(--room-avatar-content);
   transition: background-color 0.2s;
 }
 
@@ -206,14 +206,14 @@
 .room-user-initials {
   font-size: 0.85rem;
   font-weight: 700;
-  color: oklch(45% 0.15 270);
+  color: var(--room-avatar-content);
   letter-spacing: 0.03em;
 }
 
 .room-user-vote-num {
   font-weight: 700;
   font-size: 1.1rem;
-  color: oklch(40% 0.18 270);
+  color: var(--room-avatar-content);
 }
 
 .room-user-name {
@@ -340,4 +340,52 @@
   bottom: 5px;
   right: 5px;
   transform: rotate(180deg);
+}
+
+.room-card-spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--room-card-text);
+  border-top-color: transparent;
+  opacity: 0.7;
+  z-index: 2;
+  animation: room-card-spin 0.7s linear infinite;
+  pointer-events: none;
+}
+
+.room-card.phx-click-loading {
+  pointer-events: none;
+}
+
+.room-cards-inner:has(.room-card.phx-click-loading) .room-card {
+  pointer-events: none;
+}
+
+.room-cards-inner:has(.room-card.phx-click-loading) .room-card:not(.phx-click-loading) {
+  opacity: 0.5;
+}
+
+.room-card.phx-click-loading .room-card-value,
+.room-card.phx-click-loading .room-card-paw {
+  visibility: hidden;
+}
+
+.room-card.phx-click-loading .room-card-spinner {
+  display: block;
+}
+
+.room-card--selected.phx-click-loading .room-card-spinner {
+  border-color: var(--room-card-selected-content);
+  border-top-color: transparent;
+}
+
+@keyframes room-card-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

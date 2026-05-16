@@ -40,11 +40,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
         {:noreply, socket}
 
       current_user ->
-        vote_value =
+        clicked_value =
           case Integer.parse(value) do
             {int, ""} -> int
             _ -> nil
           end
+
+        vote_value = if current_user.vote == clicked_value, do: nil, else: clicked_value
 
         case Users.update_user(current_user, %{vote: vote_value}) do
           {:ok, updated_user} ->
@@ -58,7 +60,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             {:noreply, socket |> assign(:current_user, updated_user) |> assign(:users, users)}
 
           {:error, _changeset} ->
-            {:noreply, socket}
+            {:noreply,
+             put_flash(socket, :error, "Não foi possível registrar seu voto. Tente novamente.")}
         end
     end
   end
@@ -78,8 +81,20 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end)
 
     case Rooms.update_room(socket.assigns.room, %{revealed: false}) do
-      {:ok, room} -> {:noreply, assign(socket, :room, room)}
-      {:error, _changeset} -> {:noreply, socket}
+      {:ok, room} ->
+        users =
+          Users.list_users_by_room(room.id, socket.assigns.current_user_id, room.revealed)
+
+        current_user = Enum.find(users, &(&1.id == socket.assigns.current_user_id))
+
+        {:noreply,
+         socket
+         |> assign(:room, room)
+         |> assign(:users, users)
+         |> assign(:current_user, current_user)}
+
+      {:error, _changeset} ->
+        {:noreply, socket}
     end
   end
 
@@ -132,15 +147,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end)
   end
 
-  defp current_vote(current_user) do
-    if current_user, do: current_user.vote, else: nil
+  defp card_selected?(current_user, card) do
+    current_user && to_string(current_user.vote) == to_string(card)
   end
 
   @impl true
   def render(assigns) do
     assigns = assign(assigns, :user_positions, user_positions(assigns.users))
-    assigns = assign(assigns, :my_vote, current_vote(assigns.current_user))
-    assigns = assign(assigns, :revealed, assigns.room.revealed)
 
     ~H"""
     <Layouts.room_header />
@@ -154,7 +167,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             <div class="room-user" style={"left:#{x}%;top:#{y}%"}>
               <div class={"room-user-avatar #{if user.has_voted, do: "room-user-avatar--voted", else: ""}"}>
                 <%= cond do %>
-                  <% user.vote != nil -> %>
+                  <% @room.revealed and user.vote != nil -> %>
                     <span class="room-user-vote-num">{to_string(user.vote)}</span>
                   <% user.has_voted -> %>
                     <.paw_icon />
@@ -172,7 +185,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div id="wood"><span></span></div>
               <div id="fire"></div>
             </div>
-            <%= if @revealed do %>
+            <%= if @room.revealed do %>
               <button phx-click="reset" class="room-reveal-btn">
                 Recomeçar
               </button>
@@ -193,8 +206,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <button
                 phx-click="vote"
                 phx-value-card={to_string(card)}
-                class={"room-card #{if to_string(@my_vote) == to_string(card), do: "room-card--selected", else: ""}"}
+                class={"room-card #{if card_selected?(@current_user, card), do: "room-card--selected", else: ""}"}
               >
+                <span class="room-card-spinner" aria-hidden="true"></span>
                 <span class="room-card-paw room-card-paw--tl"><.paw_icon /></span>
                 <span class="room-card-paw room-card-paw--br"><.paw_icon /></span>
                 <span class="room-card-value">{card}</span>

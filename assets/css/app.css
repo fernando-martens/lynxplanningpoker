@@ -68,8 +68,9 @@
   --room-card-text: oklch(80% 0.05 270);
   --room-card-selected: oklch(55% 0.18 270);
   --room-card-selected-content: oklch(99% 0 0);
-  --room-avatar-bg: oklch(28% 0.08 270);
+  --room-avatar-bg: var(--color-base-300);
   --room-avatar-voted: oklch(35% 0.1 270);
+  --room-avatar-content: oklch(92% 0.05 270);
   --room-user-name: oklch(90% 0.01 270);
 }
 
@@ -119,8 +120,9 @@
   --room-card-text: oklch(25% 0.05 270);
   --room-card-selected: oklch(55% 0.18 270);
   --room-card-selected-content: oklch(99% 0 0);
-  --room-avatar-bg: oklch(90% 0.06 270);
+  --room-avatar-bg: var(--color-base-300);
   --room-avatar-voted: oklch(85% 0.09 270);
+  --room-avatar-content: oklch(40% 0.18 270);
   --room-user-name: oklch(25% 0.01 270);
 }
 
