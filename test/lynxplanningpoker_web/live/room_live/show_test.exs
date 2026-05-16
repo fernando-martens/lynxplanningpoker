@@ -153,7 +153,18 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert html =~ "room-user-vote-num"
       assert html =~ ">5<"
       assert html =~ ">8<"
-      assert html =~ "Recomeçar"
+      assert html =~ "room-average-value"
+      assert html =~ ">6.5<"
+    end
+
+    test "shows '—' as average when no numeric votes are present", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      html = view |> element("button", "Reveal") |> render_click()
+      assert html =~ "room-average-value"
+      assert html =~ "—"
     end
 
     test "persists revealed state on the room and propagates via PubSub", %{conn: conn} do

@@ -234,7 +234,7 @@ defmodule LynxplanningpokerWeb.Layouts do
         </div>
 
         <nav class="hidden md:flex items-center gap-2 font-semibold">
-          <.button navigate="#">
+          <.button phx-click="reset">
             <.icon name="hero-arrow-path" class="size-5" /> Recomeçar
           </.button>
           <.button navigate="#" variant="red">

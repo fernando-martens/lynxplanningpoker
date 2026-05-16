@@ -69,8 +69,20 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   @impl true
   def handle_event("reveal", _params, socket) do
     case Rooms.update_room(socket.assigns.room, %{revealed: true}) do
-      {:ok, room} -> {:noreply, assign(socket, :room, room)}
-      {:error, _changeset} -> {:noreply, socket}
+      {:ok, room} ->
+        users =
+          Users.list_users_by_room(room.id, socket.assigns.current_user_id, room.revealed)
+
+        current_user = Enum.find(users, &(&1.id == socket.assigns.current_user_id))
+
+        {:noreply,
+         socket
+         |> assign(:room, room)
+         |> assign(:users, users)
+         |> assign(:current_user, current_user)}
+
+      {:error, _changeset} ->
+        {:noreply, socket}
     end
   end
 
@@ -151,6 +163,19 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     current_user && to_string(current_user.vote) == to_string(card)
   end
 
+  defp vote_average(users) do
+    numeric_votes = for %{vote: v} <- users, is_integer(v), do: v
+
+    case numeric_votes do
+      [] ->
+        "—"
+
+      votes ->
+        avg = Enum.sum(votes) / length(votes)
+        :erlang.float_to_binary(avg, decimals: 1)
+    end
+  end
+
   @impl true
   def render(assigns) do
     assigns = assign(assigns, :user_positions, user_positions(assigns.users))
@@ -186,9 +211,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div id="fire"></div>
             </div>
             <%= if @room.revealed do %>
-              <button phx-click="reset" class="room-reveal-btn">
-                Recomeçar
-              </button>
+              <div class="room-average" aria-label="Média dos votos">
+                <span class="room-average-label">Média</span>
+                <span class="room-average-value">{vote_average(@users)}</span>
+              </div>
             <% else %>
               <button phx-click="reveal" class="room-reveal-btn">
                 Reveal
