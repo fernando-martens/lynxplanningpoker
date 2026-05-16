@@ -23,12 +23,12 @@ defmodule LynxplanningpokerWeb.RoomController do
                room_id: room.id,
                name: user_name
              }) do
-          {:ok, _user} ->
+          {:ok, user} ->
             conn
+            |> put_session(:current_user_id, user.id)
             |> redirect(to: ~p"/rooms/#{room}")
 
           {:error, _changeset} ->
-            # If user creation fails, still redirect (or handle error as needed)
             conn
             |> redirect(to: ~p"/rooms/#{room}")
         end
@@ -50,12 +50,12 @@ defmodule LynxplanningpokerWeb.RoomController do
            room_id: room.id,
            name: user_name
          }) do
-      {:ok, _user} ->
+      {:ok, user} ->
         conn
+        |> put_session(:current_user_id, user.id)
         |> redirect(to: ~p"/rooms/#{room}")
 
       {:error, _changeset} ->
-        # If user creation fails, show form again
         render(conn, :invite, room_id: room_id)
     end
   end

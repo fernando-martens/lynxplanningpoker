@@ -86,7 +86,11 @@ defmodule Lynxplanningpoker.Users do
   defp notify_room_update({:error, _} = error, _room_id), do: error
 
   defp broadcast_room_update(room_id) do
-    Phoenix.PubSub.broadcast(Lynxplanningpoker.PubSub, room_topic(room_id), {:users_updated, room_id})
+    Phoenix.PubSub.broadcast(
+      Lynxplanningpoker.PubSub,
+      room_topic(room_id),
+      {:users_updated, room_id}
+    )
   end
 
   defp room_topic(room_id), do: "room:#{room_id}"

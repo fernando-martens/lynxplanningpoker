@@ -135,3 +135,210 @@
     transform: translateX(-50%) rotate(-47deg) scale(1.05);
   }
 }
+
+/* ─── Room layout ─────────────────────────────────────────── */
+
+.room-scene {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--room-bg);
+}
+
+/* Game area fills the screen with padding for header and cards */
+.room-game-area {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 88px;
+  padding-bottom: 160px;
+}
+
+/* The ellipse table where users sit */
+.room-table {
+  position: relative;
+  width: min(580px, 90vw);
+  height: min(380px, 55vh);
+}
+
+/* Campfire + reveal button centered on the table */
+.room-campfire-wrap {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* User token around campfire */
+.room-user {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.room-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--room-avatar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: oklch(45% 0.15 270);
+  transition: background-color 0.2s;
+}
+
+.room-user-avatar--voted {
+  background-color: var(--room-avatar-voted);
+}
+
+.room-user-initials {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: oklch(45% 0.15 270);
+  letter-spacing: 0.03em;
+}
+
+.room-user-vote-num {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: oklch(40% 0.18 270);
+}
+
+.room-user-name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--room-user-name);
+  white-space: nowrap;
+}
+
+/* Reveal / Recomeçar button */
+.room-reveal-btn {
+  padding: 6px 18px;
+  border-radius: 999px;
+  background-color: oklch(90% 0.01 270);
+  color: oklch(25% 0.05 270);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1.5px solid oklch(75% 0.04 270);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.room-reveal-btn:hover {
+  background-color: oklch(83% 0.05 270);
+}
+
+/* ─── Cards bar ───────────────────────────────────────────── */
+
+.room-cards-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 16px 12px 24px;
+}
+
+.room-cards-inner {
+  display: flex;
+  gap: 8px;
+  background: oklch(97% 0.005 270 / 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid oklch(88% 0.02 270);
+  border-radius: 20px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 24px oklch(0% 0 0 / 0.08);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .room-cards-inner {
+    background: oklch(20% 0.025 260 / 0.88);
+    border-color: oklch(30% 0.03 260);
+  }
+}
+
+[data-theme="dark"] .room-cards-inner {
+  background: oklch(20% 0.025 260 / 0.88);
+  border-color: oklch(30% 0.03 260);
+}
+
+.room-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 72px;
+  border-radius: 10px;
+  background: var(--room-card-bg);
+  border: 1.5px solid oklch(85% 0.03 270);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+  outline: none;
+}
+
+.room-card:not(.room-card--selected):hover {
+  transform: translateY(-4px);
+  border-color: oklch(65% 0.12 270);
+}
+
+.room-card--selected {
+  background: var(--room-card-selected);
+  border-color: var(--room-card-selected);
+  transform: translateY(-10px) scale(1.05);
+  box-shadow:
+    0 0 0 3px var(--room-card-bg),
+    0 0 0 5px var(--room-card-selected),
+    0 12px 24px oklch(55% 0.18 270 / 0.45);
+}
+
+.room-card-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--room-card-text);
+  position: relative;
+  z-index: 1;
+}
+
+.room-card--selected .room-card-value {
+  color: var(--room-card-selected-content);
+}
+
+.room-card-paw {
+  position: absolute;
+  font-size: 0.55rem;
+  opacity: 0.25;
+  color: oklch(45% 0.12 270);
+  line-height: 1;
+}
+
+.room-card--selected .room-card-paw {
+  color: oklch(90% 0.06 270);
+}
+
+.room-card-paw--tl {
+  top: 5px;
+  left: 5px;
+}
+
+.room-card-paw--br {
+  bottom: 5px;
+  right: 5px;
+  transform: rotate(180deg);
+}

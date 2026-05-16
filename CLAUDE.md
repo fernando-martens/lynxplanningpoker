@@ -93,7 +93,37 @@ mix phx.routes         # lista todas as rotas
 ## Guidelines do projeto
 
 - Seguir as guidelines em `AGENTS.md` (já carregado automaticamente)
+- Rodar `mix format` ao finalizar qualquer edição de código Elixir
 - Usar `mix precommit` ao finalizar alterações
 - Usar `:req` para requisições HTTP (não `:httpoison` ou `:tesla`)
 - Sempre usar LiveView streams para coleções de dados
 - Não usar `daisyUI` — escrever componentes Tailwind manualmente
+- **Sempre ajustar os testes quando a funcionalidade for alterada.** Toda mudança em contexto, controller, LiveView ou schema deve vir acompanhada da atualização dos testes correspondentes em `test/`. Rodar `mix test` antes de finalizar — não deixar testes quebrados ou desatualizados.
+
+## Testes
+
+A suíte cobre as áreas críticas da aplicação:
+
+```
+test/
+  lynxplanningpoker/
+    rooms_test.exs                              # Contexto Rooms (CRUD + changeset)
+    users_test.exs                              # Contexto Users (CRUD + PubSub + list_users_by_room)
+  lynxplanningpoker_web/
+    controllers/
+      page_controller_test.exs                  # Home page
+      room_controller_test.exs                  # new/create/show(invite)/acceptInvite + sessão
+    live/
+      room_live/show_test.exs                   # Mount com/sem sessão, vote, reveal, reset, PubSub
+```
+
+Diretrizes:
+- Sempre que tocar em `lib/lynxplanningpoker/rooms.ex` ou `users.ex`, atualizar `test/lynxplanningpoker/*_test.exs`
+- Sempre que tocar em controllers/LiveViews/templates, atualizar os testes em `test/lynxplanningpoker_web/`
+- Em testes de LiveView, lembre que `render_click/1` retorna o HTML após `handle_event` mas **antes** do `handle_info` do PubSub. Para asserções sobre estado atualizado via broadcast, chamar `render(view)` depois
+
+## Cores e temas CSS
+
+- Todas as variáveis CSS de cor ficam em `assets/css/app.css`, dentro dos blocos `@plugin "../vendor/daisyui-theme"` de cada tema (`light` e `dark`)
+- Nunca definir variáveis de cor fora desses blocos — o daisyUI theme plugin já cuida do modo sistema (`prefers-color-scheme`) e do toggle manual de tema automaticamente
+- `assets/css/room.css` contém apenas estilos estruturais e animações, sem variáveis de cor

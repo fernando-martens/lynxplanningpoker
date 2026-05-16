@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mix format *)",
+      "Bash(mix precommit *)",
+      "Bash(mix run -e ' *)",
+      "Bash(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt http://localhost:4000/rooms/new -L)",
+      "Bash(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -d _csrf_token=Fyw8MXw6CA5fDwYFAz8qUhN3FhIRMA0CbblsDwODjFIakQFaYNZgxxLj -d room[is_active]=true -d room[name]=testuser -L -o /tmp/room.html -w 'Final URL: %{url_effective}\\\\n' http://localhost:4000/rooms)",
+      "Bash(grep -o 'phx-click=\"vote\"[^>]*phx-value-value=\"[^\"]*\"' /tmp/room.html | head -3; echo \"---\"; grep -o 'room-card[^\"]*' /tmp/room.html | head -5)",
+      "Read(//tmp/**)",
+      "Bash(mix test *)",
+      "Bash(mix assets.build)"
+    ]
+  }
+}

@@ -30,7 +30,6 @@ defmodule LynxplanningpokerWeb.CoreComponents do
   use Gettext, backend: LynxplanningpokerWeb.Gettext
 
   alias Phoenix.LiveView.JS
-  alias LynxplanningpokerWeb.Layouts
 
   @doc """
   Renders flash notices.

@@ -4,45 +4,194 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
 
-  @impl true
-  def mount(%{"id" => id}, _session, socket) do
-    if connected?(socket), do: Users.subscribe_to_room(id)
+  @cards [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "?"]
 
+  @impl true
+  def mount(%{"id" => id}, session, socket) do
     room = Rooms.get_room!(id)
     users = Users.list_users_by_room(id)
+    current_user_id = session["current_user_id"]
+    current_user = current_user_id && Enum.find(users, &(&1.id == current_user_id))
 
-    socket =
-      socket
-      |> assign(:room, room)
-      |> assign(:users, users)
+    if current_user do
+      if connected?(socket), do: Users.subscribe_to_room(id)
 
-    {:ok, socket}
+      socket =
+        socket
+        |> assign(:room, room)
+        |> assign(:users, users)
+        |> assign(:current_user_id, current_user.id)
+        |> assign(:current_user, current_user)
+        |> assign(:cards, @cards)
+        |> assign(:revealed, false)
+
+      {:ok, socket}
+    else
+      {:ok, push_navigate(socket, to: ~p"/rooms/invite/#{id}")}
+    end
+  end
+
+  @impl true
+  def handle_event("vote", %{"value" => value}, socket) do
+    case socket.assigns.current_user do
+      nil ->
+        {:noreply, socket}
+
+      current_user ->
+        vote_value =
+          case Integer.parse(value) do
+            {int, ""} -> int
+            _ -> nil
+          end
+
+        case Users.update_user(current_user, %{vote: vote_value}) do
+          {:ok, updated_user} ->
+            {:noreply, assign(socket, :current_user, updated_user)}
+
+          {:error, _changeset} ->
+            {:noreply, socket}
+        end
+    end
+  end
+
+  @impl true
+  def handle_event("reveal", _params, socket) do
+    {:noreply, assign(socket, :revealed, true)}
+  end
+
+  @impl true
+  def handle_event("reset", _params, socket) do
+    Enum.each(socket.assigns.users, fn user ->
+      Users.update_user(user, %{vote: nil})
+    end)
+
+    {:noreply, assign(socket, :revealed, false)}
   end
 
   @impl true
   def handle_info({:users_updated, room_id}, socket) do
     if socket.assigns.room.id == room_id do
-      {:noreply, assign(socket, :users, Users.list_users_by_room(room_id))}
+      users = Users.list_users_by_room(room_id)
+      current_user = Enum.find(users, &(&1.id == socket.assigns.current_user_id))
+      {:noreply, socket |> assign(:users, users) |> assign(:current_user, current_user)}
     else
       {:noreply, socket}
     end
   end
 
+  defp user_positions([]), do: []
+
+  defp user_positions(users) do
+    total = length(users)
+
+    Enum.with_index(users)
+    |> Enum.map(fn {user, i} ->
+      angle = -:math.pi() / 2 + 2 * :math.pi() / total * i
+      x = 50 + 40 * :math.cos(angle)
+      y = 50 + 36 * :math.sin(angle)
+      {user, Float.round(x, 2), Float.round(y, 2)}
+    end)
+  end
+
+  defp current_vote(current_user) do
+    if current_user, do: current_user.vote, else: nil
+  end
+
   @impl true
   def render(assigns) do
+    assigns = assign(assigns, :user_positions, user_positions(assigns.users))
+    assigns = assign(assigns, :my_vote, current_vote(assigns.current_user))
+
     ~H"""
     <Layouts.room_header />
-    <div class="flex flex-col items-center justify-center h-screen">
-      <div id="campfire">
-        <div id="wood"><span></span></div>
-        
-        <div id="fire"></div>
+
+    <div class="room-scene">
+      <%!-- Game area --%>
+      <div class="room-game-area">
+        <div class="room-table">
+          <%!-- Users positioned around campfire --%>
+          <%= for {user, x, y} <- @user_positions do %>
+            <div class="room-user" style={"left:#{x}%;top:#{y}%"}>
+              <div class={"room-user-avatar #{if user.vote != nil, do: "room-user-avatar--voted", else: ""}"}>
+                <%= if @revealed && user.vote != nil do %>
+                  <span class="room-user-vote-num">{to_string(user.vote)}</span>
+                <% else %>
+                  <%= if user.vote != nil do %>
+                    <.paw_icon />
+                  <% else %>
+                    <span class="room-user-initials">{initials(user.name)}</span>
+                  <% end %>
+                <% end %>
+              </div>
+              <span class="room-user-name">{user.name}</span>
+            </div>
+          <% end %>
+
+          <%!-- Campfire at center --%>
+          <div class="room-campfire-wrap">
+            <div id="campfire">
+              <div id="wood"><span></span></div>
+              <div id="fire"></div>
+            </div>
+            <%= if @revealed do %>
+              <button phx-click="reset" class="room-reveal-btn">
+                Recomeçar
+              </button>
+            <% else %>
+              <button phx-click="reveal" class="room-reveal-btn">
+                Reveal
+              </button>
+            <% end %>
+          </div>
+        </div>
       </div>
-      
-      <%= for user <- @users do %>
-        <div class="text-lg">{user.name} {if user.vote, do: to_string(user.vote), else: "-"}</div>
-      <% end %>
+
+      <%!-- Cards bar at bottom --%>
+      <div class="room-cards-bar">
+        <div class="room-cards-scroll">
+          <div class="room-cards-inner">
+            <%= for card <- @cards do %>
+              <button
+                phx-click="vote"
+                phx-value-value={to_string(card)}
+                class={"room-card #{if to_string(@my_vote) == to_string(card), do: "room-card--selected", else: ""}"}
+              >
+                <span class="room-card-paw room-card-paw--tl"><.paw_icon /></span>
+                <span class="room-card-paw room-card-paw--br"><.paw_icon /></span>
+                <span class="room-card-value">{card}</span>
+              </button>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
+    """
+  end
+
+  defp initials(name) do
+    name
+    |> String.split()
+    |> Enum.take(2)
+    |> Enum.map(&String.first/1)
+    |> Enum.join()
+    |> String.upcase()
+  end
+
+  defp paw_icon(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width="1em"
+      height="1em"
+      fill="currentColor"
+    >
+      <circle cx="6" cy="7" r="2" />
+      <circle cx="12" cy="5" r="2" />
+      <circle cx="18" cy="7" r="2" />
+      <circle cx="4" cy="12" r="1.5" />
+      <path d="M12 10c-3.5 0-6 2-6 5s2 5 6 5 6-2 6-5-2.5-5-6-5z" />
+    </svg>
     """
   end
 end
