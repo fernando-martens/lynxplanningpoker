@@ -1,0 +1,137 @@
+:root {
+  --fire1: #b54040;
+  --fire2: #cd6d3d;
+  --fire3: #e6993a;
+  --fire4: #fec637;
+}
+
+#campfire {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+#wood {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 20px;
+  z-index: 3;
+}
+
+#wood::after,
+#wood::before {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 4px;
+  background-color: #4b2e1f;
+  border-radius: 4px;
+  left: 50%;
+  top: 50%;
+}
+
+#wood::after {
+  transform: translate(-50%, -50%) rotate(15deg);
+}
+
+#wood::before {
+  transform: translate(-50%, -50%) rotate(-15deg);
+}
+
+#wood span {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  width: 2px;
+  height: 2px;
+}
+
+#wood span::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--fire3);
+  border-radius: 50%;
+  animation: spark2 2s infinite;
+}
+
+#wood span::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 3px;
+  background: var(--fire2);
+  border-radius: 50%;
+  animation: spark3 3s infinite;
+}
+
+@keyframes spark2 {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  50% {
+    bottom: 10px;
+    opacity: 1;
+    left: -2px;
+  }
+
+  100% {
+    bottom: 20px;
+    opacity: 0;
+  }
+}
+
+@keyframes spark3 {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  50% {
+    bottom: 8px;
+    opacity: 1;
+    left: 3px;
+  }
+
+  100% {
+    bottom: 18px;
+    opacity: 0;
+  }
+}
+
+/* Fogo */
+#fire {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%) rotate(-45deg);
+  border-radius: 100% 0 100% 100%;
+  background: radial-gradient(var(--fire3) 24%, var(--fire4));
+  box-shadow:
+    -3px 3px 10px -2px var(--fire2),
+    0 0 0 1px var(--fire1) inset,
+    0 0 0 2px var(--fire2) inset,
+    0 0 0 3px var(--fire3) inset;
+  animation: fire 4s linear infinite alternate;
+  z-index: 4;
+}
+
+@keyframes fire {
+
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-45deg) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(-47deg) scale(1.05);
+  }
+}

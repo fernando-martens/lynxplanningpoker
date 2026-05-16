@@ -84,7 +84,11 @@ defmodule LynxplanningpokerWeb.Layouts do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} aria-live="polite">
+    <div
+      id={@id}
+      aria-live="polite"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center"
+    >
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 
@@ -149,6 +153,99 @@ defmodule LynxplanningpokerWeb.Layouts do
         <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
       </button>
     </div>
+    """
+  end
+
+  @doc """
+  Renders the shared application header used on public pages.
+  """
+  attr :class, :string, default: nil
+
+  def app_header(assigns) do
+    assigns = assign(assigns, :class, assigns.class || "")
+
+    ~H"""
+    <header class={[
+      "sticky top-0 z-50 border-b border-base-200/60 backdrop-blur",
+      @class
+    ]}>
+      <div class="max-w-6xl mx-auto w-full px-6 py-6 flex justify-between items-center">
+        <.link navigate="/" class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            fill="var(--color-base-content)"
+            viewBox="0 0 256 256"
+          >
+            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,152a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm39.21-98.53a63.66,63.66,0,0,0-31.21-13V40.37a87.6,87.6,0,0,1,48.28,20ZM120,64.52a63.66,63.66,0,0,0-31.21,13L71.72,60.4a87.6,87.6,0,0,1,48.28-20ZM77.47,88.79a63.66,63.66,0,0,0-13,31.21H40.37a87.6,87.6,0,0,1,20-48.28ZM64.52,136a63.66,63.66,0,0,0,13,31.21L60.4,184.28a87.6,87.6,0,0,1-20-48.28Zm24.27,42.53A63.66,63.66,0,0,0,120,191.48v24.15a87.6,87.6,0,0,1-48.28-20ZM136,191.48a63.66,63.66,0,0,0,31.21-12.95l17.07,17.07a87.6,87.6,0,0,1-48.28,20Zm42.53-24.27A63.66,63.66,0,0,0,191.48,136h24.15a87.6,87.6,0,0,1-20,48.28ZM191.48,120a63.66,63.66,0,0,0-12.95-31.21L195.6,71.72a87.6,87.6,0,0,1,20,48.28Z" />
+          </svg>
+          <span class="text-xl font-bold tracking-tight">Lynx planning poker</span>
+        </.link>
+
+        <nav class="hidden md:flex items-center gap-2 font-semibold">
+          <.button navigate="#features">
+            <.icon name="hero-book-open" class="size-5" /> Features
+          </.button>
+          <.button navigate="#pricing">
+            <.icon name="hero-currency-dollar" class="size-5" /> Pricing
+          </.button>
+          <.link href="#" class="flex items-center gap-2 hover:opacity-70 transition">
+            <img
+              src="/images/bmc.png"
+              alt="Buy me a coffee"
+              class="relative w-32"
+            />
+          </.link>
+          <div class="flex items-center gap-2">
+            <.theme_toggle />
+          </div>
+        </nav>
+      </div>
+    </header>
+    """
+  end
+
+  @doc """
+  Renders the shared application header used on public pages.
+  """
+  attr :class, :string, default: nil
+
+  def room_header(assigns) do
+    assigns = assign(assigns, :class, assigns.class || "")
+
+    ~H"""
+    <header class={[
+      "absolute top-0 left-0 right-0 z-50 border-b border-base-200/60 backdrop-blur",
+      @class
+    ]}>
+      <div class="max-w-6xl mx-auto w-full px-6 py-6 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            fill="var(--color-base-content)"
+            viewBox="0 0 256 256"
+          >
+            <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,152a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm39.21-98.53a63.66,63.66,0,0,0-31.21-13V40.37a87.6,87.6,0,0,1,48.28,20ZM120,64.52a63.66,63.66,0,0,0-31.21,13L71.72,60.4a87.6,87.6,0,0,1,48.28-20ZM77.47,88.79a63.66,63.66,0,0,0-13,31.21H40.37a87.6,87.6,0,0,1,20-48.28ZM64.52,136a63.66,63.66,0,0,0,13,31.21L60.4,184.28a87.6,87.6,0,0,1-20-48.28Zm24.27,42.53A63.66,63.66,0,0,0,120,191.48v24.15a87.6,87.6,0,0,1-48.28-20ZM136,191.48a63.66,63.66,0,0,0,31.21-12.95l17.07,17.07a87.6,87.6,0,0,1-48.28,20Zm42.53-24.27A63.66,63.66,0,0,0,191.48,136h24.15a87.6,87.6,0,0,1-20,48.28ZM191.48,120a63.66,63.66,0,0,0-12.95-31.21L195.6,71.72a87.6,87.6,0,0,1,20,48.28Z" />
+          </svg>
+          <span class="text-xl font-bold tracking-tight">Lynx planning poker</span>
+        </div>
+
+        <nav class="hidden md:flex items-center gap-2 font-semibold">
+          <.button navigate="#">
+            <.icon name="hero-arrow-path" class="size-5" /> Recomeçar
+          </.button>
+          <.button navigate="#" variant="red">
+            <.icon name="hero-x-circle" class="size-5" /> Sair
+          </.button>
+          <div class="flex items-center gap-2">
+            <.theme_toggle />
+          </div>
+        </nav>
+      </div>
+    </header>
     """
   end
 end

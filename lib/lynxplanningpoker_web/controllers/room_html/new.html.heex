@@ -1,5 +1,4 @@
-<Layouts.flash_group flash={@flash} />
-<.app_header />
+<Layouts.app_header />
 
 <main class="mx-auto max-w-lg px-6 py-8">
   <section>
@@ -22,9 +21,10 @@
           label="Your name"
           placeholder="Enter your name"
           class="input input-bordered w-full"
+          phx-mounted={JS.focus()}
           required
         />
-        <p class="text-sm text-base-content/60">Visible to everyone in the room</p>
+        <p class="text-xs text-base-content/60">Visible to everyone in the room</p>
       </div>
 
       <div class="rounded-[1.5rem] border border-base-200/70 bg-base-200 p-4">

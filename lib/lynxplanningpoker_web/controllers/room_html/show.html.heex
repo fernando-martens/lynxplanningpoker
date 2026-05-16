@@ -1,15 +1,11 @@
-<Layouts.app flash={@flash}>
-  <.header>
-    Room {@room.id}
-    <:subtitle>This is a room record from your database.</:subtitle>
-    <:actions>
-      <.button navigate={~p"/rooms"}>
-        <.icon name="hero-arrow-left" />
-      </.button>
-    </:actions>
-  </.header>
+<Layouts.room_header />
 
-  <.list>
-    <:item title="Is active">{@room.is_active}</:item>
-  </.list>
-</Layouts.app>
+<div class="flex flex-col items-center justify-center h-screen">
+  <div id="campfire">
+    <div id="wood">
+      <span></span>
+    </div>
+
+    <div id="fire"></div>
+  </div>
+</div>

@@ -3,6 +3,7 @@
 
 @import "tailwindcss" source(none);
 @import "./home.css";
+@import "./room.css";
 @source "../css";
 @source "../js";
 @source "../../lib/lynxplanningpoker_web";

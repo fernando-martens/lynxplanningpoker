@@ -18,7 +18,8 @@ defmodule LynxplanningpokerWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    resources "/rooms/new", RoomController, only: [:index, :create, :show]
+    resources "/rooms", RoomController, only: [:new, :create]
+    live "/rooms/:id", RoomLive.Show, :show
   end
 
   # Other scopes may use custom stacks.
