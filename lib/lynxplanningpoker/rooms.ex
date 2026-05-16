@@ -38,6 +38,11 @@ defmodule Lynxplanningpoker.Rooms do
   def get_room!(id), do: Repo.get!(Room, id)
 
   @doc """
+  Gets a single room. Returns `nil` if not found.
+  """
+  def get_room(id), do: Repo.get(Room, id)
+
+  @doc """
   Creates a room.
 
   ## Examples

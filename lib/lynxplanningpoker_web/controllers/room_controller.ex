@@ -40,13 +40,30 @@ defmodule LynxplanningpokerWeb.RoomController do
   end
 
   def show(conn, %{"id" => id}) do
-    _room = Rooms.get_room!(id)
-    render(conn, :invite, room_id: id)
+    case Rooms.get_room(id) do
+      nil ->
+        conn
+        |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+        |> redirect(to: ~p"/")
+
+      _room ->
+        render(conn, :invite, room_id: id)
+    end
   end
 
   def acceptInvite(conn, %{"id" => room_id, "name" => user_name}) do
-    room = Rooms.get_room!(room_id)
+    case Rooms.get_room(room_id) do
+      nil ->
+        conn
+        |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+        |> redirect(to: ~p"/")
 
+      room ->
+        do_accept_invite(conn, room, user_name)
+    end
+  end
+
+  defp do_accept_invite(conn, room, user_name) do
     case Users.create_user(%{
            room_id: room.id,
            name: user_name
@@ -57,7 +74,26 @@ defmodule LynxplanningpokerWeb.RoomController do
         |> redirect(to: ~p"/rooms/#{room}")
 
       {:error, _changeset} ->
-        render(conn, :invite, room_id: room_id)
+        render(conn, :invite, room_id: room.id)
     end
+  end
+
+  def leave(conn, _params) do
+    case get_session(conn, :current_user_id) do
+      nil ->
+        :ok
+
+      user_id ->
+        try do
+          user_id |> Users.get_user!() |> Users.delete_user()
+        rescue
+          Ecto.NoResultsError -> :ok
+        end
+    end
+
+    conn
+    |> clear_session()
+    |> put_flash(:info, "Você saiu da sala.")
+    |> redirect(to: ~p"/")
   end
 end

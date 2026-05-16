@@ -47,10 +47,10 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       assert response =~ "Join the room"
     end
 
-    test "raises when room does not exist", %{conn: conn} do
-      assert_raise Ecto.NoResultsError, fn ->
-        get(conn, ~p"/rooms/invite/#{Ecto.UUID.generate()}")
-      end
+    test "redirects to home with a flash when the room does not exist", %{conn: conn} do
+      conn = get(conn, ~p"/rooms/invite/#{Ecto.UUID.generate()}")
+      assert redirected_to(conn) == ~p"/"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "não existe"
     end
   end
 
@@ -71,6 +71,37 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => ""})
       assert html_response(conn, 200) =~ "Join the room"
       assert Users.list_users_by_room(room.id) == []
+    end
+  end
+
+  describe "GET /rooms/leave" do
+    test "deletes the user, clears the session and redirects home", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{current_user_id: user.id})
+        |> get(~p"/rooms/leave")
+
+      assert redirected_to(conn) == ~p"/"
+      assert get_session(conn, :current_user_id) == nil
+      assert Users.list_users_by_room(room.id) == []
+    end
+
+    test "clears the session and redirects home when user no longer exists", %{conn: conn} do
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{current_user_id: Ecto.UUID.generate()})
+        |> get(~p"/rooms/leave")
+
+      assert redirected_to(conn) == ~p"/"
+      assert get_session(conn, :current_user_id) == nil
+    end
+
+    test "redirects home when there is no session", %{conn: conn} do
+      conn = get(conn, ~p"/rooms/leave")
+      assert redirected_to(conn) == ~p"/"
     end
   end
 end

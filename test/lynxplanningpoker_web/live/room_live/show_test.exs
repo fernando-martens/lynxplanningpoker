@@ -45,10 +45,11 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assert target == ~p"/rooms/invite/#{other_room.id}"
     end
 
-    test "raises when room does not exist", %{conn: conn} do
-      assert_raise Ecto.NoResultsError, fn ->
-        live(conn, ~p"/rooms/#{Ecto.UUID.generate()}")
-      end
+    test "redirects to home with a flash when the room does not exist", %{conn: conn} do
+      assert {:error, {:live_redirect, %{to: "/", flash: flash}}} =
+               live(conn, ~p"/rooms/#{Ecto.UUID.generate()}")
+
+      assert flash["error"] =~ "não existe"
     end
   end
 
@@ -273,26 +274,26 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       conn = logged_in_conn(conn, host.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      assert {:error, {:live_redirect, %{to: "/"}}} =
+      assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
                view |> element("button", "Encerrar planning") |> render_click()
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(room.id) end
     end
 
-    test "non-host clicking 'Sair' redirects to home and keeps the room", %{conn: conn} do
+    test "non-host clicking 'Sair' redirects through leave endpoint", %{conn: conn} do
       {room, _alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
       conn = logged_in_conn(conn, bob.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      assert {:error, {:live_redirect, %{to: "/"}}} =
+      assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
                view |> element("button", "Sair") |> render_click()
 
       assert Rooms.get_room!(room.id)
     end
 
-    test "all clients are redirected to home when the room is deleted", %{conn: conn} do
+    test "all clients are redirected when the room is deleted", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, _host} = Users.update_user(alice, %{is_host: true})
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
@@ -302,7 +303,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
       Rooms.delete_room(Rooms.get_room!(room.id))
 
-      assert_redirect(view, "/")
+      assert_redirect(view, "/rooms/leave")
     end
   end
 

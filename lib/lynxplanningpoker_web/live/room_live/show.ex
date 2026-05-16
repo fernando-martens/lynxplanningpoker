@@ -8,28 +8,36 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def mount(%{"id" => id}, session, socket) do
-    room = Rooms.get_room!(id)
-    current_user_id = session["current_user_id"]
-    users = Users.list_users_by_room(id, current_user_id, room.revealed)
-    current_user = current_user_id && Enum.find(users, &(&1.id == current_user_id))
+    case Rooms.get_room(id) do
+      nil ->
+        {:ok,
+         socket
+         |> put_flash(:error, "Essa sala não existe ou já foi encerrada.")
+         |> push_navigate(to: ~p"/")}
 
-    if current_user do
-      if connected?(socket) do
-        Users.subscribe_to_room(id)
-        Rooms.subscribe_to_room(id)
-      end
+      room ->
+        current_user_id = session["current_user_id"]
+        users = Users.list_users_by_room(id, current_user_id, room.revealed)
+        current_user = current_user_id && Enum.find(users, &(&1.id == current_user_id))
 
-      socket =
-        socket
-        |> assign(:room, room)
-        |> assign(:users, users)
-        |> assign(:current_user_id, current_user.id)
-        |> assign(:current_user, current_user)
-        |> assign(:cards, @cards)
+        if current_user do
+          if connected?(socket) do
+            Users.subscribe_to_room(id)
+            Rooms.subscribe_to_room(id)
+          end
 
-      {:ok, socket}
-    else
-      {:ok, push_navigate(socket, to: ~p"/rooms/invite/#{id}")}
+          socket =
+            socket
+            |> assign(:room, room)
+            |> assign(:users, users)
+            |> assign(:current_user_id, current_user.id)
+            |> assign(:current_user, current_user)
+            |> assign(:cards, @cards)
+
+          {:ok, socket}
+        else
+          {:ok, push_navigate(socket, to: ~p"/rooms/invite/#{id}")}
+        end
     end
   end
 
@@ -121,11 +129,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   def handle_event("end_planning", _params, socket) do
     if socket.assigns.current_user && socket.assigns.current_user.is_host do
       Rooms.delete_room(socket.assigns.room)
-
-      {:noreply,
-       socket
-       |> put_flash(:info, "Planning encerrada.")
-       |> push_navigate(to: ~p"/")}
+      {:noreply, redirect(socket, to: ~p"/rooms/leave")}
     else
       {:noreply, socket}
     end
@@ -133,10 +137,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def handle_event("leave_room", _params, socket) do
-    {:noreply,
-     socket
-     |> put_flash(:info, "Você saiu da sala.")
-     |> push_navigate(to: ~p"/")}
+    {:noreply, redirect(socket, to: ~p"/rooms/leave")}
   end
 
   @impl true
@@ -145,7 +146,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       {:noreply,
        socket
        |> put_flash(:info, "A sala foi encerrada pelo host.")
-       |> push_navigate(to: ~p"/")}
+       |> redirect(to: ~p"/rooms/leave")}
     else
       {:noreply, socket}
     end

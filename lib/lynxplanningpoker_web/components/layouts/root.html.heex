@@ -38,5 +38,8 @@
     </script>
   </head>
 
-  <body>{@inner_content}</body>
+  <body>
+    <Layouts.flash_group flash={@flash} />
+    {@inner_content}
+  </body>
 </html>

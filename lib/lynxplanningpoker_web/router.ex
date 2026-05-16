@@ -23,6 +23,7 @@ defmodule LynxplanningpokerWeb.Router do
     scope "/rooms" do
       get "/invite/:id", RoomController, :show
       post "/invite/:id", RoomController, :acceptInvite
+      get "/leave", RoomController, :leave
       live "/:id", RoomLive.Show, :show
     end
   end
