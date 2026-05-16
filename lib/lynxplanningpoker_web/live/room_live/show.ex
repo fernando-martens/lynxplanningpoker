@@ -26,6 +26,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             Rooms.subscribe_to_room(id)
           end
 
+          show_initial_invite =
+            connected?(socket) and current_user.is_host and length(users) == 1
+
           socket =
             socket
             |> assign(:room, room)
@@ -33,6 +36,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             |> assign(:current_user_id, current_user.id)
             |> assign(:current_user, current_user)
             |> assign(:cards, @cards)
+            |> assign(:show_initial_invite, show_initial_invite)
 
           {:ok, socket}
         else
@@ -253,6 +257,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
         {gettext("Anyone with this link can join the room")}
       </p>
     </.modal>
+
+    <div
+      :if={@show_initial_invite}
+      id="initial-invite-trigger"
+      class="hidden"
+      phx-mounted={show_modal("invite-modal")}
+    />
 
     <div class="room-scene">
       <div class="room-loading-overlay" aria-hidden="true">
