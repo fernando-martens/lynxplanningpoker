@@ -1,13 +1,12 @@
 defmodule LynxplanningpokerWeb.RoomLive.Show do
   use LynxplanningpokerWeb, :live_view
 
+  alias Lynxplanningpoker.Decks
   alias Lynxplanningpoker.Presence
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
 
-  @cards [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "?"]
-
-  @question_vote -1
+  @cards Decks.labels(Decks.default())
 
   @impl true
   def mount(%{"id" => id}, session, socket) do
@@ -53,31 +52,20 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   @impl true
-  def handle_event("vote", %{"card" => value}, socket) do
+  def handle_event("vote", %{"card" => label}, socket) do
     case socket.assigns.current_user do
       nil ->
         {:noreply, socket}
 
       current_user ->
-        clicked_value =
-          case value do
-            "?" ->
-              @question_vote
-
-            _ ->
-              case Integer.parse(value) do
-                {int, ""} -> int
-                _ -> nil
-              end
-          end
-
-        vote_value = if current_user.vote == clicked_value, do: nil, else: clicked_value
+        new_vote = if current_user.vote == label, do: nil, else: label
+        base_attrs = %{vote: new_vote}
 
         attrs =
           if socket.assigns.room.revealed do
-            %{vote: vote_value, vote_changed_after_reveal: true}
+            Map.put(base_attrs, :vote_changed_after_reveal, true)
           else
-            %{vote: vote_value}
+            base_attrs
           end
 
         case Users.update_user(current_user, attrs) do
@@ -253,12 +241,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   defp card_selected?(nil, _card), do: false
-  defp card_selected?(%{vote: @question_vote}, "?"), do: true
-  defp card_selected?(%{vote: v}, card) when is_integer(v), do: to_string(v) == to_string(card)
-  defp card_selected?(_, _), do: false
+  defp card_selected?(%{vote: v}, card), do: v == card
 
   defp vote_average(users) do
-    numeric_votes = for %{vote: v} <- users, is_integer(v) and v >= 0, do: v
+    numeric_votes = for %{vote_value: v} <- users, is_integer(v), do: v
 
     case numeric_votes do
       [] ->
@@ -269,9 +255,6 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
         :erlang.float_to_binary(avg, decimals: 1)
     end
   end
-
-  defp display_vote(@question_vote), do: "?"
-  defp display_vote(v), do: to_string(v)
 
   @impl true
   def render(assigns) do
@@ -335,7 +318,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div class={"room-user-avatar #{if user.has_voted, do: "room-user-avatar--voted", else: ""}"}>
                 <%= cond do %>
                   <% @room.revealed and user.vote != nil -> %>
-                    <span class="room-user-vote-num">{display_vote(user.vote)}</span>
+                    <span class="room-user-vote-num">{user.vote}</span>
                   <% user.has_voted -> %>
                     <.paw_icon />
                   <% true -> %>
@@ -377,7 +360,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             <%= for card <- @cards do %>
               <button
                 phx-click="vote"
-                phx-value-card={to_string(card)}
+                phx-value-card={card}
                 class={"room-card #{if card_selected?(@current_user, card), do: "room-card--selected", else: ""}"}
               >
                 <span class="room-card-spinner" aria-hidden="true"></span>

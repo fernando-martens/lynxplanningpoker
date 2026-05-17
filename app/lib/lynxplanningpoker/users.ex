@@ -36,12 +36,16 @@ defmodule Lynxplanningpoker.Users do
     room_id
     |> list_users_by_room()
     |> Enum.map(fn user ->
-      visible_vote =
-        if revealed? or user.id == viewer_user_id do
-          user.vote
-        end
+      visible? = revealed? or user.id == viewer_user_id
+      visible_vote = if visible?, do: user.vote
+      visible_value = if visible?, do: user.vote_value
 
-      %{user | vote: visible_vote, has_voted: not is_nil(user.vote)}
+      %{
+        user
+        | vote: visible_vote,
+          vote_value: visible_value,
+          has_voted: not is_nil(user.vote)
+      }
     end)
   end
 

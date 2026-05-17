@@ -64,7 +64,9 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       view |> element("button[phx-value-card='5']") |> render_click()
       assert render(view) =~ ~s(class="room-card room-card--selected")
 
-      assert Users.get_user!(user.id).vote == 5
+      updated = Users.get_user!(user.id)
+      assert updated.vote == "5"
+      assert updated.vote_value == 5
     end
 
     test "clicking the already-selected card toggles the vote off", %{conn: conn} do
@@ -73,23 +75,26 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button[phx-value-card='5']") |> render_click()
-      assert Users.get_user!(user.id).vote == 5
+      assert Users.get_user!(user.id).vote == "5"
 
       view |> element("button[phx-value-card='5']") |> render_click()
-      assert Users.get_user!(user.id).vote == nil
+      updated = Users.get_user!(user.id)
+      assert updated.vote == nil
+      assert updated.vote_value == nil
       refute render(view) =~ ~s(class="room-card room-card--selected")
     end
 
-    test "clicking the '?' card stores the question-mark sentinel and marks it as selected", %{
-      conn: conn
-    } do
+    test "clicking the '?' card stores it as a label with nil numeric value and marks it as selected",
+         %{conn: conn} do
       {room, user} = setup_room_with_user()
       conn = logged_in_conn(conn, user.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button[phx-value-card='?']") |> render_click()
 
-      assert Users.get_user!(user.id).vote == -1
+      updated = Users.get_user!(user.id)
+      assert updated.vote == "?"
+      assert updated.vote_value == nil
       assert render(view) =~ ~s(class="room-card room-card--selected")
     end
 
@@ -99,18 +104,20 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button[phx-value-card='?']") |> render_click()
-      assert Users.get_user!(user.id).vote == -1
+      assert Users.get_user!(user.id).vote == "?"
 
       view |> element("button[phx-value-card='?']") |> render_click()
-      assert Users.get_user!(user.id).vote == nil
+      updated = Users.get_user!(user.id)
+      assert updated.vote == nil
+      assert updated.vote_value == nil
       refute render(view) =~ ~s(class="room-card room-card--selected")
     end
 
     test "the '?' vote does not count toward the numeric average after reveal", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(alice, %{vote: -1})
-      {:ok, _} = Users.update_user(bob, %{vote: 8})
+      {:ok, _} = Users.update_user(alice, %{vote: "?"})
+      {:ok, _} = Users.update_user(bob, %{vote: "8"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -151,7 +158,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     test "hides other users' vote numbers when the room is not revealed", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(bob, %{vote: 13})
+      {:ok, _} = Users.update_user(bob, %{vote: "13"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, html} = live(conn, ~p"/rooms/#{room.id}")
@@ -164,6 +171,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       assigns = :sys.get_state(view.pid).socket.assigns
       bob_seen = Enum.find(assigns.users, &(&1.id == bob.id))
       assert bob_seen.vote == nil
+      assert bob_seen.vote_value == nil
       assert bob_seen.has_voted == true
     end
   end
@@ -172,8 +180,8 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     test "reveals all numeric votes after click", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
-      {:ok, _} = Users.update_user(bob, %{vote: 8})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
+      {:ok, _} = Users.update_user(bob, %{vote: "8"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -199,7 +207,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     test "persists revealed state on the room and propagates via PubSub", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(bob, %{vote: 13})
+      {:ok, _} = Users.update_user(bob, %{vote: "13"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -215,8 +223,8 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     test "clears every user's vote, resets revealed and hides the values again", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
-      {:ok, _} = Users.update_user(bob, %{vote: 8})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
+      {:ok, _} = Users.update_user(bob, %{vote: "8"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -225,8 +233,12 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       view |> element("button", "Restart") |> render_click()
       html = render(view)
 
-      assert Users.get_user!(alice.id).vote == nil
-      assert Users.get_user!(bob.id).vote == nil
+      alice_after = Users.get_user!(alice.id)
+      bob_after = Users.get_user!(bob.id)
+      assert alice_after.vote == nil
+      assert alice_after.vote_value == nil
+      assert bob_after.vote == nil
+      assert bob_after.vote_value == nil
       assert Rooms.get_room!(room.id).revealed == false
       assert html =~ "Reveal"
       refute html =~ "room-user-vote-num"
@@ -234,7 +246,8 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
     test "clears the vote_changed_after_reveal flag", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
-      {:ok, _} = Users.update_user(alice, %{vote: 5, vote_changed_after_reveal: true})
+
+      {:ok, _} = Users.update_user(alice, %{vote: "5", vote_changed_after_reveal: true})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -259,7 +272,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
     test "changing the vote after reveal sets the flag and shows the pencil badge", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -397,14 +410,14 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
-      {:ok, _} = Users.update_user(bob, %{vote: 13})
+      {:ok, _} = Users.update_user(bob, %{vote: "13"})
       assert render(view) =~ "room-user-avatar--voted"
     end
 
     test "reveals votes when another client triggers reveal on the same room", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(bob, %{vote: 21})
+      {:ok, _} = Users.update_user(bob, %{vote: "21"})
 
       conn = logged_in_conn(conn, alice.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")

@@ -82,17 +82,19 @@ defmodule Lynxplanningpoker.UsersTest do
       room = create_room!()
       {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
-      {:ok, _} = Users.update_user(bob, %{vote: 13})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
+      {:ok, _} = Users.update_user(bob, %{vote: "13"})
 
       [alice_seen, bob_seen] = Users.list_users_by_room(room.id, alice.id, false)
 
       assert alice_seen.id == alice.id
-      assert alice_seen.vote == 5
+      assert alice_seen.vote == "5"
+      assert alice_seen.vote_value == 5
       assert alice_seen.has_voted == true
 
       assert bob_seen.id == bob.id
       assert bob_seen.vote == nil
+      assert bob_seen.vote_value == nil
       assert bob_seen.has_voted == true
     end
 
@@ -100,14 +102,16 @@ defmodule Lynxplanningpoker.UsersTest do
       room = create_room!()
       {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
-      {:ok, _} = Users.update_user(bob, %{vote: 13})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
+      {:ok, _} = Users.update_user(bob, %{vote: "13"})
 
       [alice_seen, bob_seen] = Users.list_users_by_room(room.id, alice.id, true)
 
-      assert alice_seen.vote == 5
+      assert alice_seen.vote == "5"
+      assert alice_seen.vote_value == 5
       assert alice_seen.has_voted == true
-      assert bob_seen.vote == 13
+      assert bob_seen.vote == "13"
+      assert bob_seen.vote_value == 13
       assert bob_seen.has_voted == true
     end
 
@@ -127,10 +131,11 @@ defmodule Lynxplanningpoker.UsersTest do
     test "hides every vote value when viewer_user_id is nil and room not revealed" do
       room = create_room!()
       {:ok, alice} = Users.create_user(%{room_id: room.id, name: "Alice"})
-      {:ok, _} = Users.update_user(alice, %{vote: 5})
+      {:ok, _} = Users.update_user(alice, %{vote: "5"})
 
       [alice_seen] = Users.list_users_by_room(room.id, nil, false)
       assert alice_seen.vote == nil
+      assert alice_seen.vote_value == nil
       assert alice_seen.has_voted == true
     end
 
@@ -154,21 +159,30 @@ defmodule Lynxplanningpoker.UsersTest do
   end
 
   describe "update_user/2" do
-    test "updates the vote and broadcasts" do
+    test "updates the vote and derives vote_value, broadcasting" do
       room = create_room!()
       {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
       Users.subscribe_to_room(room.id)
 
-      assert {:ok, %User{vote: 5}} = Users.update_user(user, %{vote: 5})
+      assert {:ok, %User{vote: "5", vote_value: 5}} = Users.update_user(user, %{vote: "5"})
+
       assert_receive {:users_updated, room_id}
       assert room_id == room.id
+    end
+
+    test "stores a non-numeric vote with a nil vote_value" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      assert {:ok, %User{vote: "?", vote_value: nil}} = Users.update_user(user, %{vote: "?"})
     end
 
     test "can set vote back to nil" do
       room = create_room!()
       {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
-      {:ok, voted} = Users.update_user(user, %{vote: 8})
-      assert {:ok, %User{vote: nil}} = Users.update_user(voted, %{vote: nil})
+      {:ok, voted} = Users.update_user(user, %{vote: "8"})
+
+      assert {:ok, %User{vote: nil, vote_value: nil}} = Users.update_user(voted, %{vote: nil})
     end
 
     test "returns error when invalid" do
