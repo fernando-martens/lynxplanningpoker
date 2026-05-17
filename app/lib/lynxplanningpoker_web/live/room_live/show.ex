@@ -228,14 +228,31 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   defp user_positions([]), do: []
 
+  # Ellipse opens up as more users join: tight ring when few people are
+  # present, full table when the room is crowded.
+  @min_radius_x 28
+  @max_radius_x 42
+  @min_radius_y 32
+  @max_radius_y 44
+  @radius_ramp_start 2
+  @radius_ramp_end 12
+
   defp user_positions(users) do
     total = length(users)
+
+    t =
+      ((total - @radius_ramp_start) / (@radius_ramp_end - @radius_ramp_start))
+      |> max(0.0)
+      |> min(1.0)
+
+    rx = @min_radius_x + (@max_radius_x - @min_radius_x) * t
+    ry = @min_radius_y + (@max_radius_y - @min_radius_y) * t
 
     Enum.with_index(users)
     |> Enum.map(fn {user, i} ->
       angle = -:math.pi() / 2 + 2 * :math.pi() / total * i
-      x = 50 + 40 * :math.cos(angle)
-      y = 50 + 36 * :math.sin(angle)
+      x = 50 + rx * :math.cos(angle)
+      y = 50 + ry * :math.sin(angle)
       {user, Float.round(x, 2), Float.round(y, 2)}
     end)
   end
@@ -336,19 +353,32 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           <% end %>
           <%!-- Campfire at center --%>
           <div class="room-campfire-wrap">
-            <div id="campfire">
-              <div id="wood"><span></span></div>
-
-              <div id="fire"></div>
-            </div>
-
             <%= if @room.revealed do %>
+              <div id="campfire">
+                <div id="wood"><span></span></div>
+
+                <div id="fire"></div>
+              </div>
+
               <div class="room-average" aria-label={gettext("Vote average")}>
                 <span class="room-average-label">{gettext("Average")}</span>
                 <span class="room-average-value">{vote_average(@users)}</span>
               </div>
             <% else %>
-              <button phx-click="reveal" class="room-reveal-btn">{gettext("Reveal")}</button>
+              <button
+                type="button"
+                phx-click="reveal"
+                class="room-campfire-btn"
+                aria-label={gettext("Reveal")}
+              >
+                <div id="campfire">
+                  <div id="wood"><span></span></div>
+
+                  <div id="fire"></div>
+                </div>
+                <span class="sr-only">{gettext("Reveal")}</span>
+              </button>
+              <p class="room-campfire-hint">{gettext("Click the fire to reveal")}</p>
             <% end %>
           </div>
         </div>

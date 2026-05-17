@@ -160,8 +160,8 @@
 /* The ellipse table where users sit */
 .room-table {
   position: relative;
-  width: min(580px, 90vw);
-  height: min(380px, 55vh);
+  width: min(620px, 90vw);
+  height: min(400px, 55vh);
 }
 
 /* Campfire + reveal button centered on the table */
@@ -184,6 +184,8 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  /* Smoothly slide to new spot when the ring resizes (someone joins/leaves) */
+  transition: left 0.4s ease, top 0.4s ease;
 }
 
 .room-user-avatar {
@@ -240,21 +242,39 @@
   border: 2px solid var(--room-bg);
 }
 
-/* Reveal / Recomeçar button */
-.room-reveal-btn {
-  padding: 6px 18px;
-  border-radius: 999px;
-  background-color: oklch(90% 0.01 270);
-  color: oklch(25% 0.05 270);
-  font-size: 0.85rem;
-  font-weight: 600;
-  border: 1.5px solid oklch(75% 0.04 270);
+/* Campfire-as-button (used when room is not revealed) */
+.room-campfire-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
   cursor: pointer;
-  transition: background-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
 }
 
-.room-reveal-btn:hover {
-  background-color: oklch(83% 0.05 270);
+.room-campfire-btn:hover,
+.room-campfire-btn:focus-visible {
+  transform: scale(1.12);
+  outline: none;
+}
+
+.room-campfire-btn:active {
+  transform: scale(1.05);
+}
+
+/* Hint text shown under the campfire */
+.room-campfire-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;
+  pointer-events: none;
 }
 
 /* Vote average shown after reveal */
@@ -292,7 +312,10 @@
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
+  /* Grid column capped at max-content but shrinkable to 0 — guarantees the
+     inner never exceeds the viewport, so its overflow-x kicks in reliably. */
+  display: grid;
+  grid-template-columns: minmax(0, max-content);
   justify-content: center;
   padding: 16px 12px 24px;
 }
@@ -307,7 +330,54 @@
   padding: 14px 16px;
   box-shadow: 0 4px 24px oklch(0% 0 0 / 0.08);
   overflow-x: auto;
-  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0% 0 0 / 0.3) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.room-cards-inner::-webkit-scrollbar {
+  height: 8px;
+  -webkit-appearance: none;
+}
+
+.room-cards-inner::-webkit-scrollbar-track {
+  background: oklch(0% 0 0 / 0.06);
+  border-radius: 4px;
+}
+
+.room-cards-inner::-webkit-scrollbar-thumb {
+  background: oklch(0% 0 0 / 0.3);
+  border-radius: 4px;
+}
+
+.room-cards-inner::-webkit-scrollbar-thumb:hover {
+  background: oklch(0% 0 0 / 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .room-cards-inner {
+    scrollbar-color: oklch(100% 0 0 / 0.3) transparent;
+  }
+
+  :root:not([data-theme="light"]) .room-cards-inner::-webkit-scrollbar-track {
+    background: oklch(100% 0 0 / 0.06);
+  }
+
+  :root:not([data-theme="light"]) .room-cards-inner::-webkit-scrollbar-thumb {
+    background: oklch(100% 0 0 / 0.3);
+  }
+}
+
+[data-theme="dark"] .room-cards-inner {
+  scrollbar-color: oklch(100% 0 0 / 0.3) transparent;
+}
+
+[data-theme="dark"] .room-cards-inner::-webkit-scrollbar-track {
+  background: oklch(100% 0 0 / 0.06);
+}
+
+[data-theme="dark"] .room-cards-inner::-webkit-scrollbar-thumb {
+  background: oklch(100% 0 0 / 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -462,4 +532,108 @@ body:has(button.phx-click-loading[phx-click="leave_room"]) .room-loading-overlay
   border: 4px solid oklch(100% 0 0 / 0.25);
   border-top-color: oklch(100% 0 0 / 0.9);
   animation: room-card-spin 0.7s linear infinite;
+}
+
+/* ─── Mobile (≤ 768px) ───────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Compact header buttons: icon-only, square-ish tap targets */
+  .room-header-btn {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    min-height: 2.25rem;
+    height: 2.25rem;
+  }
+
+  /* Less padding so the game area gets more vertical room */
+  .room-game-area {
+    padding-top: 64px;
+    padding-bottom: 128px;
+  }
+
+  /* Table uses more of the viewport width and most of the vertical space */
+  .room-table {
+    width: min(580px, 94vw);
+    height: min(380px, 55vh);
+  }
+
+  .room-user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .room-user-initials {
+    font-size: 0.75rem;
+  }
+
+  .room-user-vote-num {
+    font-size: 1rem;
+  }
+
+  .room-user-name {
+    font-size: 0.7rem;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .room-user-edit-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+    border-width: 1.5px;
+  }
+
+  .room-cards-bar {
+    padding: 10px 8px 14px;
+  }
+
+  .room-cards-inner {
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 16px;
+  }
+
+  .room-card {
+    width: 48px;
+    height: 66px;
+  }
+
+  .room-card-value {
+    font-size: 1rem;
+  }
+
+  /* Disable lift-on-hover: pointless on touch and triggers on tap */
+  .room-card:not(.room-card--selected):hover {
+    transform: none;
+  }
+
+  .room-average {
+    padding: 3px 12px;
+  }
+
+  .room-average-value {
+    font-size: 1.1rem;
+  }
+
+  .room-campfire-hint {
+    font-size: 0.7rem;
+  }
+}
+
+/* ─── Very small phones (≤ 380px) ────────────────────────── */
+@media (max-width: 380px) {
+  .room-user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .room-user-name {
+    max-width: 60px;
+  }
+
+  .room-card {
+    width: 44px;
+    height: 62px;
+  }
 }

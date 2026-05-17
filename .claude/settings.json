@@ -8,7 +8,8 @@
       "PowerShell(mix format lib/lynxplanningpoker_web/components/core_components.ex)",
       "PowerShell(mix format lib/lynxplanningpoker_web/live/room_live/show.ex)",
       "PowerShell(mix test 2>&1)",
-      "Bash(mix ecto.migrate)"
+      "Bash(mix ecto.migrate)",
+      "Bash(mix compile *)"
     ]
   }
 }

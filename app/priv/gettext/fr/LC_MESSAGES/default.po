@@ -125,6 +125,9 @@ msgstr "Français"
 msgid "Reveal"
 msgstr "Révéler"
 
+msgid "Click the fire to reveal"
+msgstr "Cliquez sur le feu pour révéler"
+
 msgid "Average"
 msgstr "Moyenne"
 

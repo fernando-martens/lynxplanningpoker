@@ -122,6 +122,9 @@ msgstr ""
 msgid "Reveal"
 msgstr ""
 
+msgid "Click the fire to reveal"
+msgstr ""
+
 msgid "Average"
 msgstr ""
 

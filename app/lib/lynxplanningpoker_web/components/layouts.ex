@@ -345,34 +345,55 @@ defmodule LynxplanningpokerWeb.Layouts do
       "absolute top-0 left-0 right-0 z-50 border-b border-base-200/60 backdrop-blur",
       @class
     ]}>
-      <div class="max-w-6xl mx-auto w-full px-6 py-6 flex justify-between items-center">
-        <div class="flex items-center gap-2">
+      <div class="max-w-6xl mx-auto w-full px-3 py-3 md:px-6 md:py-6 flex justify-between items-center gap-2">
+        <div class="flex items-center gap-2 min-w-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
             height="32"
             fill="var(--color-base-content)"
             viewBox="0 0 256 256"
+            class="shrink-0"
           >
             <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,152a48,48,0,1,1,48-48A48.05,48.05,0,0,1,128,176Zm39.21-98.53a63.66,63.66,0,0,0-31.21-13V40.37a87.6,87.6,0,0,1,48.28,20ZM120,64.52a63.66,63.66,0,0,0-31.21,13L71.72,60.4a87.6,87.6,0,0,1,48.28-20ZM77.47,88.79a63.66,63.66,0,0,0-13,31.21H40.37a87.6,87.6,0,0,1,20-48.28ZM64.52,136a63.66,63.66,0,0,0,13,31.21L60.4,184.28a87.6,87.6,0,0,1-20-48.28Zm24.27,42.53A63.66,63.66,0,0,0,120,191.48v24.15a87.6,87.6,0,0,1-48.28-20ZM136,191.48a63.66,63.66,0,0,0,31.21-12.95l17.07,17.07a87.6,87.6,0,0,1-48.28,20Zm42.53-24.27A63.66,63.66,0,0,0,191.48,136h24.15a87.6,87.6,0,0,1-20,48.28ZM191.48,120a63.66,63.66,0,0,0-12.95-31.21L195.6,71.72a87.6,87.6,0,0,1,20,48.28Z" />
           </svg>
-          <span class="text-xl font-bold tracking-tight">Lynx planning poker</span>
+          <span class="hidden sm:inline text-xl font-bold tracking-tight truncate">
+            Lynx planning poker
+          </span>
         </div>
 
-        <nav class="hidden md:flex items-center gap-2 font-semibold">
-          <.button phx-click="reset">
-            <.icon name="hero-arrow-path" class="size-5" /> {gettext("Restart")}
+        <nav class="flex items-center gap-1 md:gap-2 font-semibold">
+          <.button phx-click="reset" class="room-header-btn" aria-label={gettext("Restart")}>
+            <.icon name="hero-arrow-path" class="size-5" />
+            <span class="hidden md:inline">{gettext("Restart")}</span>
           </.button>
-          <.button phx-click={show_modal("invite-modal")}>
-            <.icon name="hero-user-plus" class="size-5" /> {gettext("Invite")}
+          <.button
+            phx-click={show_modal("invite-modal")}
+            class="room-header-btn"
+            aria-label={gettext("Invite")}
+          >
+            <.icon name="hero-user-plus" class="size-5" />
+            <span class="hidden md:inline">{gettext("Invite")}</span>
           </.button>
           <%= if @is_host do %>
-            <.button phx-click="end_planning" variant="red">
-              <.icon name="hero-x-circle" class="size-5" /> {gettext("End planning")}
+            <.button
+              phx-click="end_planning"
+              variant="red"
+              class="room-header-btn"
+              aria-label={gettext("End planning")}
+            >
+              <.icon name="hero-x-circle" class="size-5" />
+              <span class="hidden md:inline">{gettext("End planning")}</span>
             </.button>
           <% else %>
-            <.button phx-click="leave_room" variant="red">
-              <.icon name="hero-x-circle" class="size-5" /> {gettext("Leave")}
+            <.button
+              phx-click="leave_room"
+              variant="red"
+              class="room-header-btn"
+              aria-label={gettext("Leave")}
+            >
+              <.icon name="hero-x-circle" class="size-5" />
+              <span class="hidden md:inline">{gettext("Leave")}</span>
             </.button>
           <% end %>
           <.settings_menu />
