@@ -18,6 +18,9 @@ test.describe("Página de pricing", () => {
     ).toBeVisible();
     await expect(page.getByText(/Available today/i)).toBeVisible();
     await expect(
+      page.getByText(/Unlimited rooms, up to 15 players each/i),
+    ).toBeVisible();
+    await expect(
       page.getByRole("link", { name: /Create a room/i }),
     ).toBeVisible();
 

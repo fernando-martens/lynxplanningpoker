@@ -145,6 +145,34 @@ defmodule Lynxplanningpoker.UsersTest do
     end
   end
 
+  describe "room capacity" do
+    test "max_users_per_room/0 returns 15" do
+      assert Users.max_users_per_room() == 15
+    end
+
+    test "count_users_by_room/1 returns the number of users in the room" do
+      room = create_room!()
+      other = create_room!()
+
+      {:ok, _} = Users.create_user(%{room_id: room.id, name: "A"})
+      {:ok, _} = Users.create_user(%{room_id: room.id, name: "B"})
+      {:ok, _} = Users.create_user(%{room_id: other.id, name: "C"})
+
+      assert Users.count_users_by_room(room.id) == 2
+    end
+
+    test "room_full?/1 is false below the limit and true at the limit" do
+      room = create_room!()
+      refute Users.room_full?(room.id)
+
+      for i <- 1..Users.max_users_per_room() do
+        {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
+      end
+
+      assert Users.room_full?(room.id)
+    end
+  end
+
   describe "list_users/0" do
     test "lists all users across rooms" do
       room1 = create_room!()

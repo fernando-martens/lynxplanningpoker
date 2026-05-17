@@ -182,8 +182,11 @@ msgstr "Gratuit"
 msgid "forever"
 msgstr "pour toujours"
 
-msgid "Unlimited rooms and players"
-msgstr "Salles et joueurs illimités"
+msgid "Unlimited rooms, up to 15 players each"
+msgstr "Salles illimitées, jusqu'à 15 joueurs chacune"
+
+msgid "This room is full (maximum %{max} players)."
+msgstr "Cette salle est pleine (maximum %{max} joueurs)."
 
 msgid "Real-time voting and reveal"
 msgstr "Vote et révélation en temps réel"

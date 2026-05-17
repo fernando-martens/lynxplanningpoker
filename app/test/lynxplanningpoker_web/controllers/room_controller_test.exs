@@ -72,6 +72,52 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       assert html_response(conn, 200) =~ "Join the room"
       assert Users.list_users_by_room(room.id) == []
     end
+
+    test "rejects the 16th player with a flash and does not create the user", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+
+      for i <- 1..Users.max_users_per_room() do
+        {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
+      end
+
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => "Latecomer"})
+
+      assert redirected_to(conn) == ~p"/"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "full"
+      assert length(Users.list_users_by_room(room.id)) == Users.max_users_per_room()
+    end
+  end
+
+  describe "room capacity on GET /rooms/invite/:id" do
+    test "redirects home with a flash when the room is full", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+
+      for i <- 1..Users.max_users_per_room() do
+        {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
+      end
+
+      conn = get(conn, ~p"/rooms/invite/#{room.id}")
+
+      assert redirected_to(conn) == ~p"/"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "full"
+    end
+
+    test "still lets an existing member through when the room is full", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+
+      [first | _] =
+        for i <- 1..Users.max_users_per_room() do
+          {:ok, user} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
+          user
+        end
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{current_user_id: first.id})
+        |> get(~p"/rooms/invite/#{room.id}")
+
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+    end
   end
 
   describe "cleanup of previous session when entering a new room" do

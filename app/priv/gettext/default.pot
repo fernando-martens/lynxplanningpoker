@@ -179,7 +179,10 @@ msgstr ""
 msgid "forever"
 msgstr ""
 
-msgid "Unlimited rooms and players"
+msgid "Unlimited rooms, up to 15 players each"
+msgstr ""
+
+msgid "This room is full (maximum %{max} players)."
 msgstr ""
 
 msgid "Real-time voting and reveal"

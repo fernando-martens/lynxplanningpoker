@@ -51,6 +51,11 @@ defmodule LynxplanningpokerWeb.RoomController do
       already_in_room?(conn, id) ->
         redirect(conn, to: ~p"/rooms/#{id}")
 
+      Users.room_full?(id) ->
+        conn
+        |> put_flash(:error, room_full_message())
+        |> redirect(to: ~p"/")
+
       true ->
         render(conn, :invite, room_id: id)
     end
@@ -64,8 +69,20 @@ defmodule LynxplanningpokerWeb.RoomController do
         |> redirect(to: ~p"/")
 
       room ->
-        do_accept_invite(conn, room, user_name)
+        if Users.room_full?(room.id) and not already_in_room?(conn, room.id) do
+          conn
+          |> put_flash(:error, room_full_message())
+          |> redirect(to: ~p"/")
+        else
+          do_accept_invite(conn, room, user_name)
+        end
     end
+  end
+
+  defp room_full_message do
+    gettext("This room is full (maximum %{max} players).",
+      max: Users.max_users_per_room()
+    )
   end
 
   defp do_accept_invite(conn, room, user_name) do

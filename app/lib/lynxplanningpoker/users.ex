@@ -7,6 +7,29 @@ defmodule Lynxplanningpoker.Users do
   alias Lynxplanningpoker.Repo
   alias Lynxplanningpoker.Users.User
 
+  @max_users_per_room 15
+
+  @doc """
+  Maximum number of users allowed in a single room.
+  """
+  def max_users_per_room, do: @max_users_per_room
+
+  @doc """
+  Returns the number of users in a given room.
+  """
+  def count_users_by_room(room_id) do
+    User
+    |> where([u], u.room_id == ^room_id)
+    |> Repo.aggregate(:count, :id)
+  end
+
+  @doc """
+  Returns true when the room already has the maximum number of users.
+  """
+  def room_full?(room_id) do
+    count_users_by_room(room_id) >= @max_users_per_room
+  end
+
   @doc """
   Lists all users.
   """
