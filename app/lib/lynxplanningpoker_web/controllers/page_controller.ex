@@ -8,4 +8,8 @@ defmodule LynxplanningpokerWeb.PageController do
   def how_it_works(conn, _params) do
     render(conn, :how_it_works)
   end
+
+  def pricing(conn, _params) do
+    render(conn, :pricing)
+  end
 end

@@ -158,3 +158,84 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
+msgid "Plans and pricing"
+msgstr ""
+
+msgid "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+msgstr ""
+
+msgid "Available today"
+msgstr ""
+
+msgid "Free forever"
+msgstr ""
+
+msgid "Everything you use today, free forever — no card, no catch."
+msgstr ""
+
+msgid "Free"
+msgstr ""
+
+msgid "forever"
+msgstr ""
+
+msgid "Unlimited rooms and players"
+msgstr ""
+
+msgid "Real-time voting and reveal"
+msgstr ""
+
+msgid "No sign-up — share a link and play"
+msgstr ""
+
+msgid "Vote average shown after reveal"
+msgstr ""
+
+msgid "Light and dark themes, three languages"
+msgstr ""
+
+msgid "Every feature listed here stays free — forever."
+msgstr ""
+
+msgid "Premium"
+msgstr ""
+
+msgid "On the roadmap"
+msgstr ""
+
+msgid "Extra features designed to help agile teams go further."
+msgstr ""
+
+msgid "Coming soon"
+msgstr ""
+
+msgid "Not available yet"
+msgstr ""
+
+msgid "Ideas we're exploring"
+msgstr ""
+
+msgid "Sprint history and team analytics"
+msgstr ""
+
+msgid "Custom card decks per team"
+msgstr ""
+
+msgid "Persistent team workspaces"
+msgstr ""
+
+msgid "Integrations with Jira, Linear and others"
+msgstr ""
+
+msgid "Priority support for paying teams"
+msgstr ""
+
+msgid "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+msgstr ""
+
+msgid "Got an idea for what should be in Premium?"
+msgstr ""
+
+msgid "Tell us by email"
+msgstr ""
+

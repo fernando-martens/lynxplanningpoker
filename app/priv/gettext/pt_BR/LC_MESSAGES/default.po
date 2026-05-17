@@ -161,3 +161,84 @@ msgstr "fechar"
 msgid "Actions"
 msgstr "Ações"
 
+msgid "Plans and pricing"
+msgstr "Planos e preços"
+
+msgid "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+msgstr "Tudo que você usa hoje será sempre gratuito. Funcionalidades premium para times ágeis estão no nosso roadmap para o futuro."
+
+msgid "Available today"
+msgstr "Disponível hoje"
+
+msgid "Free forever"
+msgstr "Gratuito para sempre"
+
+msgid "Everything you use today, free forever — no card, no catch."
+msgstr "Tudo que você usa hoje, gratuito para sempre — sem cartão, sem pegadinha."
+
+msgid "Free"
+msgstr "Grátis"
+
+msgid "forever"
+msgstr "para sempre"
+
+msgid "Unlimited rooms and players"
+msgstr "Salas e jogadores ilimitados"
+
+msgid "Real-time voting and reveal"
+msgstr "Votação e revelação em tempo real"
+
+msgid "No sign-up — share a link and play"
+msgstr "Sem cadastro — compartilhe um link e jogue"
+
+msgid "Vote average shown after reveal"
+msgstr "Média dos votos exibida após a revelação"
+
+msgid "Light and dark themes, three languages"
+msgstr "Temas claro e escuro, três idiomas"
+
+msgid "Every feature listed here stays free — forever."
+msgstr "Todas as funcionalidades listadas aqui continuam gratuitas — para sempre."
+
+msgid "Premium"
+msgstr "Premium"
+
+msgid "On the roadmap"
+msgstr "No roadmap"
+
+msgid "Extra features designed to help agile teams go further."
+msgstr "Funcionalidades extras pensadas para ajudar times ágeis a irem além."
+
+msgid "Coming soon"
+msgstr "Em breve"
+
+msgid "Not available yet"
+msgstr "Ainda não disponível"
+
+msgid "Ideas we're exploring"
+msgstr "Ideias que estamos explorando"
+
+msgid "Sprint history and team analytics"
+msgstr "Histórico de sprints e analytics do time"
+
+msgid "Custom card decks per team"
+msgstr "Baralhos personalizados por time"
+
+msgid "Persistent team workspaces"
+msgstr "Workspaces persistentes para times"
+
+msgid "Integrations with Jira, Linear and others"
+msgstr "Integrações com Jira, Linear e outras"
+
+msgid "Priority support for paying teams"
+msgstr "Suporte prioritário para times pagantes"
+
+msgid "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+msgstr "Essas funcionalidades ainda não têm data de lançamento. Mesmo quando forem lançadas, o plano gratuito acima continuará funcionando exatamente como hoje."
+
+msgid "Got an idea for what should be in Premium?"
+msgstr "Tem uma ideia do que deveria estar no Premium?"
+
+msgid "Tell us by email"
+msgstr "Conte pra gente por e-mail"
+

@@ -1,0 +1,147 @@
+<Layouts.app_header />
+<main class="mx-auto max-w-4xl px-6 py-12">
+  <section class="text-center">
+    <h1 class="text-4xl font-semibold tracking-tight">
+      {gettext("Plans and pricing")}
+    </h1>
+    <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
+      {gettext(
+        "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+      )}
+    </p>
+  </section>
+
+  <section class="mt-12 grid gap-6 md:grid-cols-2 md:items-start">
+    <article class="relative rounded-3xl border-2 border-primary bg-base-100 p-6 shadow-xl md:scale-[1.02]">
+      <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+        <span class="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow">
+          <.icon name="hero-sparkles-micro" class="size-3" />
+          {gettext("Available today")}
+        </span>
+      </div>
+
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <.icon name="hero-gift" class="size-6" />
+      </div>
+
+      <h2 class="mt-6 text-2xl font-bold">{gettext("Free forever")}</h2>
+      <p class="mt-1 text-sm text-base-content/70">
+        {gettext("Everything you use today, free forever — no card, no catch.")}
+      </p>
+
+      <div class="mt-6 flex items-baseline gap-2">
+        <span class="text-5xl font-bold tracking-tight">{gettext("Free")}</span>
+        <span class="text-sm text-base-content/60">{gettext("forever")}</span>
+      </div>
+
+      <.link
+        navigate={~p"/rooms/new"}
+        class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-bold text-white shadow-lg transition hover:brightness-90"
+      >
+        {gettext("Create a room")} <.icon name="hero-plus" class="size-5" />
+      </.link>
+
+      <ul class="mt-8 space-y-3 text-sm">
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span>{gettext("Unlimited rooms and players")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span>{gettext("Real-time voting and reveal")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span>{gettext("No sign-up — share a link and play")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span>{gettext("Vote average shown after reveal")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span>{gettext("Light and dark themes, three languages")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+          <span class="font-semibold">
+            {gettext("Every feature listed here stays free — forever.")}
+          </span>
+        </li>
+      </ul>
+    </article>
+
+    <article class="rounded-3xl border border-base-200 bg-base-100/60 p-6 shadow-sm">
+      <div class="absolute"></div>
+
+      <div class="flex h-12 w-12 items-center justify-center rounded-full bg-base-200 text-base-content/70">
+        <.icon name="hero-rocket-launch" class="size-6" />
+      </div>
+
+      <div class="mt-6 flex items-center gap-3">
+        <h2 class="text-2xl font-bold text-base-content/80">{gettext("Premium")}</h2>
+        <span class="inline-flex items-center gap-1 rounded-full border border-base-300 bg-base-200 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-base-content/70">
+          {gettext("On the roadmap")}
+        </span>
+      </div>
+      <p class="mt-1 text-sm text-base-content/70">
+        {gettext("Extra features designed to help agile teams go further.")}
+      </p>
+
+      <div class="mt-6 flex items-baseline gap-2">
+        <span class="text-3xl font-semibold tracking-tight text-base-content/70">
+          {gettext("Coming soon")}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        disabled
+        class="mt-6 inline-flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-full border border-base-300 bg-base-200 px-6 py-3 text-base font-semibold text-base-content/60"
+      >
+        {gettext("Not available yet")}
+      </button>
+
+      <p class="mt-6 text-xs uppercase tracking-wide text-base-content/60">
+        {gettext("Ideas we're exploring")}
+      </p>
+      <ul class="mt-3 space-y-3 text-sm text-base-content/80">
+        <li class="flex items-start gap-3">
+          <.icon name="hero-clock" class="size-5 shrink-0 text-base-content/50" />
+          <span>{gettext("Sprint history and team analytics")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-clock" class="size-5 shrink-0 text-base-content/50" />
+          <span>{gettext("Custom card decks per team")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-clock" class="size-5 shrink-0 text-base-content/50" />
+          <span>{gettext("Persistent team workspaces")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-clock" class="size-5 shrink-0 text-base-content/50" />
+          <span>{gettext("Integrations with Jira, Linear and others")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <.icon name="hero-clock" class="size-5 shrink-0 text-base-content/50" />
+          <span>{gettext("Priority support for paying teams")}</span>
+        </li>
+      </ul>
+
+      <p class="mt-6 rounded-xl border border-base-200 bg-base-100 p-3 text-xs text-base-content/60">
+        {gettext(
+          "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+        )}
+      </p>
+    </article>
+  </section>
+
+  <section class="mt-12 text-center">
+    <p class="text-sm text-base-content/70">
+      {gettext("Got an idea for what should be in Premium?")}
+      <a href="mailto:contact@lynx.com" class="font-semibold text-primary hover:underline">
+        {gettext("Tell us by email")}
+      </a>
+    </p>
+  </section>
+</main>

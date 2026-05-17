@@ -161,3 +161,84 @@ msgstr "close"
 msgid "Actions"
 msgstr "Actions"
 
+msgid "Plans and pricing"
+msgstr "Plans and pricing"
+
+msgid "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+msgstr "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+
+msgid "Available today"
+msgstr "Available today"
+
+msgid "Free forever"
+msgstr "Free forever"
+
+msgid "Everything you use today, free forever — no card, no catch."
+msgstr "Everything you use today, free forever — no card, no catch."
+
+msgid "Free"
+msgstr "Free"
+
+msgid "forever"
+msgstr "forever"
+
+msgid "Unlimited rooms and players"
+msgstr "Unlimited rooms and players"
+
+msgid "Real-time voting and reveal"
+msgstr "Real-time voting and reveal"
+
+msgid "No sign-up — share a link and play"
+msgstr "No sign-up — share a link and play"
+
+msgid "Vote average shown after reveal"
+msgstr "Vote average shown after reveal"
+
+msgid "Light and dark themes, three languages"
+msgstr "Light and dark themes, three languages"
+
+msgid "Every feature listed here stays free — forever."
+msgstr "Every feature listed here stays free — forever."
+
+msgid "Premium"
+msgstr "Premium"
+
+msgid "On the roadmap"
+msgstr "On the roadmap"
+
+msgid "Extra features designed to help agile teams go further."
+msgstr "Extra features designed to help agile teams go further."
+
+msgid "Coming soon"
+msgstr "Coming soon"
+
+msgid "Not available yet"
+msgstr "Not available yet"
+
+msgid "Ideas we're exploring"
+msgstr "Ideas we're exploring"
+
+msgid "Sprint history and team analytics"
+msgstr "Sprint history and team analytics"
+
+msgid "Custom card decks per team"
+msgstr "Custom card decks per team"
+
+msgid "Persistent team workspaces"
+msgstr "Persistent team workspaces"
+
+msgid "Integrations with Jira, Linear and others"
+msgstr "Integrations with Jira, Linear and others"
+
+msgid "Priority support for paying teams"
+msgstr "Priority support for paying teams"
+
+msgid "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+msgstr "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+
+msgid "Got an idea for what should be in Premium?"
+msgstr "Got an idea for what should be in Premium?"
+
+msgid "Tell us by email"
+msgstr "Tell us by email"
+

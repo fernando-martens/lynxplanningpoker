@@ -20,6 +20,7 @@ defmodule LynxplanningpokerWeb.Router do
 
     get("/", PageController, :home)
     get("/how-it-works", PageController, :how_it_works)
+    get("/pricing", PageController, :pricing)
     resources("/rooms", RoomController, only: [:new, :create])
 
     get("/locale/:locale", LocaleController, :update)

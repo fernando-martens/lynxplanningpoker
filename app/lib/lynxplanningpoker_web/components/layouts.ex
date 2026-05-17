@@ -311,10 +311,10 @@ defmodule LynxplanningpokerWeb.Layouts do
         </.link>
 
         <nav class="hidden md:flex items-center gap-2 font-semibold">
-          <.button navigate="#features">
+          <.button navigate={~p"/how-it-works"}>
             <.icon name="hero-book-open" class="size-5" /> {gettext("Features")}
           </.button>
-          <.button navigate="#pricing">
+          <.button navigate={~p"/pricing"}>
             <.icon name="hero-currency-dollar" class="size-5" /> {gettext("Pricing")}
           </.button>
           <.link href="#" class="flex items-center gap-2 hover:opacity-70 transition">
