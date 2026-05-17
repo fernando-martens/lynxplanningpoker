@@ -89,6 +89,9 @@ msgstr "Lien d'invitation"
 msgid "Copy"
 msgstr "Copier"
 
+msgid "Link copied!"
+msgstr "Lien copié !"
+
 msgid "Anyone with this link can join the room"
 msgstr "Toute personne disposant de ce lien peut rejoindre la salle"
 

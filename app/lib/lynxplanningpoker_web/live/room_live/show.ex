@@ -240,17 +240,31 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           type="text"
           readonly
           value={url(~p"/rooms/invite/#{@room.id}")}
+          data-copy-feedback="copy-feedback"
           class="flex-1 input input-bordered rounded-xl border border-base-300 bg-base-100 px-4 py-3 text-sm"
           onclick="this.select()"
         />
-        <button
-          type="button"
-          class="btn rounded-xl bg-base-200 hover:bg-base-300 px-4 py-3 inline-flex items-center justify-center gap-2 whitespace-nowrap"
-          phx-click={JS.dispatch("phx:copy", to: "#invite-url")}
-        >
-          <.icon name="hero-document-duplicate" class="size-4" />
-          {gettext("Copy")}
-        </button>
+        <div class="relative">
+          <button
+            type="button"
+            class="btn rounded-xl bg-base-200 hover:bg-base-300 px-4 py-3 inline-flex items-center justify-center gap-2 whitespace-nowrap w-full"
+            phx-click={JS.dispatch("phx:copy", to: "#invite-url")}
+          >
+            <.icon name="hero-document-duplicate" class="size-4" />
+            {gettext("Copy")}
+          </button>
+          <div
+            id="copy-feedback"
+            style="display: none"
+            class="absolute -top-9 left-1/2 -translate-x-1/2 z-10 px-2.5 py-1 rounded-md bg-base-content text-base-100 text-xs font-medium whitespace-nowrap shadow-lg items-center gap-1"
+            role="status"
+          >
+            <.icon name="hero-check-circle" class="size-3.5" />
+            {gettext("Link copied!")}
+            <span class="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-base-content">
+            </span>
+          </div>
+        </div>
       </div>
 
       <p class="mt-3 text-xs text-base-content/60">

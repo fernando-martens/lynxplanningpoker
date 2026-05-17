@@ -39,11 +39,24 @@ window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // Copy-to-clipboard: triggered via `JS.dispatch("phx:copy", to: "#some-input")`.
 // Reads the dispatched element's value/textContent and writes it to the clipboard.
+// If the source element has `data-copy-feedback="some-id"`, shows that element
+// for 2s as visual confirmation.
 window.addEventListener("phx:copy", (event) => {
   const target = event.target
   if (!target) return
   const text = target.value ?? target.textContent ?? ""
-  if (text) navigator.clipboard.writeText(text)
+  if (!text) return
+  navigator.clipboard.writeText(text).then(() => {
+    const feedbackId = target.dataset.copyFeedback
+    if (!feedbackId) return
+    const feedback = document.getElementById(feedbackId)
+    if (!feedback) return
+    feedback.style.display = "inline-flex"
+    clearTimeout(feedback._copyTimer)
+    feedback._copyTimer = setTimeout(() => {
+      feedback.style.display = "none"
+    }, 2000)
+  })
 })
 
 // connect if there are any LiveViews on the page

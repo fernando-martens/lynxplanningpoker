@@ -84,11 +84,7 @@ defmodule LynxplanningpokerWeb.Layouts do
 
   def flash_group(assigns) do
     ~H"""
-    <div
-      id={@id}
-      aria-live="polite"
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center"
-    >
+    <div id={@id} aria-live="polite">
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 

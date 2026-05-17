@@ -89,6 +89,9 @@ msgstr "Invitation link"
 msgid "Copy"
 msgstr "Copy"
 
+msgid "Link copied!"
+msgstr "Link copied!"
+
 msgid "Anyone with this link can join the room"
 msgstr "Anyone with this link can join the room"
 

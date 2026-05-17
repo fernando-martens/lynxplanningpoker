@@ -129,9 +129,15 @@ defmodule LynxplanningpokerWeb.RoomController do
         end
     end
 
-    conn
-    |> delete_session(:current_user_id)
-    |> put_flash(:info, gettext("You left the room."))
-    |> redirect(to: ~p"/")
+    conn = delete_session(conn, :current_user_id)
+
+    conn =
+      if Phoenix.Flash.get(conn.assigns.flash, :info) do
+        conn
+      else
+        put_flash(conn, :info, gettext("You left the room."))
+      end
+
+    redirect(conn, to: ~p"/")
   end
 end

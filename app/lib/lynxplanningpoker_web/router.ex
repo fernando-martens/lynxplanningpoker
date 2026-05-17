@@ -2,35 +2,35 @@ defmodule LynxplanningpokerWeb.Router do
   use LynxplanningpokerWeb, :router
 
   pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_live_flash
-    plug :put_root_layout, html: {LynxplanningpokerWeb.Layouts, :root}
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-    plug LynxplanningpokerWeb.Plugs.Locale
+    plug(:accepts, ["html"])
+    plug(:fetch_session)
+    plug(:fetch_live_flash)
+    plug(:put_root_layout, html: {LynxplanningpokerWeb.Layouts, :root})
+    plug(:protect_from_forgery)
+    plug(:put_secure_browser_headers)
+    plug(LynxplanningpokerWeb.Plugs.Locale)
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug(:accepts, ["json"])
   end
 
   scope "/", LynxplanningpokerWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/", PageController, :home
-    get "/how-it-works", PageController, :how_it_works
-    resources "/rooms", RoomController, only: [:new, :create]
+    get("/", PageController, :home)
+    get("/how-it-works", PageController, :how_it_works)
+    resources("/rooms", RoomController, only: [:new, :create])
 
-    get "/locale/:locale", LocaleController, :update
+    get("/locale/:locale", LocaleController, :update)
 
     scope "/rooms" do
-      get "/invite/:id", RoomController, :show
-      post "/invite/:id", RoomController, :acceptInvite
-      get "/leave", RoomController, :leave
+      get("/invite/:id", RoomController, :show)
+      post("/invite/:id", RoomController, :acceptInvite)
+      get("/leave", RoomController, :leave)
 
       live_session :default, on_mount: LynxplanningpokerWeb.LiveHooks.Locale do
-        live "/:id", RoomLive.Show, :show
+        live("/:id", RoomLive.Show, :show)
       end
     end
   end
@@ -50,10 +50,10 @@ defmodule LynxplanningpokerWeb.Router do
     import Phoenix.LiveDashboard.Router
 
     scope "/dev" do
-      pipe_through :browser
+      pipe_through(:browser)
 
-      live_dashboard "/dashboard", metrics: LynxplanningpokerWeb.Telemetry
-      forward "/mailbox", Plug.Swoosh.MailboxPreview
+      live_dashboard("/dashboard", metrics: LynxplanningpokerWeb.Telemetry)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 end
