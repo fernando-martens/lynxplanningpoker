@@ -1,10 +1,13 @@
 defmodule LynxplanningpokerWeb.RoomLive.Show do
   use LynxplanningpokerWeb, :live_view
 
+  alias Lynxplanningpoker.Presence
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
 
   @cards [0, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, "?"]
+
+  @question_vote -1
 
   @impl true
   def mount(%{"id" => id}, session, socket) do
@@ -24,6 +27,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           if connected?(socket) do
             Users.subscribe_to_room(id)
             Rooms.subscribe_to_room(id)
+
+            presence_topic = Presence.room_topic(id)
+            Phoenix.PubSub.subscribe(Lynxplanningpoker.PubSub, presence_topic)
+            Presence.track(self(), presence_topic, current_user.id, %{})
           end
 
           show_initial_invite =
@@ -53,9 +60,15 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
       current_user ->
         clicked_value =
-          case Integer.parse(value) do
-            {int, ""} -> int
-            _ -> nil
+          case value do
+            "?" ->
+              @question_vote
+
+            _ ->
+              case Integer.parse(value) do
+                {int, ""} -> int
+                _ -> nil
+              end
           end
 
         vote_value = if current_user.vote == clicked_value, do: nil, else: clicked_value
@@ -149,6 +162,36 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   @impl true
+  def handle_info(
+        %Phoenix.Socket.Broadcast{event: "presence_diff", payload: %{leaves: leaves}},
+        socket
+      ) do
+    if map_size(leaves) > 0 do
+      room_id = socket.assigns.room.id
+      still_present = Presence.list(Presence.room_topic(room_id))
+
+      for {user_id, _meta} <- leaves, not Map.has_key?(still_present, user_id) do
+        try do
+          user = Users.get_user!(user_id)
+
+          if user.is_host do
+            case Rooms.get_room(user.room_id) do
+              nil -> :ok
+              room -> Rooms.delete_room(room)
+            end
+          else
+            Users.delete_user(user)
+          end
+        rescue
+          Ecto.NoResultsError -> :ok
+        end
+      end
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_info({:room_deleted, room_id}, socket) do
     if socket.assigns.room.id == room_id do
       {:noreply,
@@ -209,12 +252,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end)
   end
 
-  defp card_selected?(current_user, card) do
-    current_user && to_string(current_user.vote) == to_string(card)
-  end
+  defp card_selected?(nil, _card), do: false
+  defp card_selected?(%{vote: @question_vote}, "?"), do: true
+  defp card_selected?(%{vote: v}, card) when is_integer(v), do: to_string(v) == to_string(card)
+  defp card_selected?(_, _), do: false
 
   defp vote_average(users) do
-    numeric_votes = for %{vote: v} <- users, is_integer(v), do: v
+    numeric_votes = for %{vote: v} <- users, is_integer(v) and v >= 0, do: v
 
     case numeric_votes do
       [] ->
@@ -226,13 +270,15 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
+  defp display_vote(@question_vote), do: "?"
+  defp display_vote(v), do: to_string(v)
+
   @impl true
   def render(assigns) do
     assigns = assign(assigns, :user_positions, user_positions(assigns.users))
 
     ~H"""
     <Layouts.room_header is_host={@current_user && @current_user.is_host} />
-
     <.modal id="invite-modal" title={gettext("Invitation link")}>
       <div class="flex flex-col sm:flex-row gap-2 items-stretch">
         <input
@@ -250,8 +296,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             class="btn rounded-xl bg-base-200 hover:bg-base-300 px-4 py-3 inline-flex items-center justify-center gap-2 whitespace-nowrap w-full"
             phx-click={JS.dispatch("phx:copy", to: "#invite-url")}
           >
-            <.icon name="hero-document-duplicate" class="size-4" />
-            {gettext("Copy")}
+            <.icon name="hero-document-duplicate" class="size-4" /> {gettext("Copy")}
           </button>
           <div
             id="copy-feedback"
@@ -259,8 +304,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             class="absolute -top-9 left-1/2 -translate-x-1/2 z-10 px-2.5 py-1 rounded-md bg-base-content text-base-100 text-xs font-medium whitespace-nowrap shadow-lg items-center gap-1"
             role="status"
           >
-            <.icon name="hero-check-circle" class="size-3.5" />
-            {gettext("Link copied!")}
+            <.icon name="hero-check-circle" class="size-3.5" /> {gettext("Link copied!")}
             <span class="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-base-content">
             </span>
           </div>
@@ -278,12 +322,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       class="hidden"
       phx-mounted={show_modal("invite-modal")}
     />
-
     <div class="room-scene">
       <div class="room-loading-overlay" aria-hidden="true">
         <div class="room-loading-spinner"></div>
       </div>
-
       <%!-- Game area --%>
       <div class="room-game-area">
         <div class="room-table">
@@ -293,12 +335,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div class={"room-user-avatar #{if user.has_voted, do: "room-user-avatar--voted", else: ""}"}>
                 <%= cond do %>
                   <% @room.revealed and user.vote != nil -> %>
-                    <span class="room-user-vote-num">{to_string(user.vote)}</span>
+                    <span class="room-user-vote-num">{display_vote(user.vote)}</span>
                   <% user.has_voted -> %>
                     <.paw_icon />
                   <% true -> %>
                     <span class="room-user-initials">{initials(user.name)}</span>
                 <% end %>
+
                 <%= if @room.revealed and user.vote_changed_after_reveal do %>
                   <span class="room-user-edit-badge" title={gettext("Vote changed after reveal")}>
                     <.pencil_icon />
@@ -308,27 +351,25 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <span class="room-user-name">{user.name}</span>
             </div>
           <% end %>
-
           <%!-- Campfire at center --%>
           <div class="room-campfire-wrap">
             <div id="campfire">
               <div id="wood"><span></span></div>
+
               <div id="fire"></div>
             </div>
+
             <%= if @room.revealed do %>
               <div class="room-average" aria-label={gettext("Vote average")}>
                 <span class="room-average-label">{gettext("Average")}</span>
                 <span class="room-average-value">{vote_average(@users)}</span>
               </div>
             <% else %>
-              <button phx-click="reveal" class="room-reveal-btn">
-                {gettext("Reveal")}
-              </button>
+              <button phx-click="reveal" class="room-reveal-btn">{gettext("Reveal")}</button>
             <% end %>
           </div>
         </div>
       </div>
-
       <%!-- Cards bar at bottom --%>
       <div class="room-cards-bar">
         <div class="room-cards-scroll">
@@ -370,11 +411,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       height="1em"
       fill="currentColor"
     >
-      <circle cx="6" cy="7" r="2" />
-      <circle cx="12" cy="5" r="2" />
-      <circle cx="18" cy="7" r="2" />
-      <circle cx="4" cy="12" r="1.5" />
-      <path d="M12 10c-3.5 0-6 2-6 5s2 5 6 5 6-2 6-5-2.5-5-6-5z" />
+      <circle cx="6" cy="7" r="2" /> <circle cx="12" cy="5" r="2" /> <circle cx="18" cy="7" r="2" />
+      <circle cx="4" cy="12" r="1.5" /> <path d="M12 10c-3.5 0-6 2-6 5s2 5 6 5 6-2 6-5-2.5-5-6-5z" />
     </svg>
     """
   end

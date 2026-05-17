@@ -12,6 +12,7 @@ defmodule Lynxplanningpoker.Application do
       Lynxplanningpoker.Repo,
       {DNSCluster, query: Application.get_env(:lynxplanningpoker, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Lynxplanningpoker.PubSub},
+      Lynxplanningpoker.Presence,
       # Start a worker by calling: Lynxplanningpoker.Worker.start_link(arg)
       # {Lynxplanningpoker.Worker, arg},
       # Start to serve requests, typically the last entry

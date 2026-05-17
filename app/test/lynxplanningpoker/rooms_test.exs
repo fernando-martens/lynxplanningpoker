@@ -50,6 +50,28 @@ defmodule Lynxplanningpoker.RoomsTest do
         Rooms.get_room!(Ecto.UUID.generate())
       end
     end
+
+    test "raises Ecto.NoResultsError when id is not a valid UUID" do
+      assert_raise Ecto.NoResultsError, fn ->
+        Rooms.get_room!("not-a-uuid")
+      end
+    end
+  end
+
+  describe "get_room/1" do
+    test "returns the room with the given id" do
+      {:ok, room} = Rooms.create_room(%{is_active: true})
+      assert Rooms.get_room(room.id).id == room.id
+    end
+
+    test "returns nil when room does not exist" do
+      assert Rooms.get_room(Ecto.UUID.generate()) == nil
+    end
+
+    test "returns nil when id is not a valid UUID" do
+      assert Rooms.get_room("not-a-uuid") == nil
+      assert Rooms.get_room("3c707c09-7970-415f-9f59-cdd0e1b4ff4") == nil
+    end
   end
 
   describe "list_rooms/0" do

@@ -80,17 +80,45 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       refute render(view) =~ ~s(class="room-card room-card--selected")
     end
 
-    test "clicking a non-numeric card (e.g. '?') stores nil and does not mark as selected", %{
+    test "clicking the '?' card stores the question-mark sentinel and marks it as selected", %{
       conn: conn
     } do
       {room, user} = setup_room_with_user()
-      {:ok, _voted} = Users.update_user(user, %{vote: 3})
       conn = logged_in_conn(conn, user.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       view |> element("button[phx-value-card='?']") |> render_click()
 
+      assert Users.get_user!(user.id).vote == -1
+      assert render(view) =~ ~s(class="room-card room-card--selected")
+    end
+
+    test "clicking the '?' card again toggles the vote off", %{conn: conn} do
+      {room, user} = setup_room_with_user()
+      conn = logged_in_conn(conn, user.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view |> element("button[phx-value-card='?']") |> render_click()
+      assert Users.get_user!(user.id).vote == -1
+
+      view |> element("button[phx-value-card='?']") |> render_click()
       assert Users.get_user!(user.id).vote == nil
+      refute render(view) =~ ~s(class="room-card room-card--selected")
+    end
+
+    test "the '?' vote does not count toward the numeric average after reveal", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+      {:ok, _} = Users.update_user(alice, %{vote: -1})
+      {:ok, _} = Users.update_user(bob, %{vote: 8})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      html = view |> element("button", "Reveal") |> render_click()
+      assert html =~ "room-average-value"
+      assert html =~ ">8.0<"
+      assert html =~ ">?<"
     end
 
     test "hides the current user's own vote number before reveal (shows paw instead)", %{
@@ -291,6 +319,50 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
                view |> element("button", "Leave") |> render_click()
 
       assert Rooms.get_room!(room.id)
+    end
+
+    test "presence leave of a non-host deletes only that user", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, _host} = Users.update_user(alice, %{is_host: true})
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      send(
+        view.pid,
+        %Phoenix.Socket.Broadcast{
+          topic: Lynxplanningpoker.Presence.room_topic(room.id),
+          event: "presence_diff",
+          payload: %{joins: %{}, leaves: %{bob.id => %{metas: [%{}]}}}
+        }
+      )
+
+      _ = render(view)
+
+      assert Rooms.get_room!(room.id)
+      assert_raise Ecto.NoResultsError, fn -> Users.get_user!(bob.id) end
+    end
+
+    test "presence leave of the host deletes the entire room", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, host} = Users.update_user(alice, %{is_host: true})
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, bob.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      send(
+        view.pid,
+        %Phoenix.Socket.Broadcast{
+          topic: Lynxplanningpoker.Presence.room_topic(room.id),
+          event: "presence_diff",
+          payload: %{joins: %{}, leaves: %{host.id => %{metas: [%{}]}}}
+        }
+      )
+
+      assert_redirect(view, "/rooms/leave")
+      assert Rooms.get_room(room.id) == nil
     end
 
     test "all clients are redirected when the room is deleted", %{conn: conn} do

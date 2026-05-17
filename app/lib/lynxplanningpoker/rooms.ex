@@ -35,12 +35,22 @@ defmodule Lynxplanningpoker.Rooms do
       ** (Ecto.NoResultsError)
 
   """
-  def get_room!(id), do: Repo.get!(Room, id)
+  def get_room!(id) do
+    case Ecto.UUID.cast(id) do
+      {:ok, uuid} -> Repo.get!(Room, uuid)
+      :error -> raise Ecto.NoResultsError, queryable: Room
+    end
+  end
 
   @doc """
-  Gets a single room. Returns `nil` if not found.
+  Gets a single room. Returns `nil` if not found or if `id` is not a valid UUID.
   """
-  def get_room(id), do: Repo.get(Room, id)
+  def get_room(id) do
+    case Ecto.UUID.cast(id) do
+      {:ok, uuid} -> Repo.get(Room, uuid)
+      :error -> nil
+    end
+  end
 
   @doc """
   Creates a room.
