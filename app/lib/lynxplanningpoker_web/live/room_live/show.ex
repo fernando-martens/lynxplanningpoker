@@ -363,7 +363,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           <%!-- Campfire at center --%>
           <div class="room-campfire-wrap">
             <%= if @room.revealed do %>
-              <div id="campfire">
+              <div id="campfire" class="campfire--settled">
                 <div id="wood"><span></span></div>
 
                 <div id="fire"></div>

@@ -138,6 +138,31 @@
   }
 }
 
+/* ─── Settled campfire (after reveal) ─────────────────────────
+   When votes are revealed, the fire dies down to a calm ember —
+   the meeting is over, the group is just chatting around it. */
+.campfire--settled #fire {
+  bottom: 11px;
+  background: radial-gradient(var(--fire2) 28%, var(--fire3));
+  box-shadow:
+    -2px 2px 6px -2px var(--fire1),
+    0 0 0 1px var(--fire1) inset,
+    0 0 0 2px var(--fire2) inset;
+  animation: fire-ember 6s linear infinite alternate;
+}
+
+@keyframes fire-ember {
+
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-45deg) scale(0.55);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(-44deg) scale(0.62);
+  }
+}
+
 /* ─── Room layout ─────────────────────────────────────────── */
 
 .room-scene {
