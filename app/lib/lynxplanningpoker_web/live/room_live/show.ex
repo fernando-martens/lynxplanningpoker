@@ -335,11 +335,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
               <div class={[
                 "room-user-avatar",
                 user.has_voted && "room-user-avatar--voted",
-                !user.has_voted && "room-user-avatar--empty"
+                !user.has_voted && !@room.revealed && "room-user-avatar--empty"
               ]}>
                 <%= cond do %>
                   <% @room.revealed and user.vote != nil -> %>
                     <span class="room-user-vote-num">{user.vote}</span>
+                  <% @room.revealed -> %>
+                    <span class="room-user-vote-num">?</span>
                   <% user.has_voted -> %>
                     <.paw_icon />
                   <% true -> %>
