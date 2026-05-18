@@ -86,6 +86,10 @@ test.describe("Sincronização em tempo real entre múltiplos usuários", () => 
     });
 
     await hostPage.getByRole("button", { name: /End planning/i }).click();
+    await hostPage
+      .locator("#leave-confirm-modal")
+      .getByRole("button", { name: /^Yes$/i })
+      .click();
 
     await expect(guestPage).toHaveURL(/\/$/, { timeout: 10_000 });
     await expect(

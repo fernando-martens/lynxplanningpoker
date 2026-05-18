@@ -308,7 +308,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       refute html =~ "End planning"
     end
 
-    test "host clicking 'End planning' deletes the room", %{conn: conn} do
+    test "host confirming 'End planning' deletes the room", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")
       {:ok, host} = Users.update_user(alice, %{is_host: true})
 
@@ -316,12 +316,12 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
-               view |> element("button", "End planning") |> render_click()
+               view |> element("#leave-confirm-modal button", "Yes") |> render_click()
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(room.id) end
     end
 
-    test "non-host clicking 'Leave' redirects through leave endpoint", %{conn: conn} do
+    test "non-host confirming 'Leave' redirects through leave endpoint", %{conn: conn} do
       {room, _alice} = setup_room_with_user("Alice")
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
@@ -329,7 +329,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
 
       assert {:error, {:redirect, %{to: "/rooms/leave"}}} =
-               view |> element("button", "Leave") |> render_click()
+               view |> element("#leave-confirm-modal button", "Yes") |> render_click()
 
       assert Rooms.get_room!(room.id)
     end

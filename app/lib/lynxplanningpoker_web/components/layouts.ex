@@ -377,7 +377,7 @@ defmodule LynxplanningpokerWeb.Layouts do
           </.button>
           <%= if @is_host do %>
             <.button
-              phx-click="end_planning"
+              phx-click={show_modal("leave-confirm-modal")}
               variant="red"
               class="room-header-btn"
               aria-label={gettext("End planning")}
@@ -387,7 +387,7 @@ defmodule LynxplanningpokerWeb.Layouts do
             </.button>
           <% else %>
             <.button
-              phx-click="leave_room"
+              phx-click={show_modal("leave-confirm-modal")}
               variant="red"
               class="room-header-btn"
               aria-label={gettext("Leave")}

@@ -20,7 +20,6 @@ defmodule LynxplanningpokerWeb.RoomLive.Forest do
     {75, 5, 0.75},
     {81, 10, 0.9},
     {86, 4, 0.65},
-    {91, 11, 0.8},
     {96, 5, 0.7},
     # Left side
     {2, 18, 0.75},
@@ -34,7 +33,6 @@ defmodule LynxplanningpokerWeb.RoomLive.Forest do
     {6, 92, 0.8},
     {15, 94, 0.6},
     # Right side
-    {98, 18, 0.7},
     {93, 28, 0.85},
     {98, 38, 0.6},
     {91, 48, 0.95},

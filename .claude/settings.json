@@ -15,7 +15,9 @@
       "PowerShell(mix compile)",
       "PowerShell(mix compile --warnings-as-errors 2>&1)",
       "PowerShell(mix test test/lynxplanningpoker_web/live/room_live/show_test.exs 2>&1)",
-      "PowerShell($pwd.Path; Get-ChildItem -Name mix.exs -ErrorAction SilentlyContinue)"
+      "PowerShell($pwd.Path; Get-ChildItem -Name mix.exs -ErrorAction SilentlyContinue)",
+      "Bash(mix gettext.extract --merge)",
+      "PowerShell(mix gettext.extract --merge 2>&1)"
     ]
   }
 }

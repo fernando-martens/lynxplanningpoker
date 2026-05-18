@@ -32,6 +32,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             presence_topic = Presence.room_topic(id)
             Phoenix.PubSub.subscribe(Lynxplanningpoker.PubSub, presence_topic)
             Presence.track(self(), presence_topic, current_user.id, %{})
+
+            # DEV ONLY: cycle fake users 1→15 every second to preview layout.
+            # Process.send_after(self(), :tick_fake_users, 0)
           end
 
           show_initial_invite =
@@ -228,6 +231,33 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
+  # DEV ONLY: cycle fake users 1→15 every second to preview the seating layout.
+  @impl true
+  def handle_info(:tick_fake_users, socket) do
+    count = socket.assigns[:fake_count] || 1
+    next_count = if count >= 15, do: 1, else: count + 1
+    Process.send_after(self(), :tick_fake_users, 1000)
+
+    {:noreply,
+     socket
+     |> assign(:users, fake_users(count))
+     |> assign(:fake_count, next_count)}
+  end
+
+  defp fake_users(n) do
+    for i <- 1..n do
+      %{
+        id: "fake-#{i}",
+        name: "User #{i}",
+        vote: nil,
+        vote_value: nil,
+        has_voted: false,
+        vote_changed_after_reveal: false,
+        is_host: false
+      }
+    end
+  end
+
   defp card_selected?(nil, _card), do: false
   defp card_selected?(%{vote: v}, card), do: v == card
 
@@ -288,6 +318,40 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       <p class="mt-3 text-xs text-base-content/60">
         {gettext("Anyone with this link can join the room")}
       </p>
+    </.modal>
+
+    <.modal
+      id="leave-confirm-modal"
+      title={
+        if @current_user && @current_user.is_host,
+          do: gettext("End planning?"),
+          else: gettext("Leave the room?")
+      }
+    >
+      <p class="text-sm text-base-content/70 mb-6">
+        {if @current_user && @current_user.is_host,
+          do:
+            gettext("All participants will be disconnected and the room will be permanently closed."),
+          else: gettext("You will leave the room. You can rejoin using the invite link.")}
+      </p>
+      <div class="flex gap-2 justify-end">
+        <button
+          type="button"
+          phx-click={hide_modal("leave-confirm-modal")}
+          class="btn rounded-xl bg-base-200 hover:bg-base-300 px-4"
+        >
+          {gettext("No")}
+        </button>
+        <%= if @current_user && @current_user.is_host do %>
+          <.button phx-click="end_planning" variant="red" class="px-4">
+            {gettext("Yes")}
+          </.button>
+        <% else %>
+          <.button phx-click="leave_room" variant="red" class="px-4">
+            {gettext("Yes")}
+          </.button>
+        <% end %>
+      </div>
     </.modal>
 
     <div

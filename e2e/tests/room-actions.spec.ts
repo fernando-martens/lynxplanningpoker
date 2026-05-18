@@ -46,7 +46,7 @@ test.describe("Ações da sala (Invite / Leave / End planning)", () => {
     await hostContext.close();
   });
 
-  test("guest clicando em Leave volta para a home com mensagem", async ({
+  test("guest clicando em Leave e confirmando volta para a home com mensagem", async ({
     browser,
   }) => {
     const hostContext = await browser.newContext();
@@ -62,6 +62,10 @@ test.describe("Ações da sala (Invite / Leave / End planning)", () => {
 
     await guestPage.getByRole("button", { name: /^Leave$/i }).click();
 
+    const confirmModal = guestPage.locator("#leave-confirm-modal");
+    await expect(confirmModal).toBeVisible();
+    await confirmModal.getByRole("button", { name: /^Yes$/i }).click();
+
     await expect(guestPage).toHaveURL(/\/$/);
     await expect(guestPage.getByText(/You left the room/i)).toBeVisible();
 
@@ -69,13 +73,44 @@ test.describe("Ações da sala (Invite / Leave / End planning)", () => {
     await hostContext.close();
   });
 
-  test("host clicando em End planning fecha a sala e volta para a home", async ({
+  test("guest clicando em Leave e cancelando permanece na sala", async ({
+    browser,
+  }) => {
+    const hostContext = await browser.newContext();
+    const hostPage = await hostContext.newPage();
+    const roomUrl = await createRoomAsHost(hostPage, "Host Cancel");
+    await dismissInviteModalIfOpen(hostPage);
+
+    const { page: guestPage, context: guestContext } = await joinRoomAsGuest(
+      browser,
+      roomUrl,
+      "Guest Cancel",
+    );
+
+    await guestPage.getByRole("button", { name: /^Leave$/i }).click();
+
+    const confirmModal = guestPage.locator("#leave-confirm-modal");
+    await expect(confirmModal).toBeVisible();
+    await confirmModal.getByRole("button", { name: /^No$/i }).click();
+
+    await expect(confirmModal).toBeHidden();
+    await expect(guestPage).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);
+
+    await guestContext.close();
+    await hostContext.close();
+  });
+
+  test("host clicando em End planning e confirmando fecha a sala e volta para a home", async ({
     page,
   }) => {
     const roomUrl = await createRoomAsHost(page, "Host End");
     await dismissInviteModalIfOpen(page);
 
     await page.getByRole("button", { name: /End planning/i }).click();
+
+    const confirmModal = page.locator("#leave-confirm-modal");
+    await expect(confirmModal).toBeVisible();
+    await confirmModal.getByRole("button", { name: /^Yes$/i }).click();
 
     await expect(page).toHaveURL(/\/$/);
 

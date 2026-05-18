@@ -235,21 +235,42 @@
 }
 
 @keyframes tree-shake {
-  0%, 100% { transform: rotate(0deg); }
-  18% { transform: rotate(-9deg); }
-  38% { transform: rotate(7deg); }
-  58% { transform: rotate(-4deg); }
-  78% { transform: rotate(2deg); }
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  18% {
+    transform: rotate(-9deg);
+  }
+
+  38% {
+    transform: rotate(7deg);
+  }
+
+  58% {
+    transform: rotate(-4deg);
+  }
+
+  78% {
+    transform: rotate(2deg);
+  }
 }
 
 
-@media (max-width: 768px) {
-  .room-forest-tree {
-    width: 16px;
+/* Forest density tapers with viewport size — on tablets we thin out a
+   quarter of the trees, and on phones we hide the forest entirely so the
+   central play area can breathe. */
+@media (max-width: 1024px) {
+  .room-forest-tree:nth-child(4n) {
+    display: none;
   }
+}
 
-  .room-forest-tree::before {
-    inset: -22px;
+@media (max-width: 768px) {
+  .room-forest {
+    display: none;
   }
 }
 
@@ -402,6 +423,7 @@
 
 /* Campfire-as-button (used when room is not revealed) */
 .room-campfire-btn {
+  position: relative;
   background: none;
   border: none;
   /* Pad so the click area matches the visually scaled fire (~75×75) */
@@ -412,6 +434,16 @@
   align-items: center;
   justify-content: center;
   transition: transform 0.2s ease;
+}
+
+/* Invisible hit-area expansion — same trick used on the forest trees.
+   Makes the reveal target comfortable to click/tap without changing layout
+   or the visible campfire size. */
+.room-campfire-btn::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  z-index: -1;
 }
 
 .room-campfire-btn:hover,
