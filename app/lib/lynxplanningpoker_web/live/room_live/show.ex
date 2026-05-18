@@ -97,6 +97,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def handle_event("reveal", _params, socket) do
+    # DEV ONLY: artificial delay to make the campfire loading spinner visible.
+    # Process.sleep(4000)
+
     case Rooms.update_room(socket.assigns.room, %{revealed: true}) do
       {:ok, room} ->
         users =

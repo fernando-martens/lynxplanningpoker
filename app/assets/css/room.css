@@ -446,6 +446,38 @@
   z-index: -1;
 }
 
+/* Localized spinner shown on top of the campfire while reveal is in flight.
+   Replaces the full-screen overlay for this action since the reveal is fast
+   and a global blur feels heavier than the interaction warrants. */
+.room-campfire-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid oklch(0% 0 0 / 0.15);
+  border-top-color: var(--fire2);
+  animation: room-card-spin 0.7s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.room-campfire-btn.phx-click-loading {
+  pointer-events: none;
+}
+
+.room-campfire-btn.phx-click-loading::after {
+  opacity: 1;
+}
+
+.room-campfire-btn.phx-click-loading #campfire {
+  opacity: 0.35;
+  transition: opacity 0.15s ease;
+}
+
 .room-campfire-btn:hover,
 .room-campfire-btn:focus-visible {
   transform: scale(1.12);
@@ -642,8 +674,8 @@
 .room-card-paw {
   position: absolute;
   font-size: 0.55rem;
-  opacity: 0.25;
-  color: oklch(45% 0.12 270);
+  opacity: 0.35;
+  color: var(--room-card-paw);
   line-height: 1;
 }
 
@@ -723,7 +755,6 @@
   -webkit-backdrop-filter: blur(2px);
 }
 
-body:has(button.phx-click-loading[phx-click="reveal"]) .room-loading-overlay,
 body:has(button.phx-click-loading[phx-click="reset"]) .room-loading-overlay,
 body:has(button.phx-click-loading[phx-click="end_planning"]) .room-loading-overlay,
 body:has(button.phx-click-loading[phx-click="leave_room"]) .room-loading-overlay {

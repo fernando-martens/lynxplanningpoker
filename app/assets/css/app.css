@@ -66,6 +66,7 @@
   --room-bg: oklch(17% 0.02 260);
   --room-card-bg: oklch(22% 0.025 260);
   --room-card-text: oklch(80% 0.05 270);
+  --room-card-paw: oklch(78% 0.1 270);
   --room-card-selected: oklch(55% 0.18 270);
   --room-card-selected-content: oklch(99% 0 0);
   --room-avatar-bg: var(--color-base-300);
@@ -128,6 +129,7 @@
   --room-bg: oklch(96% 0.01 85);
   --room-card-bg: oklch(99% 0 0);
   --room-card-text: oklch(25% 0.05 270);
+  --room-card-paw: oklch(45% 0.12 270);
   --room-card-selected: oklch(55% 0.18 270);
   --room-card-selected-content: oklch(99% 0 0);
   --room-avatar-bg: var(--color-base-300);
