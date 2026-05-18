@@ -23,6 +23,7 @@ defmodule Lynxplanningpoker.Users.User do
     user
     |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal, :is_host])
     |> validate_required([:room_id, :name])
+    |> validate_length(:name, max: 20)
     |> derive_vote_value()
     |> foreign_key_constraint(:room_id)
   end

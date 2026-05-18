@@ -129,3 +129,4 @@ Diretrizes:
 - Todas as variáveis CSS de cor ficam em `assets/css/app.css`, dentro dos blocos `@plugin "../vendor/daisyui-theme"` de cada tema (`light` e `dark`)
 - Nunca definir variáveis de cor fora desses blocos — o daisyUI theme plugin já cuida do modo sistema (`prefers-color-scheme`) e do toggle manual de tema automaticamente
 - `assets/css/room.css` contém apenas estilos estruturais e animações, sem variáveis de cor
+- **Sempre usar `oklch()` para cores** — nunca hex (`#RRGGBB`), `rgb()` ou `hsl()`. Se uma cor for fornecida em hex (ex: em um SVG ou design), converter para `oklch()` antes de adicionar no `app.css`. Convenção: `oklch(L% C H)` onde `L` é luminosidade (0–100%), `C` é croma (0 ≈ cinza, ~0.4 máx) e `H` é matiz em graus (0–360). Os tons roxos do app ficam em torno do hue 270–290

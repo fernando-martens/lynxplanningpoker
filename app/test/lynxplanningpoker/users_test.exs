@@ -35,6 +35,24 @@ defmodule Lynxplanningpoker.UsersTest do
       assert %{room_id: ["can't be blank"]} = errors_on(changeset)
     end
 
+    test "returns error when name is longer than 20 characters" do
+      room = create_room!()
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.create_user(%{room_id: room.id, name: String.duplicate("a", 21)})
+
+      assert %{name: ["should be at most 20 character(s)"]} = errors_on(changeset)
+    end
+
+    test "accepts a name with exactly 20 characters" do
+      room = create_room!()
+
+      assert {:ok, %User{name: name}} =
+               Users.create_user(%{room_id: room.id, name: String.duplicate("a", 20)})
+
+      assert String.length(name) == 20
+    end
+
     test "returns error when room_id does not exist" do
       assert {:error, %Ecto.Changeset{} = changeset} =
                Users.create_user(%{room_id: Ecto.UUID.generate(), name: "Bob"})
