@@ -59,6 +59,16 @@ window.addEventListener("phx:copy", (event) => {
   })
 })
 
+// Tree easter egg: clicking a forest tree makes it sway for half a second.
+// Pure client-side — no roundtrip to the server.
+window.addEventListener("click", (e) => {
+  const tree = e.target.closest(".room-forest-tree")
+  if (!tree || tree.classList.contains("is-shaking")) return
+
+  tree.classList.add("is-shaking")
+  setTimeout(() => tree.classList.remove("is-shaking"), 600)
+})
+
 // connect if there are any LiveViews on the page
 liveSocket.connect()
 

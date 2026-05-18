@@ -5,6 +5,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   alias Lynxplanningpoker.Presence
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
+  alias LynxplanningpokerWeb.RoomLive.Forest
+  alias LynxplanningpokerWeb.RoomLive.Seating
 
   @cards Decks.labels(Decks.default())
 
@@ -226,37 +228,6 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
-  defp user_positions([]), do: []
-
-  # Ellipse opens up as more users join: tight ring when few people are
-  # present, full table when the room is crowded.
-  @min_radius_x 28
-  @max_radius_x 42
-  @min_radius_y 32
-  @max_radius_y 44
-  @radius_ramp_start 2
-  @radius_ramp_end 12
-
-  defp user_positions(users) do
-    total = length(users)
-
-    t =
-      ((total - @radius_ramp_start) / (@radius_ramp_end - @radius_ramp_start))
-      |> max(0.0)
-      |> min(1.0)
-
-    rx = @min_radius_x + (@max_radius_x - @min_radius_x) * t
-    ry = @min_radius_y + (@max_radius_y - @min_radius_y) * t
-
-    Enum.with_index(users)
-    |> Enum.map(fn {user, i} ->
-      angle = -:math.pi() / 2 + 2 * :math.pi() / total * i
-      x = 50 + rx * :math.cos(angle)
-      y = 50 + ry * :math.sin(angle)
-      {user, Float.round(x, 2), Float.round(y, 2)}
-    end)
-  end
-
   defp card_selected?(nil, _card), do: false
   defp card_selected?(%{vote: v}, card), do: v == card
 
@@ -275,7 +246,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def render(assigns) do
-    assigns = assign(assigns, :user_positions, user_positions(assigns.users))
+    assigns =
+      assigns
+      |> assign(:user_positions, Seating.positions(assigns.users))
+      |> assign(:forest_trees, Forest.trees())
 
     ~H"""
     <Layouts.room_header is_host={@current_user && @current_user.is_host} />
@@ -325,6 +299,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     <div class="room-scene">
       <div class="room-loading-overlay" aria-hidden="true">
         <div class="room-loading-spinner"></div>
+      </div>
+      <div class="room-forest" aria-hidden="true">
+        <%= for {x, y, s} <- @forest_trees do %>
+          <span class="room-forest-tree" style={"left:#{x}%;top:#{y}%;--tree-scale:#{s}"}>
+            <.tree_icon />
+          </span>
+        <% end %>
       </div>
       <%!-- Game area --%>
       <div class="room-game-area">
@@ -455,6 +436,25 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     >
       <circle cx="6" cy="7" r="2" /> <circle cx="12" cy="5" r="2" /> <circle cx="18" cy="7" r="2" />
       <circle cx="4" cy="12" r="1.5" /> <path d="M12 10c-3.5 0-6 2-6 5s2 5 6 5 6-2 6-5-2.5-5-6-5z" />
+    </svg>
+    """
+  end
+
+  defp tree_icon(assigns) do
+    ~H"""
+    <svg
+      class="room-tree"
+      viewBox="0 0 27 37"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <path
+        d="M4.78807 13.4467C9.3978 9.39699 12.4241 2.90051 13.2205 0.510025C13.8295 2.66615 16.0032 8.75015 20.9502 13.0249C18.027 12.6874 16.3592 11.4781 15.8908 10.9156C16.8277 12.978 19.854 17.9465 24.4637 21.3213C21.4281 21.4338 18.2331 19.587 17.0151 18.6496C17.6241 20.2432 20.2194 24.5555 25.7286 29.0552C23.2551 29.2802 21.0439 28.4927 20.2475 28.0709C20.6223 28.8208 22.3556 30.9957 26.2908 33.6955C25.054 33.9205 23.152 33.3205 22.3556 32.9924L22.7773 34.258C21.0908 33.9205 18.4205 32.6175 17.2962 32.0081C17.5773 32.7581 18.2519 34.3705 18.7016 34.8205C17.4648 34.8205 15.9845 33.883 15.4691 33.4143V36.7891H11.3935V32.5706C10.0443 33.6955 7.08356 34.5392 5.77185 34.8205C5.91239 34.3049 6.19347 33.1049 6.19347 32.43C4.50699 33.4424 1.93041 33.6955 0.852934 33.6955C1.83672 32.8987 4.00104 30.9113 4.78807 29.3364C2.87672 29.5614 0.993474 28.9614 0.290771 28.6333C2.67996 26.8522 7.40212 22.7837 7.17726 20.7588C6.33401 21.04 4.22591 21.5463 2.53942 21.3213C4.46014 19.8214 8.58266 16.1466 9.70699 13.4467C9.19167 13.5874 5.68753 14.0092 4.78807 13.4467Z"
+        fill="var(--tree-fill)"
+        stroke="var(--tree-stroke)"
+        stroke-width="0.3"
+      />
     </svg>
     """
   end

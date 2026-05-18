@@ -342,11 +342,11 @@ defmodule LynxplanningpokerWeb.Layouts do
 
     ~H"""
     <header class={[
-      "absolute top-0 left-0 right-0 z-50 border-b border-base-200/60 backdrop-blur",
+      "absolute top-0 left-0 right-0 z-50 border-b border-base-200/60 pointer-events-none",
       @class
     ]}>
       <div class="max-w-6xl mx-auto w-full px-3 py-3 md:px-6 md:py-6 flex justify-between items-center gap-2">
-        <div class="flex items-center gap-2 min-w-0">
+        <div class="flex items-center gap-2 min-w-0 pointer-events-auto">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -362,7 +362,7 @@ defmodule LynxplanningpokerWeb.Layouts do
           </span>
         </div>
 
-        <nav class="flex items-center gap-1 md:gap-2 font-semibold">
+        <nav class="flex items-center gap-1 md:gap-2 font-semibold pointer-events-auto">
           <.button phx-click="reset" class="room-header-btn" aria-label={gettext("Restart")}>
             <.icon name="hero-arrow-path" class="size-5" />
             <span class="hidden md:inline">{gettext("Restart")}</span>

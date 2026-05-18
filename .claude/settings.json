@@ -9,7 +9,13 @@
       "PowerShell(mix format lib/lynxplanningpoker_web/live/room_live/show.ex)",
       "PowerShell(mix test 2>&1)",
       "Bash(mix ecto.migrate)",
-      "Bash(mix compile *)"
+      "Bash(mix compile *)",
+      "PowerShell($pwd.Path; Test-Path .\\\\mix.exs; Test-Path .\\\\app\\\\mix.exs)",
+      "PowerShell(mix compile 2>&1)",
+      "PowerShell(mix compile)",
+      "PowerShell(mix compile --warnings-as-errors 2>&1)",
+      "PowerShell(mix test test/lynxplanningpoker_web/live/room_live/show_test.exs 2>&1)",
+      "PowerShell($pwd.Path; Get-ChildItem -Name mix.exs -ErrorAction SilentlyContinue)"
     ]
   }
 }
