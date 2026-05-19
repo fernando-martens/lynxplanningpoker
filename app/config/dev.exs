@@ -88,5 +88,12 @@ config :phoenix_live_view,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
 
+# Relax rate limits in dev so the parallel e2e suite (workers > 1) doesn't
+# trip the 10 rooms/min/IP gate from 127.0.0.1. Prod values remain in
+# config/config.exs (the canonical defaults).
+config :lynxplanningpoker, :rate_limit,
+  global: [limit: 100_000, scale_ms: 60_000],
+  room_create: [limit: 100_000, scale_ms: 60_000]
+
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

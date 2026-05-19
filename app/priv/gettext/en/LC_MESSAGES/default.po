@@ -100,6 +100,11 @@ msgstr "Visible to everyone in the room"
 msgid "Verify you are human"
 msgstr "Verify you are human"
 
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex
+#, elixir-autogen
+msgid "Please complete the human verification before continuing."
+msgstr "Please complete the human verification before continuing."
+
 #: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:46
 #, elixir-autogen
 msgid "Join your room"

@@ -13,7 +13,7 @@
       </p>
     </div>
 
-    <.form for={@changeset} action={@action} class="mt-5 space-y-6">
+    <.form for={@changeset} action={@action} class="mt-5 space-y-6" id="create-room-form">
       <div class="space-y-2">
         <.input
           name="room[name]"
@@ -30,17 +30,12 @@
         <p class="text-xs text-base-content/60">{gettext("Visible to everyone in the room")}</p>
       </div>
 
-      <div class="rounded-[1.5rem] border border-base-200/70 bg-base-200 p-4">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <.input
-            type="checkbox"
-            name="room[captcha]"
-            id="room-captcha"
-            label={gettext("Verify you are human")}
-          />
-          <span class="text-xs uppercase tracking-[0.2em] text-base-content/70">Cloudflare</span>
-        </div>
-      </div>
+      <%= if @turnstile_site_key do %>
+        <div class="cf-turnstile" data-sitekey={@turnstile_site_key}></div>
+
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>
+        </script>
+      <% end %>
 
       <.button type="submit" class="w-full py-5 text-lg font-semibold">
         {gettext("Join your room")}

@@ -1,8 +1,25 @@
 defmodule LynxplanningpokerWeb.RoomControllerTest do
-  use LynxplanningpokerWeb.ConnCase, async: true
+  # async: false because some tests mutate `:lynxplanningpoker, :turnstile`
+  # via Application.put_env/3 to exercise the verification gate.
+  use LynxplanningpokerWeb.ConnCase, async: false
 
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
+
+  # Helper: enable Turnstile for a single test with `secret_key: nil` so the
+  # verifier returns {:error, :missing_secret} without doing any HTTP.
+  defp enable_turnstile_without_secret(_context) do
+    original = Application.get_env(:lynxplanningpoker, :turnstile)
+
+    Application.put_env(:lynxplanningpoker, :turnstile,
+      enabled: true,
+      site_key: "test-site-key",
+      secret_key: nil
+    )
+
+    on_exit(fn -> Application.put_env(:lynxplanningpoker, :turnstile, original) end)
+    :ok
+  end
 
   describe "GET /rooms/new" do
     test "renders the create-room form", %{conn: conn} do
@@ -10,6 +27,31 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       response = html_response(conn, 200)
       assert response =~ "Who are you?"
       assert response =~ ~s(name="room[name]")
+    end
+
+    test "renders the Turnstile widget when enabled", %{conn: conn} do
+      original = Application.get_env(:lynxplanningpoker, :turnstile)
+
+      Application.put_env(:lynxplanningpoker, :turnstile,
+        enabled: true,
+        site_key: "1x00000000000000000000AA",
+        secret_key: "secret"
+      )
+
+      on_exit(fn -> Application.put_env(:lynxplanningpoker, :turnstile, original) end)
+
+      conn = get(conn, ~p"/rooms/new")
+      response = html_response(conn, 200)
+      assert response =~ "cf-turnstile"
+      assert response =~ "1x00000000000000000000AA"
+      assert response =~ "challenges.cloudflare.com/turnstile/v0/api.js"
+    end
+
+    test "omits the Turnstile widget when disabled", %{conn: conn} do
+      conn = get(conn, ~p"/rooms/new")
+      response = html_response(conn, 200)
+      refute response =~ "cf-turnstile"
+      refute response =~ "challenges.cloudflare.com"
     end
   end
 
@@ -35,6 +77,24 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
       assert html_response(conn, 200) =~ "Who are you?"
       assert Rooms.list_rooms() == []
+    end
+  end
+
+  describe "POST /rooms with Turnstile enabled" do
+    setup :enable_turnstile_without_secret
+
+    test "blocks creation and re-renders the form when verification fails", %{conn: conn} do
+      conn =
+        post(conn, ~p"/rooms", %{
+          "room" => %{"name" => "Alice", "is_active" => "true"},
+          "cf-turnstile-response" => "any-token"
+        })
+
+      response = html_response(conn, 200)
+      assert response =~ "Who are you?"
+      assert response =~ "human verification"
+      assert Rooms.list_rooms() == []
+      assert get_session(conn, :current_user_id) == nil
     end
   end
 

@@ -67,7 +67,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Dev do
     {users, next_count}
   end
 
-  defp fake_full_users do
+  # Public so the unused-function warning doesn't fire — this is only called
+  # when the marked line in `stats_users/1` is uncommented locally.
+  def fake_full_users do
     votes = [
       "0",
       "1",

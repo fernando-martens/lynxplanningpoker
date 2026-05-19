@@ -49,3 +49,10 @@ config :lynxplanningpoker, LynxplanningpokerWeb.Gettext, default_locale: "en"
 config :lynxplanningpoker, :rate_limit,
   global: [limit: 1_000_000, scale_ms: 60_000],
   room_create: [limit: 1_000_000, scale_ms: 60_000]
+
+# Disable Turnstile in tests — no widget rendered, no network call.
+# Verifier tests flip this on locally with `Application.put_env/3`.
+config :lynxplanningpoker, :turnstile,
+  enabled: false,
+  site_key: nil,
+  secret_key: nil

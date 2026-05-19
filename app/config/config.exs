@@ -16,6 +16,14 @@ config :lynxplanningpoker, :rate_limit,
   global: [limit: 300, scale_ms: 60_000],
   room_create: [limit: 10, scale_ms: 60_000]
 
+# Cloudflare Turnstile. Dev defaults to the official "always passes" test
+# keys; prod is overridden in runtime.exs with real env-var-backed values;
+# test disables verification entirely (see test.exs).
+config :lynxplanningpoker, :turnstile,
+  enabled: true,
+  site_key: "1x00000000000000000000AA",
+  secret_key: "1x0000000000000000000000000000000AA"
+
 config :lynxplanningpoker, Lynxplanningpoker.Repo,
   migration_primary_key: [type: :binary_id],
   migration_foreign_key: [type: :binary_id]
@@ -68,6 +76,11 @@ config :logger, :default_formatter,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# Silence the Windows symlink warning emitted by Phoenix.LiveView.ColocatedJS.
+# We don't import from assets/node_modules in colocated hooks, so the symlink
+# isn't needed.
+config :phoenix_live_view, :colocated_js, disable_symlink_warning: true
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

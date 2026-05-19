@@ -40,12 +40,19 @@ export async function createRoomAsHost(
   await expect(page).toHaveURL(/\/rooms\/new$/);
 
   await page.getByLabel(/Your name/i).fill(hostName);
-  // Captcha é apenas um checkbox visual (não validado no backend), mas marcamos
-  // para refletir a interação real do usuário.
-  const captcha = page.getByLabel(/Verify you are human/i);
-  if (await captcha.isVisible().catch(() => false)) {
-    await captcha.check();
-  }
+  // Em dev as test keys do Cloudflare Turnstile (1x00...AA) auto-resolvem
+  // o widget; esperamos o hidden input com o token ser preenchido antes de
+  // submeter pra não cair no flash de erro de verificação.
+  await page.waitForFunction(
+    () => {
+      const el = document.querySelector(
+        'input[name="cf-turnstile-response"]',
+      ) as HTMLInputElement | null;
+      return !!el && el.value.length > 0;
+    },
+    null,
+    { timeout: 15_000 },
+  );
   await page.getByRole("button", { name: /Join your room/i }).click();
 
   await expect(page).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);

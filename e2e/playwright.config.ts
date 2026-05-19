@@ -4,10 +4,10 @@ const BASE_URL = process.env.BASE_URL ?? "http://localhost:4000";
 
 export default defineConfig({
   testDir: "./tests",
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: 1,
+  workers: 4,
   reporter: [["html", { open: "never" }], ["list"]],
   use: {
     baseURL: BASE_URL,

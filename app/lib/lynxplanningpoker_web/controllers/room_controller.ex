@@ -3,24 +3,46 @@ defmodule LynxplanningpokerWeb.RoomController do
 
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Rooms.Room
+  alias Lynxplanningpoker.Turnstile
   alias Lynxplanningpoker.Users
 
   def new(conn, _params) do
     changeset = Rooms.change_room(%Room{})
-    render(conn, :new, changeset: changeset, action: ~p"/rooms")
+
+    render(conn, :new,
+      changeset: changeset,
+      action: ~p"/rooms",
+      turnstile_site_key: Turnstile.site_key()
+    )
   end
 
-  def create(conn, %{"room" => room_params}) do
-    # Extract the user name from params (not part of room schema)
+  def create(conn, %{"room" => room_params} = params) do
     user_name = room_params["name"]
-    # Remove name from room_params since Room schema doesn't have it
     room_params = Map.drop(room_params, ["name"])
+    turnstile_token = params["cf-turnstile-response"]
 
+    case Turnstile.verify(turnstile_token, client_ip(conn)) do
+      :ok ->
+        do_create(conn, room_params, user_name)
+
+      {:error, _reason} ->
+        changeset = Rooms.change_room(%Room{}, room_params)
+
+        conn
+        |> put_flash(:error, gettext("Please complete the human verification before continuing."))
+        |> render(:new,
+          changeset: changeset,
+          action: ~p"/rooms",
+          turnstile_site_key: Turnstile.site_key()
+        )
+    end
+  end
+
+  defp do_create(conn, room_params, user_name) do
     case Rooms.create_room(room_params) do
       {:ok, room} ->
         cleanup_previous_session(conn)
 
-        # Create a user with the provided name in this room as the host
         case Users.create_user(%{
                room_id: room.id,
                name: user_name,
@@ -37,7 +59,21 @@ defmodule LynxplanningpokerWeb.RoomController do
         end
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, :new, changeset: changeset, action: ~p"/rooms")
+        render(conn, :new,
+          changeset: changeset,
+          action: ~p"/rooms",
+          turnstile_site_key: Turnstile.site_key()
+        )
+    end
+  end
+
+  defp client_ip(conn) do
+    case Plug.Conn.get_req_header(conn, "x-forwarded-for") do
+      [forwarded | _] ->
+        forwarded |> String.split(",") |> List.first() |> String.trim()
+
+      _ ->
+        conn.remote_ip |> :inet.ntoa() |> to_string()
     end
   end
 

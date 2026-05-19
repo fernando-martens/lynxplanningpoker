@@ -24,6 +24,25 @@ config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
 if config_env() == :prod do
+  turnstile_site_key =
+    System.get_env("CLOUDFLARE_TURNSTILE_SITE_KEY") ||
+      raise """
+      environment variable CLOUDFLARE_TURNSTILE_SITE_KEY is missing.
+      Get it from the Cloudflare Turnstile dashboard.
+      """
+
+  turnstile_secret_key =
+    System.get_env("CLOUDFLARE_TURNSTILE_SECRET_KEY") ||
+      raise """
+      environment variable CLOUDFLARE_TURNSTILE_SECRET_KEY is missing.
+      Get it from the Cloudflare Turnstile dashboard.
+      """
+
+  config :lynxplanningpoker, :turnstile,
+    enabled: true,
+    site_key: turnstile_site_key,
+    secret_key: turnstile_secret_key
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
