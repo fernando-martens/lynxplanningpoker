@@ -109,17 +109,17 @@ mix dialyzer           # análise de tipos via PLT (primeira run ~1-2min; depois
 - Não usar `daisyUI` — escrever componentes Tailwind manualmente
 - **Sempre ajustar os testes quando a funcionalidade for alterada.** Toda mudança em contexto, controller, LiveView ou schema deve vir acompanhada da atualização dos testes correspondentes em `test/`. Rodar `mix test` antes de finalizar — não deixar testes quebrados ou desatualizados.
 - **Sempre atualizar também os testes E2E em `../e2e/tests/`** quando a mudança afetar UI, rotas, fluxos de usuário, labels ou comportamento visível ao usuário (qualquer alteração em templates `.heex`, controllers, LiveViews, layouts ou seletor de idioma/tema). Se uma label/`msgid` for renomeada, atualizar também os seletores baseados em texto dos specs do Playwright. Se uma nova funcionalidade visível for adicionada, criar/estender o spec correspondente em `e2e/tests/`.
-- **Internacionalização (i18n):** o app suporta três idiomas — **pt_BR** (padrão), **en** e **fr**. Toda nova label visível ao usuário (templates `.heex`, componentes, flashes em controllers/LiveViews, `title`/`aria-label`/`placeholder`) **deve** ser envolvida em `gettext("...")` (ou `dgettext("errors", "...")` para mensagens do Ecto). Para cada `msgid` novo, adicionar a tradução nos três arquivos: `priv/gettext/pt_BR/LC_MESSAGES/default.po`, `priv/gettext/en/LC_MESSAGES/default.po` e `priv/gettext/fr/LC_MESSAGES/default.po` (e também em `default.pot`). Não deixar `msgstr ""` vazio em nenhum dos três idiomas. Convenção: o `msgid` é escrito em inglês (fonte canônica do gettext) — mesmo quando o texto original na UI estava em português, traduzir o `msgid` para inglês e usar o texto pt_BR como `msgstr` do arquivo `pt_BR`.
+- **Internacionalização (i18n):** o app suporta quatro idiomas — **pt_BR** (padrão), **en**, **fr** e **es**. Toda nova label visível ao usuário (templates `.heex`, componentes, flashes em controllers/LiveViews, `title`/`aria-label`/`placeholder`) **deve** ser envolvida em `gettext("...")` (ou `dgettext("errors", "...")` para mensagens do Ecto). Para cada `msgid` novo, adicionar a tradução nos quatro arquivos: `priv/gettext/pt_BR/LC_MESSAGES/default.po`, `priv/gettext/en/LC_MESSAGES/default.po`, `priv/gettext/fr/LC_MESSAGES/default.po` e `priv/gettext/es/LC_MESSAGES/default.po` (e também em `default.pot`). Não deixar `msgstr ""` vazio em nenhum dos quatro idiomas. Convenção: o `msgid` é escrito em inglês (fonte canônica do gettext) — mesmo quando o texto original na UI estava em português, traduzir o `msgid` para inglês e usar o texto pt_BR como `msgstr` do arquivo `pt_BR`.
 - **Auditoria obrigatória de i18n ao finalizar:** depois de qualquer mudança que envolva strings visíveis (novas ou renomeadas), **sempre** rodar:
 
   ```sh
   cd app && mix gettext.extract --merge
   ```
 
-  Esse comando atualiza `priv/gettext/default.pot` e mergeia em cada `.po`. Depois, **conferir** que nenhum `msgstr` ficou vazio e nenhuma entrada ficou marcada `#, fuzzy` — `mix gettext.extract --merge` apenas adiciona os msgids; preencher os `msgstr` continua sendo tarefa manual (em inglês `msgstr = msgid`; em pt_BR/fr traduzir). Auditoria rápida nos 6 arquivos:
+  Esse comando atualiza `priv/gettext/default.pot` e mergeia em cada `.po`. Depois, **conferir** que nenhum `msgstr` ficou vazio e nenhuma entrada ficou marcada `#, fuzzy` — `mix gettext.extract --merge` apenas adiciona os msgids; preencher os `msgstr` continua sendo tarefa manual (em inglês `msgstr = msgid`; em pt_BR/fr/es traduzir). Auditoria rápida nos 8 arquivos:
 
   ```sh
-  for f in priv/gettext/{en,pt_BR,fr}/LC_MESSAGES/{default,errors}.po; do
+  for f in priv/gettext/{en,pt_BR,fr,es}/LC_MESSAGES/{default,errors}.po; do
     empty=$(grep -cE '^msgstr ""$|^msgstr\[[01]\] ""$' "$f")
     fuzzy=$(grep -c '^#,.*fuzzy' "$f")
     # empty=1 é o header (convenção do gettext); empty>1 ou fuzzy>0 indicam tradução faltando

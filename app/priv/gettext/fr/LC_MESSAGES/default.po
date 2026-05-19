@@ -18,15 +18,14 @@ msgstr "Gratuit, rapide et sans inscription."
 
 #: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:29
 #: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:26
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:36
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:98
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:73
 #: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:41
 #, elixir-autogen
 msgid "Create a room"
 msgstr "Créer une salle"
 
 #: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:35
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:5
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:4
 #, elixir-autogen
 msgid "How it works"
 msgstr "Comment ça marche"
@@ -36,24 +35,22 @@ msgstr "Comment ça marche"
 msgid "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
 msgstr "Sur la page d'accueil, cliquez sur « Créer une salle », indiquez votre nom et vous deviendrez l'hôte d'une toute nouvelle session de planning."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:49
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:59
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:39
 #, elixir-autogen
 msgid "Invite your team"
 msgstr "Invitez votre équipe"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:52
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:42
 #, elixir-autogen
 msgid "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
 msgstr "Utilisez le bouton « Inviter » pour copier le lien de la salle et le partager avec votre équipe. Toute personne disposant du lien peut rejoindre — sans inscription."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:72
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:82
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:52
 #, elixir-autogen
 msgid "Vote and reveal"
 msgstr "Votez et révélez"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:75
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:55
 #, elixir-autogen
 msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
 msgstr "Chaque joueur choisit une carte pour estimer la tâche. Lorsque tout le monde a voté, l'hôte révèle les résultats et la moyenne s'affiche. Utilisez « Recommencer » pour passer au tour suivant."
@@ -116,24 +113,24 @@ msgstr "Saisissez votre nom pour rejoindre la salle"
 msgid "Join the room"
 msgstr "Rejoindre la salle"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:316
+#: lib/lynxplanningpoker_web/components/layouts.ex:326
 #, elixir-autogen
 msgid "Features"
 msgstr "Fonctionnalités"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:319
+#: lib/lynxplanningpoker_web/components/layouts.ex:329
 #, elixir-autogen
 msgid "Pricing"
 msgstr "Tarifs"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:367
-#: lib/lynxplanningpoker_web/components/layouts.ex:369
+#: lib/lynxplanningpoker_web/components/layouts.ex:377
+#: lib/lynxplanningpoker_web/components/layouts.ex:379
 #, elixir-autogen
 msgid "Restart"
 msgstr "Recommencer"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:374
-#: lib/lynxplanningpoker_web/components/layouts.ex:377
+#: lib/lynxplanningpoker_web/components/layouts.ex:384
+#: lib/lynxplanningpoker_web/components/layouts.ex:387
 #, elixir-autogen
 msgid "Invite"
 msgstr "Inviter"
@@ -163,14 +160,14 @@ msgstr "Toute personne disposant de ce lien peut rejoindre la salle"
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:384
-#: lib/lynxplanningpoker_web/components/layouts.ex:387
+#: lib/lynxplanningpoker_web/components/layouts.ex:394
+#: lib/lynxplanningpoker_web/components/layouts.ex:397
 #, elixir-autogen
 msgid "End planning"
 msgstr "Terminer le planning"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:394
-#: lib/lynxplanningpoker_web/components/layouts.ex:397
+#: lib/lynxplanningpoker_web/components/layouts.ex:404
+#: lib/lynxplanningpoker_web/components/layouts.ex:407
 #, elixir-autogen
 msgid "Leave"
 msgstr "Quitter"
@@ -199,6 +196,9 @@ msgstr "Anglais"
 
 msgid "French"
 msgstr "Français"
+
+msgid "Spanish"
+msgstr "Espagnol"
 
 #: lib/lynxplanningpoker_web/live/room_live/show.ex:587
 #: lib/lynxplanningpoker_web/live/room_live/show.ex:594
@@ -330,11 +330,6 @@ msgstr "Sans inscription — partagez un lien et jouez"
 #, elixir-autogen
 msgid "Vote average shown after reveal"
 msgstr "Moyenne des votes affichée après la révélation"
-
-#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:63
-#, elixir-autogen
-msgid "Light and dark themes, three languages"
-msgstr "Thèmes clair et sombre, trois langues"
 
 #: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:68
 #, elixir-autogen
@@ -702,92 +697,97 @@ msgstr "Vos droits"
 msgid "Last updated: %{date}"
 msgstr "Dernière mise à jour : %{date}"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:171
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:150
 #, elixir-autogen, elixir-format
 msgid "Can I use it in my language?"
 msgstr "Puis-je l'utiliser dans ma langue ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:8
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:7
 #, elixir-autogen, elixir-format
 msgid "Create, invite, vote — your team estimates a story in under a minute."
 msgstr "Créez, invitez, votez — votre équipe estime une story en moins d'une minute."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:123
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Do my teammates need to sign up?"
 msgstr "Mes coéquipiers doivent-ils s'inscrire ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:103
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "Frequently asked questions"
 msgstr "Questions fréquentes"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:138
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:115
 #, elixir-autogen, elixir-format
 msgid "How many people can join a room?"
 msgstr "Combien de personnes peuvent rejoindre une salle ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:108
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Is it really free?"
 msgstr "C'est vraiment gratuit ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:130
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "No accounts, no passwords. Anyone with the room link types a name and they're in. The name is only kept while they are in the room."
 msgstr "Pas de comptes, pas de mots de passe. Toute personne ayant le lien de la salle saisit un nom et entre. Le nom n'est conservé que pendant qu'elle est dans la salle."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:12
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "No sign-up"
 msgstr "Sans inscription"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:164
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Read the privacy details"
 msgstr "Lire les détails de confidentialité"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:90
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "Ready to start?"
 msgstr "Prêt à commencer ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:13
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Real-time"
 msgstr "Temps réel"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:160
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "Rooms are ephemeral: everything is deleted when the host leaves or after two hours of inactivity. We don't sell data and we don't run ads."
 msgstr "Les salles sont éphémères : tout est supprimé lorsque l'hôte part ou après deux heures d'inactivité. Nous ne vendons pas de données et nous ne diffusons pas de publicités."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:178
-#, elixir-autogen, elixir-format
-msgid "The interface is available in Portuguese (Brazil), English and French. Switch from the header menu — your choice sticks across sessions."
-msgstr "L'interface est disponible en portugais (Brésil), anglais et français. Changez de langue depuis le menu d'en-tête — votre choix est conservé entre les sessions."
-
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:145
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:123
 #, elixir-autogen, elixir-format
 msgid "Up to 15 participants per room, which covers the vast majority of planning sessions. If you need bigger groups, get in touch."
 msgstr "Jusqu'à 15 participants par salle, ce qui couvre la grande majorité des sessions de planning. Si vous avez besoin de groupes plus grands, contactez-nous."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:153
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "What happens to my data?"
 msgstr "Que deviennent mes données ?"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:115
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:91
 #, elixir-autogen, elixir-format
 msgid "Yes. The core planning poker experience — creating rooms, inviting your team, voting, revealing — is free forever. We have no paid tier today; if we add one in the future, it will only cover advanced features and the basic flow will remain free."
 msgstr "Oui. L'expérience principale de planning poker — créer des salles, inviter votre équipe, voter, révéler — est gratuite pour toujours. Nous n'avons pas d'offre payante aujourd'hui ; si nous en ajoutons une à l'avenir, elle ne couvrira que des fonctionnalités avancées et le flux de base restera gratuit."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:92
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "Your first room takes less than 10 seconds to set up."
 msgstr "Créer votre première salle prend moins de 10 secondes."
 
-#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:14
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:63
 #, elixir-autogen, elixir-format
-msgid "pt / en / fr"
-msgstr "pt / en / fr"
+msgid "Light and dark themes, four languages"
+msgstr "Thèmes clair et sombre, quatre langues"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:158
+#, elixir-autogen, elixir-format
+msgid "The interface is available in Portuguese (Brazil), English, French and Spanish. Switch from the header menu — your choice sticks across sessions."
+msgstr "L'interface est disponible en portugais (Brésil), anglais, français et espagnol. Changez de langue depuis le menu d'en-tête — votre choix est conservé entre les sessions."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "pt / en / fr / es"
+msgstr "pt / en / fr / es"

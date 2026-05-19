@@ -23,7 +23,7 @@ defmodule LynxplanningpokerWeb.Gettext do
   """
   use Gettext.Backend, otp_app: :lynxplanningpoker, default_locale: "pt_BR"
 
-  @locales ~w(en pt_BR fr)
+  @locales ~w(en pt_BR fr es)
 
   def locales, do: @locales
 

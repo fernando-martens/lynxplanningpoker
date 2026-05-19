@@ -207,6 +207,7 @@ defmodule LynxplanningpokerWeb.Layouts do
   defp locale_label("pt_BR"), do: "PT"
   defp locale_label("en"), do: "EN"
   defp locale_label("fr"), do: "FR"
+  defp locale_label("es"), do: "ES"
   defp locale_label(_), do: "?"
 
   attr(:locale, :string, required: true)
@@ -241,6 +242,15 @@ defmodule LynxplanningpokerWeb.Layouts do
       <rect width="9.33" height="20" fill="#002654" />
       <rect x="9.33" width="9.33" height="20" fill="#fff" />
       <rect x="18.66" width="9.33" height="20" fill="#ce1126" />
+    </svg>
+    """
+  end
+
+  defp flag(%{locale: "es"} = assigns) do
+    ~H"""
+    <svg viewBox="0 0 28 20" xmlns="http://www.w3.org/2000/svg" class={@class}>
+      <rect width="28" height="20" fill="#c60b1e" />
+      <rect y="5" width="28" height="10" fill="#ffc400" />
     </svg>
     """
   end
