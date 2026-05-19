@@ -281,15 +281,17 @@
   height: min(400px, 55vh);
 }
 
-/* Campfire + reveal button centered on the table. The hint and average have
-   the same reserved height (see .room-campfire-hint min-height), so the wrap
-   total height is identical in both states — the campfire doesn't shift when
-   the room is revealed, and the whole block stays centered between users. */
+/* Campfire wrap. Anchored by the campfire (top of content), NOT centered on
+   its own midline — so the campfire stays in exactly the same spot whether
+   the room is revealed or not, even though the revealed state has extra
+   content (hint + average) below the campfire. The -54px offset matches the
+   half-height of the unrevealed content (50 fire + 8 gap + 50 reserved hint)
+   so visually the campfire remains roughly centered on the table. */
 .room-campfire-wrap {
   position: absolute;
-  top: 50%;
+  top: calc(50% - 54px);
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -504,29 +506,84 @@
   align-items: flex-start;
 }
 
-/* Vote average shown after reveal */
-.room-average {
+/* Hint shown between the campfire and the average card after reveal. Sits
+   naturally in the flex column flow at the same vertical position as the
+   unrevealed .room-campfire-hint text (both come right after the campfire +
+   8px gap), so the explanatory text doesn't shift between states. */
+.room-stats-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  margin: 0;
+}
+
+/* Unified button covering the whole central area (campfire + hint + average)
+   after reveal. Clicking anywhere inside opens the statistics modal. The
+   layout (column, gap 8px, centered) matches the unrevealed campfire wrap
+   so the campfire stays in exactly the same spot between states. */
+.room-reveal-summary {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 4px 14px;
-  border-radius: 12px;
-  background-color: var(--color-base-200);
-  border: 1.5px solid var(--color-base-300);
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.room-reveal-summary:focus-visible {
+  outline: none;
+}
+
+.room-reveal-summary:focus-visible .room-average-value {
+  text-decoration: underline;
+}
+
+/* Scale the campfire (not the rest of the button) on hover of the unified
+   button. The base transform is already scale(1.3) on #campfire, so the
+   hover state composes to ~1.46 for a similar feel to the unrevealed
+   .room-campfire-btn hover. */
+.room-reveal-summary #campfire {
+  transition: transform 0.2s ease;
+}
+
+.room-reveal-summary:hover #campfire,
+.room-reveal-summary:focus-visible #campfire {
+  transform: scale(1.46);
+}
+
+.room-reveal-summary:active #campfire {
+  transform: scale(1.36);
+}
+
+/* Vote average shown after reveal — plain inline text (no card), placed
+   right under the hint so it doesn't crowd the player sitting at the
+   bottom of the seating ring. */
+.room-average {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
 }
 
 .room-average-label {
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--color-base-content);
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .room-average-value {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--room-card-selected);
   line-height: 1.1;
@@ -840,15 +897,26 @@ body:has(button.phx-click-loading[phx-click="leave_room"]) .room-loading-overlay
   }
 
   .room-average {
-    padding: 3px 12px;
+    gap: 5px;
+  }
+
+  .room-average-label {
+    font-size: 0.8rem;
   }
 
   .room-average-value {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .room-campfire-hint {
     font-size: 0.7rem;
+  }
+
+  /* With up to 12 bars side-by-side, the word "votes" makes each per-bar
+     count wider than the bar itself on mobile and overlaps neighbors.
+     Hide just the word — the count number stays visible. */
+  .stats-bar-count-word {
+    display: none;
   }
 }
 
@@ -868,4 +936,198 @@ body:has(button.phx-click-loading[phx-click="leave_room"]) .room-loading-overlay
     width: 44px;
     height: 62px;
   }
+}
+
+/* ─── Statistics modal ──────────────────────────────────── */
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stats-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background-color: var(--color-base-200);
+  border: 1px solid var(--color-base-300);
+}
+
+.stats-summary-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-base-content);
+  opacity: 0.6;
+}
+
+.stats-summary-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--room-card-selected);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.stats-consensus {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--color-success);
+  color: var(--color-success-content);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.stats-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-base-content);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+/* Vertical bar chart — one column per voted card. Bars grow from the bottom
+   of a fixed-height track; height is set inline as a percentage of the most
+   voted card so the tallest bar always fills the track. */
+.stats-distribution {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 120px;
+}
+
+.stats-bar-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-bar-track {
+  width: 100%;
+  max-width: 110px;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.stats-bar-fill {
+  width: 100%;
+  min-height: 8px;
+  border-radius: 14px 14px 4px 4px;
+  transition: height 0.35s ease;
+}
+
+/* Pastel palette cycled by card index so adjacent bars stay visually distinct
+   without depending on the deck size. */
+.stats-bar-fill--0 {
+  background-color: oklch(82% 0.07 165);
+}
+
+.stats-bar-fill--1 {
+  background-color: oklch(83% 0.08 25);
+}
+
+.stats-bar-fill--2 {
+  background-color: oklch(83% 0.08 340);
+}
+
+.stats-bar-fill--3 {
+  background-color: oklch(83% 0.08 270);
+}
+
+.stats-bar-label {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-base-content);
+}
+
+.stats-bar-count {
+  font-size: 0.8rem;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  white-space: nowrap;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.stats-row-count {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: right;
+  color: var(--color-base-content);
+  opacity: 0.75;
+}
+
+.stats-abstained {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--color-base-content);
+  opacity: 0.65;
+  text-align: center;
+}
+
+.stats-section-title--spaced {
+  margin-top: 18px;
+}
+
+.stats-voters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.stats-voter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: var(--color-base-200);
+}
+
+.stats-voter-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-voter-vote {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--room-card-selected);
+  min-width: 24px;
+  text-align: right;
+}
+
+.stats-voter-vote--empty {
+  color: var(--color-base-content);
+  opacity: 0.4;
+  font-weight: 600;
 }

@@ -17,7 +17,10 @@
       "PowerShell(mix test test/lynxplanningpoker_web/live/room_live/show_test.exs 2>&1)",
       "PowerShell($pwd.Path; Get-ChildItem -Name mix.exs -ErrorAction SilentlyContinue)",
       "Bash(mix gettext.extract --merge)",
-      "PowerShell(mix gettext.extract --merge 2>&1)"
+      "PowerShell(mix gettext.extract --merge 2>&1)",
+      "Bash(grep -oE \"room-average-value[^<]{0,80}\")",
+      "Bash(awk '/6\\\\.5/ {print NR\": \"$0}')",
+      "Bash(grep -oE \"average-value[^<]{0,30}\")"
     ]
   }
 }

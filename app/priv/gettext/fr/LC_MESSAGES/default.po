@@ -120,44 +120,44 @@ msgstr "Saisissez votre nom pour rejoindre la salle"
 msgid "Join the room"
 msgstr "Rejoindre la salle"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:315
+#: lib/lynxplanningpoker_web/components/layouts.ex:316
 #, elixir-autogen
 msgid "Features"
 msgstr "Fonctionnalités"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:318
+#: lib/lynxplanningpoker_web/components/layouts.ex:319
 #, elixir-autogen
 msgid "Pricing"
 msgstr "Tarifs"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:366
-#: lib/lynxplanningpoker_web/components/layouts.ex:368
+#: lib/lynxplanningpoker_web/components/layouts.ex:367
+#: lib/lynxplanningpoker_web/components/layouts.ex:369
 #, elixir-autogen
 msgid "Restart"
 msgstr "Recommencer"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:373
-#: lib/lynxplanningpoker_web/components/layouts.ex:376
+#: lib/lynxplanningpoker_web/components/layouts.ex:374
+#: lib/lynxplanningpoker_web/components/layouts.ex:377
 #, elixir-autogen
 msgid "Invite"
 msgstr "Inviter"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:286
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:390
 #, elixir-autogen
 msgid "Invitation link"
 msgstr "Lien d'invitation"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:303
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:407
 #, elixir-autogen
 msgid "Copy"
 msgstr "Copier"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:311
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:415
 #, elixir-autogen
 msgid "Link copied!"
 msgstr "Lien copié !"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:319
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:423
 #, elixir-autogen
 msgid "Anyone with this link can join the room"
 msgstr "Toute personne disposant de ce lien peut rejoindre la salle"
@@ -167,30 +167,30 @@ msgstr "Toute personne disposant de ce lien peut rejoindre la salle"
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:383
-#: lib/lynxplanningpoker_web/components/layouts.ex:386
+#: lib/lynxplanningpoker_web/components/layouts.ex:384
+#: lib/lynxplanningpoker_web/components/layouts.ex:387
 #, elixir-autogen
 msgid "End planning"
 msgstr "Terminer le planning"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:393
-#: lib/lynxplanningpoker_web/components/layouts.ex:396
+#: lib/lynxplanningpoker_web/components/layouts.ex:394
+#: lib/lynxplanningpoker_web/components/layouts.ex:397
 #, elixir-autogen
 msgid "Leave"
 msgstr "Quitter"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:130
+#: lib/lynxplanningpoker_web/components/layouts.ex:131
 #, elixir-autogen
 msgid "Settings"
 msgstr "Paramètres"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:141
+#: lib/lynxplanningpoker_web/components/layouts.ex:142
 #, elixir-autogen
 msgid "Theme"
 msgstr "Thème"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:147
-#: lib/lynxplanningpoker_web/components/layouts.ex:180
+#: lib/lynxplanningpoker_web/components/layouts.ex:148
+#: lib/lynxplanningpoker_web/components/layouts.ex:181
 #, elixir-autogen
 msgid "Language"
 msgstr "Langue"
@@ -204,28 +204,24 @@ msgstr "Anglais"
 msgid "French"
 msgstr "Français"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:428
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:435
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:619
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:626
 #, elixir-autogen
 msgid "Reveal"
 msgstr "Révéler"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:437
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:628
 #, elixir-autogen
 msgid "Click the fire to reveal"
 msgstr "Cliquez sur le feu pour révéler"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:420
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:464
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:610
 #, elixir-autogen
 msgid "Average"
 msgstr "Moyenne"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:419
-#, elixir-autogen
-msgid "Vote average"
-msgstr "Moyenne des votes"
-
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:402
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:584
 #, elixir-autogen
 msgid "Vote changed after reveal"
 msgstr "Vote modifié après révélation"
@@ -242,7 +238,7 @@ msgstr "Cette salle n'existe pas ou est déjà terminée."
 msgid "Could not register your vote. Please try again."
 msgstr "Impossible d'enregistrer votre vote. Veuillez réessayer."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:192
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:195
 #, elixir-autogen
 msgid "The room was ended by the host."
 msgstr "La salle a été fermée par l'hôte."
@@ -252,18 +248,18 @@ msgstr "La salle a été fermée par l'hôte."
 msgid "You left the room."
 msgstr "Vous avez quitté la salle."
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:94
+#: lib/lynxplanningpoker_web/components/layouts.ex:95
 #, elixir-autogen
 msgid "We can't find the internet"
 msgstr "Impossible de trouver Internet"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:99
-#: lib/lynxplanningpoker_web/components/layouts.ex:111
+#: lib/lynxplanningpoker_web/components/layouts.ex:100
+#: lib/lynxplanningpoker_web/components/layouts.ex:112
 #, elixir-autogen
 msgid "Attempting to reconnect"
 msgstr "Tentative de reconnexion"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:106
+#: lib/lynxplanningpoker_web/components/layouts.ex:107
 #, elixir-autogen
 msgid "Something went wrong!"
 msgstr "Une erreur est survenue !"
@@ -418,33 +414,97 @@ msgstr "Une idée de ce qui devrait figurer dans Premium ?"
 msgid "Tell us by email"
 msgstr "Dites-le-nous par e-mail"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:334
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:438
 #, elixir-autogen, elixir-format
 msgid "All participants will be disconnected and the room will be permanently closed."
 msgstr "Tous les participants seront déconnectés et la salle sera fermée définitivement."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:327
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:431
 #, elixir-autogen, elixir-format
 msgid "End planning?"
 msgstr "Terminer le planning ?"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:328
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:432
 #, elixir-autogen, elixir-format
 msgid "Leave the room?"
 msgstr "Quitter la salle ?"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:345
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:447
 #, elixir-autogen, elixir-format
 msgid "No"
 msgstr "Non"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:349
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:353
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:451
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:455
 #, elixir-autogen, elixir-format
 msgid "Yes"
 msgstr "Oui"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:337
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:439
 #, elixir-autogen, elixir-format
 msgid "You will leave the room. You can rejoin using the invite link."
 msgstr "Vous quitterez la salle. Vous pouvez la rejoindre via le lien d'invitation."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:532
+#, elixir-autogen, elixir-format
+msgid "%{count} participant did not vote"
+msgid_plural "%{count} participants did not vote"
+msgstr[0] "%{count} participant n'a pas voté"
+msgstr[1] "%{count} participants n'ont pas voté"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:483
+#, elixir-autogen, elixir-format
+msgid "Consensus reached!"
+msgstr "Consensus atteint !"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:487
+#, elixir-autogen, elixir-format
+msgid "Distribution"
+msgstr "Répartition"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:472
+#, elixir-autogen, elixir-format
+msgid "Max"
+msgstr "Max"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:468
+#, elixir-autogen, elixir-format
+msgid "Min"
+msgstr "Min"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:490
+#, elixir-autogen, elixir-format
+msgid "No votes were cast."
+msgstr "Aucun vote n'a été enregistré."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:598
+#, elixir-autogen, elixir-format
+msgid "View voting statistics"
+msgstr "Voir les statistiques de vote"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:476
+#, elixir-autogen, elixir-format
+msgid "Voted"
+msgstr "Votants"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:461
+#, elixir-autogen, elixir-format
+msgid "Voting statistics"
+msgstr "Statistiques du vote"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:607
+#, elixir-autogen, elixir-format
+msgid "Click to see statistics"
+msgstr "Cliquez pour voir les statistiques"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:514
+#, elixir-autogen, elixir-format
+msgid "Individual votes"
+msgstr "Votes individuels"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:506
+#, elixir-autogen, elixir-format
+msgid "vote"
+msgid_plural "votes"
+msgstr[0] "voix"
+msgstr[1] "voix"

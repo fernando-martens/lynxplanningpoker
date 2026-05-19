@@ -29,7 +29,7 @@ test.describe("Revelar e reiniciar votação", () => {
 
     await hostPage.getByRole("button", { name: /^Reveal$/i }).click();
 
-    await expect(hostPage.getByText(/^Average$/i)).toBeVisible();
+    await expect(hostPage.getByText(/^Average:$/i)).toBeVisible();
     await expect(hostPage.locator(".room-average-value")).toHaveText("6.5");
 
     await expect(hostPage.locator(".room-user-vote-num").first()).toBeVisible();
@@ -49,7 +49,7 @@ test.describe("Revelar e reiniciar votação", () => {
     await expect(card5).toHaveClass(/room-card--selected/);
 
     await page.getByRole("button", { name: /^Reveal$/i }).click();
-    await expect(page.getByText(/^Average$/i)).toBeVisible();
+    await expect(page.getByText(/^Average:$/i)).toBeVisible();
 
     await page.getByRole("button", { name: /Restart/i }).click();
 
@@ -73,7 +73,7 @@ test.describe("Revelar e reiniciar votação", () => {
     await card(guestPage, "5").click();
 
     await hostPage.getByRole("button", { name: /^Reveal$/i }).click();
-    await expect(hostPage.getByText(/^Average$/i)).toBeVisible();
+    await expect(hostPage.getByText(/^Average:$/i)).toBeVisible();
 
     // guest muda voto depois do reveal
     await card(guestPage, "13").click();

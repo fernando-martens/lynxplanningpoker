@@ -9,7 +9,7 @@ defmodule LynxplanningpokerWeb.Layouts do
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
   # and other static content.
-  embed_templates "layouts/*"
+  embed_templates("layouts/*")
 
   @doc """
   Renders your app layout.
@@ -25,13 +25,14 @@ defmodule LynxplanningpokerWeb.Layouts do
       </Layouts.app>
 
   """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
 
-  attr :current_scope, :map,
+  attr(:current_scope, :map,
     default: nil,
     doc: "the current [scope](https://hexdocs.pm/phoenix/scopes.html)"
+  )
 
-  slot :inner_block, required: true
+  slot(:inner_block, required: true)
 
   def app(assigns) do
     ~H"""
@@ -79,8 +80,8 @@ defmodule LynxplanningpokerWeb.Layouts do
 
       <.flash_group flash={@flash} />
   """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
-  attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
+  attr(:flash, :map, required: true, doc: "the map of flash messages")
+  attr(:id, :string, default: "flash-group", doc: "the optional id of flash container")
 
   def flash_group(assigns) do
     ~H"""
@@ -208,8 +209,8 @@ defmodule LynxplanningpokerWeb.Layouts do
   defp locale_label("fr"), do: "FR"
   defp locale_label(_), do: "?"
 
-  attr :locale, :string, required: true
-  attr :class, :any, default: nil
+  attr(:locale, :string, required: true)
+  attr(:class, :any, default: nil)
 
   defp flag(%{locale: "pt_BR"} = assigns) do
     ~H"""
@@ -286,7 +287,7 @@ defmodule LynxplanningpokerWeb.Layouts do
   @doc """
   Renders the shared application header used on public pages.
   """
-  attr :class, :string, default: nil
+  attr(:class, :string, default: nil)
 
   def app_header(assigns) do
     assigns = assign(assigns, :class, assigns.class || "")
@@ -334,15 +335,15 @@ defmodule LynxplanningpokerWeb.Layouts do
   @doc """
   Renders the shared application header used on public pages.
   """
-  attr :class, :string, default: nil
-  attr :is_host, :boolean, default: false
+  attr(:class, :string, default: nil)
+  attr(:is_host, :boolean, default: false)
 
   def room_header(assigns) do
     assigns = assign(assigns, :class, assigns.class || "")
 
     ~H"""
     <header class={[
-      "absolute top-0 left-0 right-0 z-50 border-b border-base-200/60 pointer-events-none",
+      "absolute top-0 left-0 right-0 z-50 pointer-events-none",
       @class
     ]}>
       <div class="max-w-6xl mx-auto w-full px-3 py-3 md:px-6 md:py-6 flex justify-between items-center gap-2">

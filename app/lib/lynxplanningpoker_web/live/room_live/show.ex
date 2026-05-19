@@ -5,6 +5,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   alias Lynxplanningpoker.Presence
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
+  alias LynxplanningpokerWeb.RoomLive.Dev
   alias LynxplanningpokerWeb.RoomLive.Forest
   alias LynxplanningpokerWeb.RoomLive.Seating
 
@@ -33,8 +34,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             Phoenix.PubSub.subscribe(Lynxplanningpoker.PubSub, presence_topic)
             Presence.track(self(), presence_topic, current_user.id, %{})
 
-            # DEV ONLY: cycle fake users 1→15 every second to preview layout.
-            # Process.send_after(self(), :tick_fake_users, 0)
+            Dev.maybe_schedule_seating_tick(self())
           end
 
           show_initial_invite =
@@ -97,8 +97,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
 
   @impl true
   def handle_event("reveal", _params, socket) do
-    # DEV ONLY: artificial delay to make the campfire loading spinner visible.
-    # Process.sleep(4000)
+    Dev.maybe_slow_down_reveal()
 
     case Rooms.update_room(socket.assigns.room, %{revealed: true}) do
       {:ok, room} ->
@@ -234,31 +233,19 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
-  # DEV ONLY: cycle fake users 1→15 every second to preview the seating layout.
+  # DEV ONLY: handles the seating-preview tick scheduled by
+  # `Dev.maybe_schedule_seating_tick/1`. With the tick disabled this
+  # callback is never invoked.
   @impl true
   def handle_info(:tick_fake_users, socket) do
     count = socket.assigns[:fake_count] || 1
-    next_count = if count >= 15, do: 1, else: count + 1
+    {users, next_count} = Dev.tick_fake_users(count)
     Process.send_after(self(), :tick_fake_users, 1000)
 
     {:noreply,
      socket
-     |> assign(:users, fake_users(count))
+     |> assign(:users, users)
      |> assign(:fake_count, next_count)}
-  end
-
-  defp fake_users(n) do
-    for i <- 1..n do
-      %{
-        id: "fake-#{i}",
-        name: "User #{i}",
-        vote: nil,
-        vote_value: nil,
-        has_voted: false,
-        vote_changed_after_reveal: false,
-        is_host: false
-      }
-    end
   end
 
   defp card_selected?(nil, _card), do: false
@@ -277,12 +264,75 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
+  defp bar_pct(_count, 0), do: 0
+  defp bar_pct(count, max_count), do: round(count * 100 / max_count)
+
+  defp sorted_voters(users) do
+    Enum.sort_by(users, fn user ->
+      cond do
+        is_integer(user.vote_value) -> {0, user.vote_value, user.name}
+        not is_nil(user.vote) -> {1, 0, user.name}
+        true -> {2, 0, user.name}
+      end
+    end)
+  end
+
+  defp vote_stats(users, cards) do
+    total = length(users)
+    voted_users = Enum.filter(users, & &1.has_voted)
+    voted = length(voted_users)
+    numeric_votes = for %{vote_value: v} <- voted_users, is_integer(v), do: v
+
+    {min_v, max_v} =
+      case numeric_votes do
+        [] -> {nil, nil}
+        votes -> {Enum.min(votes), Enum.max(votes)}
+      end
+
+    counts =
+      voted_users
+      |> Enum.frequencies_by(& &1.vote)
+      |> Enum.reject(fn {label, _} -> is_nil(label) end)
+
+    max_count =
+      case counts do
+        [] -> 0
+        _ -> counts |> Enum.map(&elem(&1, 1)) |> Enum.max()
+      end
+
+    distribution =
+      cards
+      |> Enum.map(fn label ->
+        count = Enum.find_value(counts, 0, fn {l, c} -> if l == label, do: c end)
+        {label, count}
+      end)
+      |> Enum.filter(fn {_label, count} -> count > 0 end)
+
+    consensus? = match?([_ | _], numeric_votes) and length(Enum.uniq(numeric_votes)) == 1
+
+    %{
+      total: total,
+      voted: voted,
+      abstained: total - voted,
+      average: vote_average(users),
+      min: min_v,
+      max: max_v,
+      distribution: distribution,
+      max_count: max_count,
+      consensus?: consensus?
+    }
+  end
+
   @impl true
   def render(assigns) do
+    stats_users = Dev.stats_users(assigns.users)
+
     assigns =
       assigns
       |> assign(:user_positions, Seating.positions(assigns.users))
       |> assign(:forest_trees, Forest.trees())
+      |> assign(:stats, vote_stats(stats_users, assigns.cards))
+      |> assign(:stats_users, stats_users)
 
     ~H"""
     <Layouts.room_header is_host={@current_user && @current_user.is_host} />
@@ -357,6 +407,86 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       </div>
     </.modal>
 
+    <.modal id="stats-modal" title={gettext("Voting statistics")}>
+      <div class="stats-summary">
+        <div class="stats-summary-item">
+          <span class="stats-summary-label">{gettext("Average")}</span>
+          <span class="stats-summary-value">{@stats.average}</span>
+        </div>
+        <div class="stats-summary-item">
+          <span class="stats-summary-label">{gettext("Min")}</span>
+          <span class="stats-summary-value">{@stats.min || "—"}</span>
+        </div>
+        <div class="stats-summary-item">
+          <span class="stats-summary-label">{gettext("Max")}</span>
+          <span class="stats-summary-value">{@stats.max || "—"}</span>
+        </div>
+        <div class="stats-summary-item">
+          <span class="stats-summary-label">{gettext("Voted")}</span>
+          <span class="stats-summary-value">{@stats.voted}/{@stats.total}</span>
+        </div>
+      </div>
+
+      <%= if @stats.consensus? do %>
+        <p class="stats-consensus">
+          {gettext("Consensus reached!")}
+        </p>
+      <% end %>
+
+      <h3 class="stats-section-title">{gettext("Distribution")}</h3>
+      <%= if @stats.distribution == [] do %>
+        <p class="text-sm text-base-content/60">
+          {gettext("No votes were cast.")}
+        </p>
+      <% else %>
+        <ul class="stats-distribution">
+          <%= for {{label, count}, idx} <- Enum.with_index(@stats.distribution) do %>
+            <li class="stats-bar-item">
+              <div class="stats-bar-track">
+                <div
+                  class={"stats-bar-fill stats-bar-fill--#{rem(idx, 4)}"}
+                  style={"height: #{bar_pct(count, @stats.max_count)}%"}
+                >
+                </div>
+              </div>
+              <span class="stats-bar-label">{label}</span>
+              <span class="stats-bar-count">
+                <span class="stats-bar-count-num">{count}</span>
+                <span class="stats-bar-count-word">{ngettext("vote", "votes", count)}</span>
+              </span>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <h3 class="stats-section-title stats-section-title--spaced">
+        {gettext("Individual votes")}
+      </h3>
+      <ul class="stats-voters">
+        <%= for user <- sorted_voters(@stats_users) do %>
+          <li class="stats-voter">
+            <span class="stats-voter-name">{user.name}</span>
+            <span class={[
+              "stats-voter-vote",
+              is_nil(user.vote) && "stats-voter-vote--empty"
+            ]}>
+              {user.vote || "—"}
+            </span>
+          </li>
+        <% end %>
+      </ul>
+
+      <%= if @stats.abstained > 0 do %>
+        <p class="stats-abstained">
+          {ngettext(
+            "%{count} participant did not vote",
+            "%{count} participants did not vote",
+            @stats.abstained
+          )}
+        </p>
+      <% end %>
+    </.modal>
+
     <div
       :if={@show_initial_invite}
       id="initial-invite-trigger"
@@ -411,16 +541,25 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           <%!-- Campfire at center --%>
           <div class="room-campfire-wrap">
             <%= if @room.revealed do %>
-              <div id="campfire" class="campfire--settled">
-                <div id="wood"><span></span></div>
+              <button
+                type="button"
+                class="room-reveal-summary"
+                aria-label={gettext("View voting statistics")}
+                phx-click={show_modal("stats-modal")}
+              >
+                <div id="campfire" class="campfire--settled">
+                  <div id="wood"><span></span></div>
 
-                <div id="fire"></div>
-              </div>
+                  <div id="fire"></div>
+                </div>
 
-              <div class="room-average" aria-label={gettext("Vote average")}>
-                <span class="room-average-label">{gettext("Average")}</span>
-                <span class="room-average-value">{vote_average(@users)}</span>
-              </div>
+                <span class="room-stats-hint">{gettext("Click to see statistics")}</span>
+
+                <span class="room-average">
+                  <span class="room-average-label">{gettext("Average")}:</span>
+                  <span class="room-average-value">{@stats.average}</span>
+                </span>
+              </button>
             <% else %>
               <button
                 type="button"
