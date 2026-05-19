@@ -94,4 +94,21 @@ defmodule LynxplanningpokerWeb.ClientIPTest do
       end)
     end
   end
+
+  describe "anonymize/1" do
+    test "zeroes the last octet of an IPv4 address (/24 prefix)" do
+      assert ClientIP.anonymize("192.168.1.42") == "192.168.1.0"
+      assert ClientIP.anonymize("203.0.113.5") == "203.0.113.0"
+    end
+
+    test "zeroes the trailing groups of an IPv6 address (/48 prefix)" do
+      assert ClientIP.anonymize("2001:db8:abcd:1234::1") == "2001:db8:abcd::"
+      assert ClientIP.anonymize("::1") == "::"
+    end
+
+    test "passes through unparseable input rather than crashing" do
+      assert ClientIP.anonymize("not-an-ip") == "not-an-ip"
+      assert ClientIP.anonymize("") == ""
+    end
+  end
 end

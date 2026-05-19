@@ -43,7 +43,7 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimit do
         retry_after_s = div(retry_after_ms, 1000) + 1
 
         Logger.warning(
-          "rate limit exceeded bucket=#{bucket} ip=#{ip} retry_after=#{retry_after_s}s"
+          "rate limit exceeded bucket=#{bucket} ip=#{ClientIP.anonymize(ip)} retry_after=#{retry_after_s}s"
         )
 
         conn

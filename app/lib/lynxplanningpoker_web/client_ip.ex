@@ -19,6 +19,28 @@ defmodule LynxplanningpokerWeb.ClientIP do
   alias RemoteIp.Block
 
   @doc """
+  Returns a privacy-preserving form of an IP suitable for logs.
+
+  IPv4 addresses are truncated to /24 (`192.168.1.42` -> `192.168.1.0`) and
+  IPv6 addresses to /48 (`2001:db8:abcd:1234::1` -> `2001:db8:abcd:0:0:0:0:0`).
+  This is the standard pseudonymization recommended by GDPR/LGPD guidance:
+  enough precision to spot abuse patterns by network, not enough to identify
+  a specific user. Falls back to the literal input if it isn't parseable.
+  """
+  @spec anonymize(String.t()) :: String.t()
+  def anonymize(ip) when is_binary(ip) do
+    case :inet.parse_address(String.to_charlist(ip)) do
+      {:ok, {a, b, c, _d}} -> "#{a}.#{b}.#{c}.0"
+      {:ok, {a, b, c, _, _, _, _, _}} -> format_ipv6_prefix(a, b, c)
+      _ -> ip
+    end
+  end
+
+  defp format_ipv6_prefix(a, b, c) do
+    {a, b, c, 0, 0, 0, 0, 0} |> :inet.ntoa() |> to_string()
+  end
+
+  @doc """
   Returns the client IP as a string.
   """
   @spec from_conn(Plug.Conn.t()) :: String.t()
