@@ -20,7 +20,8 @@
       "PowerShell(mix gettext.extract --merge 2>&1)",
       "Bash(grep -oE \"room-average-value[^<]{0,80}\")",
       "Bash(awk '/6\\\\.5/ {print NR\": \"$0}')",
-      "Bash(grep -oE \"average-value[^<]{0,30}\")"
+      "Bash(grep -oE \"average-value[^<]{0,30}\")",
+      "Bash(npx playwright *)"
     ]
   }
 }

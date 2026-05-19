@@ -6,9 +6,14 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
 
-  defp setup_room_with_user(name \\ "Alice") do
+  defp setup_room_with_user(name \\ "Alice", opts \\ []) do
     {:ok, room} = Rooms.create_room(%{is_active: true})
-    {:ok, user} = Users.create_user(%{room_id: room.id, name: name})
+
+    attrs =
+      %{room_id: room.id, name: name}
+      |> Map.put(:is_host, Keyword.get(opts, :is_host, false))
+
+    {:ok, user} = Users.create_user(attrs)
     {room, user}
   end
 
@@ -287,8 +292,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
   describe "end_planning / leave_room events" do
     test "host header shows 'End planning' button", %{conn: conn} do
-      {room, alice} = setup_room_with_user("Alice")
-      {:ok, host} = Users.update_user(alice, %{is_host: true})
+      {room, host} = setup_room_with_user("Alice", is_host: true)
 
       conn = logged_in_conn(conn, host.id)
       {:ok, _view, html} = live(conn, ~p"/rooms/#{room.id}")
@@ -309,8 +313,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
 
     test "host confirming 'End planning' deletes the room", %{conn: conn} do
-      {room, alice} = setup_room_with_user("Alice")
-      {:ok, host} = Users.update_user(alice, %{is_host: true})
+      {room, host} = setup_room_with_user("Alice", is_host: true)
 
       conn = logged_in_conn(conn, host.id)
       {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
@@ -335,8 +338,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
 
     test "presence leave of a non-host deletes only that user", %{conn: conn} do
-      {room, alice} = setup_room_with_user("Alice")
-      {:ok, _host} = Users.update_user(alice, %{is_host: true})
+      {room, alice} = setup_room_with_user("Alice", is_host: true)
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
       conn = logged_in_conn(conn, alice.id)
@@ -358,8 +360,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
 
     test "presence leave of the host deletes the entire room", %{conn: conn} do
-      {room, alice} = setup_room_with_user("Alice")
-      {:ok, host} = Users.update_user(alice, %{is_host: true})
+      {room, host} = setup_room_with_user("Alice", is_host: true)
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
       conn = logged_in_conn(conn, bob.id)
@@ -379,8 +380,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
 
     test "all clients are redirected when the room is deleted", %{conn: conn} do
-      {room, alice} = setup_room_with_user("Alice")
-      {:ok, _host} = Users.update_user(alice, %{is_host: true})
+      {room, _host} = setup_room_with_user("Alice", is_host: true)
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
       conn = logged_in_conn(conn, bob.id)

@@ -14,7 +14,9 @@ test.describe("Sincronização em tempo real entre múltiplos usuários", () => 
     const roomUrl = await createRoomAsHost(hostPage, "Anfitrião");
     await dismissInviteModalIfOpen(hostPage);
 
-    await expect(hostPage.getByText("Visitante")).toHaveCount(0);
+    // escopa para .room-scene porque o #stats-modal (oculto) também lista os participantes
+    const visitanteInScene = hostPage.locator(".room-scene").getByText("Visitante");
+    await expect(visitanteInScene).toHaveCount(0);
 
     const { context: guestContext } = await joinRoomAsGuest(
       browser,
@@ -22,7 +24,7 @@ test.describe("Sincronização em tempo real entre múltiplos usuários", () => 
       "Visitante",
     );
 
-    await expect(hostPage.getByText("Visitante")).toBeVisible({ timeout: 10_000 });
+    await expect(visitanteInScene).toBeVisible({ timeout: 10_000 });
 
     await guestContext.close();
     await hostContext.close();
@@ -81,7 +83,10 @@ test.describe("Sincronização em tempo real entre múltiplos usuários", () => 
     await waitForLiveView(guestPage);
 
     // espera o host enxergar o guest antes de encerrar (garante sincronização)
-    await expect(hostPage.getByText("Guest Despejado")).toBeVisible({
+    // escopa para .room-scene porque o #stats-modal (oculto) também lista os participantes
+    await expect(
+      hostPage.locator(".room-scene").getByText("Guest Despejado"),
+    ).toBeVisible({
       timeout: 10_000,
     });
 

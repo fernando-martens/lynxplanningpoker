@@ -236,6 +236,18 @@ defmodule Lynxplanningpoker.UsersTest do
       {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
       assert {:error, %Ecto.Changeset{}} = Users.update_user(user, %{name: nil})
     end
+
+    test "silently ignores :is_host so a regular user cannot escalate to host" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      refute user.is_host
+
+      {:ok, updated} = Users.update_user(user, %{vote: "5", is_host: true})
+
+      assert updated.vote == "5"
+      refute updated.is_host
+      refute Users.get_user!(user.id).is_host
+    end
   end
 
   describe "delete_user/1" do

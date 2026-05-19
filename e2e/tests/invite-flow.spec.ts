@@ -29,7 +29,10 @@ test.describe("Fluxo de convite (guest entra na sala)", () => {
     await expect(guestPage).toHaveURL(new RegExp(`/rooms/${roomId}$`));
 
     // o host deve enxergar o nome do convidado em tempo real
-    await expect(hostPage.getByText("Convidada")).toBeVisible({ timeout: 10_000 });
+    // escopa para .room-scene porque o #stats-modal (oculto) também lista os participantes
+    await expect(
+      hostPage.locator(".room-scene").getByText("Convidada"),
+    ).toBeVisible({ timeout: 10_000 });
 
     await hostContext.close();
     await guestContext.close();

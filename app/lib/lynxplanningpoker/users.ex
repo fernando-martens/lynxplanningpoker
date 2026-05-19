@@ -82,7 +82,7 @@ defmodule Lynxplanningpoker.Users do
   """
   def create_user(attrs) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.creation_changeset(attrs)
     |> Repo.insert()
     |> notify_room_update()
   end

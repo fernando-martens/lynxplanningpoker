@@ -18,8 +18,26 @@ defmodule Lynxplanningpoker.Users.User do
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
+  @doc """
+  Changeset for updating an existing user. Does NOT permit `:is_host` — host
+  status is assigned only at creation via `creation_changeset/2`, so a malicious
+  payload reaching `update_user/2` cannot escalate privileges.
+  """
   def changeset(user, attrs) do
+    user
+    |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal])
+    |> validate_required([:room_id, :name])
+    |> validate_length(:name, max: 20)
+    |> derive_vote_value()
+    |> foreign_key_constraint(:room_id)
+  end
+
+  @doc """
+  Changeset for creating a new user. Permits `:is_host` because the host flag
+  is set by trusted server code (`RoomController.create/2`) when the room is
+  first created.
+  """
+  def creation_changeset(user, attrs) do
     user
     |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal, :is_host])
     |> validate_required([:room_id, :name])
