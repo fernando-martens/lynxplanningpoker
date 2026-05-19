@@ -16,6 +16,11 @@ config :lynxplanningpoker, :rate_limit,
   global: [limit: 300, scale_ms: 60_000],
   room_create: [limit: 10, scale_ms: 60_000]
 
+# CIDRs of reverse proxies allowed to set `X-Forwarded-For`. Defaults to `[]`
+# (header ignored, TCP peer used). Prod overrides this in runtime.exs from the
+# `TRUSTED_PROXIES` env var (e.g. Cloudflare ranges).
+config :lynxplanningpoker, :trusted_proxies, []
+
 # Cloudflare Turnstile. Dev defaults to the official "always passes" test
 # keys; prod is overridden in runtime.exs with real env-var-backed values;
 # test disables verification entirely (see test.exs).

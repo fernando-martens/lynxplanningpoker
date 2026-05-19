@@ -19,6 +19,7 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimit do
   require Logger
 
   alias Lynxplanningpoker.RateLimit
+  alias LynxplanningpokerWeb.ClientIP
 
   def init(opts) do
     %{
@@ -31,7 +32,7 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimit do
 
   def call(conn, %{bucket: bucket} = opts) do
     {limit, scale} = resolve_limits(opts)
-    ip = client_ip(conn)
+    ip = ClientIP.from_conn(conn)
     key = "#{bucket}:#{ip}"
 
     case RateLimit.hit(key, scale, limit) do
@@ -63,15 +64,5 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimit do
 
     {Keyword.get(bucket_cfg, :limit, default_limit),
      Keyword.get(bucket_cfg, :scale_ms, default_scale)}
-  end
-
-  defp client_ip(conn) do
-    case get_req_header(conn, "x-forwarded-for") do
-      [forwarded | _] ->
-        forwarded |> String.split(",") |> List.first() |> String.trim()
-
-      _ ->
-        conn.remote_ip |> :inet.ntoa() |> to_string()
-    end
   end
 end

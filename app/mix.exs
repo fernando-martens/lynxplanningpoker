@@ -66,7 +66,8 @@ defmodule Lynxplanningpoker.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
-      {:hammer, "~> 7.0"}
+      {:hammer, "~> 7.0"},
+      {:remote_ip, "~> 1.2"}
     ]
   end
 

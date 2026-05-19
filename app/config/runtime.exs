@@ -23,6 +23,15 @@ end
 config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+trusted_proxies =
+  case System.get_env("TRUSTED_PROXIES") do
+    nil -> []
+    "" -> []
+    raw -> raw |> String.split(",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
+  end
+
+config :lynxplanningpoker, :trusted_proxies, trusted_proxies
+
 if config_env() == :prod do
   turnstile_site_key =
     System.get_env("CLOUDFLARE_TURNSTILE_SITE_KEY") ||

@@ -5,6 +5,7 @@ defmodule LynxplanningpokerWeb.RoomController do
   alias Lynxplanningpoker.Rooms.Room
   alias Lynxplanningpoker.Turnstile
   alias Lynxplanningpoker.Users
+  alias LynxplanningpokerWeb.ClientIP
 
   def new(conn, _params) do
     changeset = Rooms.change_room(%Room{})
@@ -21,7 +22,7 @@ defmodule LynxplanningpokerWeb.RoomController do
     room_params = Map.drop(room_params, ["name"])
     turnstile_token = params["cf-turnstile-response"]
 
-    case Turnstile.verify(turnstile_token, client_ip(conn)) do
+    case Turnstile.verify(turnstile_token, ClientIP.from_conn(conn)) do
       :ok ->
         do_create(conn, room_params, user_name)
 
@@ -64,16 +65,6 @@ defmodule LynxplanningpokerWeb.RoomController do
           action: ~p"/rooms",
           turnstile_site_key: Turnstile.site_key()
         )
-    end
-  end
-
-  defp client_ip(conn) do
-    case Plug.Conn.get_req_header(conn, "x-forwarded-for") do
-      [forwarded | _] ->
-        forwarded |> String.split(",") |> List.first() |> String.trim()
-
-      _ ->
-        conn.remote_ip |> :inet.ntoa() |> to_string()
     end
   end
 

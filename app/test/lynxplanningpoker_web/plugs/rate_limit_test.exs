@@ -64,11 +64,13 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimitTest do
       refute allowed.halted
     end
 
-    test "honors x-forwarded-for header" do
+    test "ignores x-forwarded-for from an untrusted peer" do
       bucket = "test:#{System.unique_integer([:positive])}"
       opts = RateLimit.init(bucket: bucket, limit: 1)
 
-      # Two different remote_ips but same X-Forwarded-For should share a bucket
+      # Two different remote_ips spoofing the same X-Forwarded-For must NOT
+      # share a bucket — the header is untrusted unless the peer is a known
+      # proxy. This is the regression test for the IP-spoofing bug.
       forwarded = "203.0.113.#{:rand.uniform(254)}"
 
       conn1 =
@@ -77,6 +79,35 @@ defmodule LynxplanningpokerWeb.Plugs.RateLimitTest do
 
       conn2 =
         build_conn_with_ip(uniq_ip())
+        |> Plug.Conn.put_req_header("x-forwarded-for", forwarded)
+
+      first = RateLimit.call(conn1, opts)
+      refute first.halted
+
+      second = RateLimit.call(conn2, opts)
+      refute second.halted
+    end
+
+    test "honors x-forwarded-for when peer is a trusted proxy" do
+      bucket = "test:#{System.unique_integer([:positive])}"
+      opts = RateLimit.init(bucket: bucket, limit: 1)
+
+      # 10.0.0.0/8 is the trusted "proxy" range for this test
+      original_proxies = Application.get_env(:lynxplanningpoker, :trusted_proxies, [])
+      Application.put_env(:lynxplanningpoker, :trusted_proxies, ["10.0.0.0/8"])
+
+      on_exit(fn ->
+        Application.put_env(:lynxplanningpoker, :trusted_proxies, original_proxies)
+      end)
+
+      forwarded = "203.0.113.#{:rand.uniform(254)}"
+
+      conn1 =
+        build_conn_with_ip({10, 0, 0, 1})
+        |> Plug.Conn.put_req_header("x-forwarded-for", forwarded)
+
+      conn2 =
+        build_conn_with_ip({10, 0, 0, 2})
         |> Plug.Conn.put_req_header("x-forwarded-for", forwarded)
 
       _ = RateLimit.call(conn1, opts)
