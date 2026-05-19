@@ -1,0 +1,32 @@
+# Sobelow configuration. See `mix sobelow --help` for all options.
+[
+  verbose: false,
+  private: false,
+  skip: false,
+  router: "lib/lynxplanningpoker_web/router.ex",
+  exit: :low,
+  format: "txt",
+  out: "",
+  threshold: :low,
+  # Check IDs to silence globally. Keep this list small and justified —
+  # every entry is a class of warnings you've decided will never be
+  # actionable for this project.
+  #
+  # - "Config.Secrets": flags string literals assigned to keys named
+  #   `secret_*` / `signing_*` in config files. The only hits here are
+  #   Cloudflare Turnstile's *publicly documented* "always passes" test
+  #   keys in `config/config.exs` (overridden in `runtime.exs` for prod
+  #   from `CLOUDFLARE_TURNSTILE_*` env vars). Real secrets never live
+  #   in committed config — that's an architectural invariant enforced
+  #   by code review.
+  #
+  # - "Config.CSP": looks for a CSP map passed to
+  #   `put_secure_browser_headers/2`. We set CSP per-request via the
+  #   `LynxplanningpokerWeb.Plugs.ContentSecurityPolicy` plug right after
+  #   `put_secure_browser_headers` in the `:browser` pipeline (needed for
+  #   per-request nonces). Sobelow can't introspect a sibling plug — the
+  #   header IS being set.
+  ignore: ["Config.Secrets", "Config.CSP"],
+  ignore_files: [],
+  version: false
+]

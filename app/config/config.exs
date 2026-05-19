@@ -29,8 +29,14 @@ config :lynxplanningpoker, :room_cleaner,
 config :lynxplanningpoker, :trusted_proxies, []
 
 # Cloudflare Turnstile. Dev defaults to the official "always passes" test
-# keys; prod is overridden in runtime.exs with real env-var-backed values;
+# keys (https://developers.cloudflare.com/turnstile/troubleshooting/testing/);
+# prod is overridden in runtime.exs with real env-var-backed values;
 # test disables verification entirely (see test.exs).
+#
+# NOTE: these are public documented test credentials, not real secrets.
+# Real Turnstile/SECRET_KEY_BASE/etc. values MUST come from runtime.exs
+# env vars only — never committed. Sobelow's Config.Secrets check is
+# silenced project-wide based on this invariant (see `.sobelow-conf`).
 config :lynxplanningpoker, :turnstile,
   enabled: true,
   site_key: "1x00000000000000000000AA",

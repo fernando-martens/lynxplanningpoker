@@ -62,42 +62,9 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     current_user = socket.assigns.current_user
 
     cond do
-      is_nil(current_user) ->
-        {:noreply, socket}
-
-      label not in @cards ->
-        {:noreply, socket}
-
-      true ->
-        new_vote = if current_user.vote == label, do: nil, else: label
-        base_attrs = %{vote: new_vote}
-
-        attrs =
-          if socket.assigns.room.revealed do
-            Map.put(base_attrs, :vote_changed_after_reveal, true)
-          else
-            base_attrs
-          end
-
-        case Users.update_user(current_user, attrs) do
-          {:ok, updated_user} ->
-            updated_user = %{updated_user | has_voted: not is_nil(updated_user.vote)}
-
-            users =
-              Enum.map(socket.assigns.users, fn user ->
-                if user.id == updated_user.id, do: updated_user, else: user
-              end)
-
-            {:noreply, socket |> assign(:current_user, updated_user) |> assign(:users, users)}
-
-          {:error, _changeset} ->
-            {:noreply,
-             put_flash(
-               socket,
-               :error,
-               gettext("Could not register your vote. Please try again.")
-             )}
-        end
+      is_nil(current_user) -> {:noreply, socket}
+      label not in @cards -> {:noreply, socket}
+      true -> do_vote(socket, current_user, label)
     end
   end
 
@@ -266,6 +233,38 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
      socket
      |> assign(:users, users)
      |> assign(:fake_count, next_count)}
+  end
+
+  defp do_vote(socket, current_user, label) do
+    new_vote = if current_user.vote == label, do: nil, else: label
+    base_attrs = %{vote: new_vote}
+
+    attrs =
+      if socket.assigns.room.revealed do
+        Map.put(base_attrs, :vote_changed_after_reveal, true)
+      else
+        base_attrs
+      end
+
+    case Users.update_user(current_user, attrs) do
+      {:ok, updated_user} ->
+        updated_user = %{updated_user | has_voted: not is_nil(updated_user.vote)}
+
+        users =
+          Enum.map(socket.assigns.users, fn user ->
+            if user.id == updated_user.id, do: updated_user, else: user
+          end)
+
+        {:noreply, socket |> assign(:current_user, updated_user) |> assign(:users, users)}
+
+      {:error, _changeset} ->
+        {:noreply,
+         put_flash(
+           socket,
+           :error,
+           gettext("Could not register your vote. Please try again.")
+         )}
+    end
   end
 
   defp card_selected?(nil, _card), do: false

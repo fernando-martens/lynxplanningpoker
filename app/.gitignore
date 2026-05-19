@@ -37,3 +37,6 @@ lynxplanningpoker-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Dialyzer PLT cache — large, machine-specific, rebuilt on demand.
+/priv/plts/
+

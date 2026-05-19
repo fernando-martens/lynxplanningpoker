@@ -11,7 +11,17 @@ defmodule Lynxplanningpoker.MixProject do
       aliases: aliases(),
       deps: deps(),
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
-      listeners: [Phoenix.CodeReloader]
+      listeners: [Phoenix.CodeReloader],
+      dialyzer: [
+        plt_file: {:no_warn, "priv/plts/project.plt"},
+        plt_core_path: "priv/plts/core.plt",
+        # `precommit` runs in MIX_ENV=test, which compiles `test/support/*.ex`
+        # (ConnCase, DataCase). Those reference `ExUnit.*` internals, so the
+        # PLT must include `:ex_unit` or Dialyzer reports them as missing.
+        plt_add_apps: [:ex_unit, :mix],
+        ignore_warnings: ".dialyzer_ignore.exs",
+        flags: [:error_handling, :underspecs]
+      ]
     ]
   end
 
@@ -67,7 +77,12 @@ defmodule Lynxplanningpoker.MixProject do
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.5"},
       {:hammer, "~> 7.0"},
-      {:remote_ip, "~> 1.2"}
+      {:remote_ip, "~> 1.2"},
+      # Quality tooling (dev/test only — never compiled into the release).
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -90,7 +105,16 @@ defmodule Lynxplanningpoker.MixProject do
         "esbuild lynxplanningpoker --minify",
         "phx.digest"
       ],
-      precommit: ["compile --warnings-as-errors", "deps.unlock --unused", "format", "test"]
+      precommit: [
+        "compile --warnings-as-errors",
+        "deps.unlock --unused",
+        "format",
+        "deps.audit",
+        "sobelow --config --exit Low",
+        "credo --strict",
+        "dialyzer",
+        "test"
+      ]
     ]
   end
 end

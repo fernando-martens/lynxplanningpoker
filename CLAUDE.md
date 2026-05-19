@@ -84,10 +84,16 @@ assets/js/app.js           # Entrypoint JS (esbuild)
 ## Comandos úteis
 
 ```sh
-mix precommit          # compile + format + test (rodar antes de commitar)
+mix precommit          # compile + format + deps.audit + sobelow --exit Low + credo --strict + dialyzer + test
 mix test               # roda os testes
 mix test --failed      # roda apenas os testes que falharam
 mix phx.routes         # lista todas as rotas
+
+# Ferramentas de qualidade individuais (todas rodam dentro do precommit)
+mix deps.audit         # checa CVEs nas deps (mix_audit)
+mix sobelow --config   # scanner de segurança Phoenix
+mix credo --strict     # lint Elixir
+mix dialyzer           # análise de tipos via PLT (primeira run ~1-2min; depois ~5-15s)
 ```
 
 ## Guidelines do projeto

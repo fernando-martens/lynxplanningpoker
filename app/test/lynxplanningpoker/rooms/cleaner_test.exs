@@ -3,6 +3,7 @@ defmodule Lynxplanningpoker.Rooms.CleanerTest do
 
   import Ecto.Query
 
+  alias Ecto.Adapters.SQL.Sandbox
   alias Lynxplanningpoker.Repo
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Rooms.Cleaner
@@ -26,7 +27,7 @@ defmodule Lynxplanningpoker.Rooms.CleanerTest do
       )
 
     # Allow the GenServer process to use the test's DB connection.
-    Ecto.Adapters.SQL.Sandbox.allow(Repo, self(), pid)
+    Sandbox.allow(Repo, self(), pid)
     {pid, name}
   end
 
