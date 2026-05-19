@@ -30,16 +30,17 @@
         <p class="text-xs text-base-content/60">{gettext("Visible to everyone in the room")}</p>
       </div>
 
+      <.button type="submit" class="w-full py-5 text-lg font-semibold">
+        {gettext("Join your room")}
+      </.button>
       <%= if @turnstile_site_key do %>
-        <div class="cf-turnstile" data-sitekey={@turnstile_site_key}></div>
+        <div class="flex justify-center">
+          <div class="cf-turnstile" data-sitekey={@turnstile_site_key}></div>
+        </div>
 
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer>
         </script>
       <% end %>
-
-      <.button type="submit" class="w-full py-5 text-lg font-semibold">
-        {gettext("Join your room")}
-      </.button>
     </.form>
   </section>
 </main>

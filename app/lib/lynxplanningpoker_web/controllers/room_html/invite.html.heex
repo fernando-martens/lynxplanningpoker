@@ -5,13 +5,14 @@
       <div class="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-base-200 shadow-inner">
         <img src="/images/lynx.svg" alt="Lynx Mascot" class="h-20 w-20 object-contain" />
       </div>
-
+      
       <h1 class="mt-8 text-4xl font-semibold tracking-tight">{gettext("You're invited!")}</h1>
+      
       <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
         {gettext("Enter your name to join the room")}
       </p>
     </div>
-
+    
     <.form
       for={%{}}
       action={~p"/rooms/invite/#{@room_id}"}
@@ -33,6 +34,7 @@
         />
         <p class="text-xs text-base-content/60">{gettext("Visible to everyone in the room")}</p>
       </div>
+      
       <.button type="submit" class="w-full py-5 text-lg font-semibold">
         {gettext("Join the room")}
       </.button>
