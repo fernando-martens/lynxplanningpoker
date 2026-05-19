@@ -59,6 +59,14 @@ window.addEventListener("phx:copy", (event) => {
   })
 })
 
+// Inputs flagged with `data-select-on-click` (e.g. the invite-URL field in
+// the room) select their text on click for easier copy. Delegated listener
+// instead of inline `onclick=` so the CSP can drop `'unsafe-inline'`.
+window.addEventListener("click", (e) => {
+  const el = e.target.closest("[data-select-on-click]")
+  if (el && typeof el.select === "function") el.select()
+})
+
 // Tree easter egg: clicking a forest tree makes it sway for half a second.
 // Pure client-side — no roundtrip to the server.
 window.addEventListener("click", (e) => {

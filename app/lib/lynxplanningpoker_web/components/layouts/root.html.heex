@@ -17,7 +17,7 @@
       href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap"
       rel="stylesheet"
     />
-    <script>
+    <script nonce={assigns[:csp_nonce]}>
       (() => {
         const setTheme = (theme) => {
           if (theme === "system") {
@@ -32,7 +32,7 @@
           setTheme(localStorage.getItem("phx:theme") || "system");
         }
         window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
-        
+
         window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
       })();
     </script>

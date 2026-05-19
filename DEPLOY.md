@@ -118,14 +118,7 @@ A app **não** termina TLS sozinha por padrão. Duas opções:
 
 Termine TLS na Cloudflare / nginx / Caddy / load balancer e mande HTTP plano pra Bandit (porta 4000). É a abordagem mais simples e é o que `PHX_HOST` + `TRUSTED_PROXIES` assumem.
 
-Antes de ir pra prod, **descomente** [`runtime.exs:118-120`](app/config/runtime.exs):
-
-```elixir
-config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
-  force_ssl: [hsts: true]
-```
-
-Isso redireciona qualquer requisição HTTP que escape do proxy direto pra HTTPS e adiciona HSTS.
+`force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]]` já está habilitado no bloco prod de [`runtime.exs`](app/config/runtime.exs) — qualquer requisição HTTP que escape do proxy é redirecionada pra HTTPS, e o cabeçalho HSTS é emitido. O `rewrite_on` faz Plug.SSL respeitar o `X-Forwarded-Proto` do proxy (sem isso, a app vê todo request como HTTP e cai em loop de redirect).
 
 ### Opção B — TLS direto no Bandit
 
@@ -145,43 +138,26 @@ config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
 
 ## 5. Headers de segurança
 
-`put_secure_browser_headers` no [`router.ex`](app/lib/lynxplanningpoker_web/router.ex) já adiciona `x-frame-options`, `x-content-type-options`, etc. **Falta CSP** — recomendado adicionar:
+`put_secure_browser_headers` no [`router.ex`](app/lib/lynxplanningpoker_web/router.ex) adiciona `x-frame-options`, `x-content-type-options`, etc., e o plug [`ContentSecurityPolicy`](app/lib/lynxplanningpoker_web/plugs/content_security_policy.ex) emite um `content-security-policy` com **nonce por requisição**. A política autoriza:
 
-```elixir
-plug :put_secure_browser_headers, %{
-  "content-security-policy" =>
-    "default-src 'self'; " <>
-    "script-src 'self' https://challenges.cloudflare.com; " <>
-    "frame-src https://challenges.cloudflare.com; " <>
-    "style-src 'self' 'unsafe-inline'; " <>
-    "img-src 'self' data:; " <>
-    "connect-src 'self' wss://#{System.get_env("PHX_HOST") || "localhost"}"
-}
-```
+- `'self'` para tudo
+- `'nonce-<per-request>'` em `script-src` — usado pelo script inline de bootstrap de tema em `root.html.heex` via `nonce={@csp_nonce}`
+- `https://challenges.cloudflare.com` em `script-src`/`frame-src` (widget Turnstile)
+- `https://fonts.googleapis.com` em `style-src` e `https://fonts.gstatic.com` em `font-src` (Google Fonts)
+- `'unsafe-inline'` em **style-src** (necessário para os `style="..."` runtime de posicionamento no LiveView; remover exigiria refatorar todo o posicionamento)
+- `data:` em img/font (SVGs inline, fontes embutidas)
+- `ws: wss:` em `connect-src` (socket do LiveView e LiveReloader em dev)
+- `frame-ancestors 'none'` (anti-clickjacking)
 
-Ajuste `connect-src` se usar domínios externos. `frame-src` precisa do Turnstile.
+`script-src` **não** tem mais `'unsafe-inline'`. Se precisar adicionar um novo script inline, anote-o com `nonce={@csp_nonce}`. Para incluir um domínio externo (CDN, analytics), atualize a função `policy/1` no plug.
 
 ---
 
 ## 6. WebSocket / LiveView
 
-O socket está aberto a qualquer origem em dev. Em prod, restrinja em [`endpoint.ex`](app/lib/lynxplanningpoker_web/endpoint.ex#L14-L16):
+Em prod, [`runtime.exs`](app/config/runtime.exs) já configura `check_origin: ["https://#{host}", "//#{host}"]` no endpoint, derivado de `PHX_HOST`. Isso rejeita qualquer upgrade WebSocket/LiveView cujo header `Origin` não bata com o domínio público — protege contra ataques tipo CSWSH (cross-site WebSocket hijacking).
 
-```elixir
-socket "/live", Phoenix.LiveView.Socket,
-  websocket: [
-    connect_info: [session: @session_options],
-    check_origin: ["//poker.seudominio.com", "https://poker.seudominio.com"]
-  ],
-  longpoll: [connect_info: [session: @session_options]]
-```
-
-Ou globalmente no endpoint via config:
-
-```elixir
-config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
-  check_origin: ["https://poker.seudominio.com"]
-```
+Em dev, o default do Phoenix (`check_origin: true` validando contra o `:url` host = `localhost`) já é o suficiente; não precisa configurar nada.
 
 ---
 
@@ -228,9 +204,9 @@ config :swoosh, :api_client, Swoosh.ApiClient.Req
 - [ ] `CLOUDFLARE_TURNSTILE_SITE_KEY` / `..._SECRET_KEY` são as chaves de prod (não as `1x0000...` de dev).
 - [ ] `TRUSTED_PROXIES` contém todas as faixas do CDN/LB usado.
 - [ ] Origin firewallado para aceitar tráfego só do CDN.
-- [ ] `force_ssl: [hsts: true]` descomentado em `runtime.exs`.
-- [ ] `check_origin` do socket LiveView restringe ao domínio de prod.
-- [ ] CSP configurado no `put_secure_browser_headers`.
+- [x] `force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]]` ativo em `runtime.exs` (prod).
+- [x] `check_origin` do socket LiveView restringe ao domínio de prod (derivado de `PHX_HOST`).
+- [x] CSP configurado no `put_secure_browser_headers` (router.ex `@csp`).
 - [ ] Migrations rodadas: `bin/lynxplanningpoker eval "Lynxplanningpoker.Release.migrate"`.
 - [ ] LiveDashboard ou está desabilitado ou está atrás de Basic Auth.
 - [ ] Backup automatizado do Postgres ativo.

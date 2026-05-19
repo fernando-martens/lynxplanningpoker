@@ -5,7 +5,7 @@ defmodule Lynxplanningpoker.UsersTest do
   alias Lynxplanningpoker.Users
   alias Lynxplanningpoker.Users.User
 
-  defp create_room!(attrs \\ %{is_active: true}) do
+  defp create_room!(attrs \\ %{}) do
     {:ok, room} = Rooms.create_room(attrs)
     room
   end
@@ -231,10 +231,32 @@ defmodule Lynxplanningpoker.UsersTest do
       assert {:ok, %User{vote: nil, vote_value: nil}} = Users.update_user(voted, %{vote: nil})
     end
 
-    test "returns error when invalid" do
+    test "silently ignores :name and :room_id so identity fields cannot be tampered with" do
+      room = create_room!()
+      other_room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      {:ok, updated} =
+        Users.update_user(user, %{name: "Mallory", room_id: other_room.id, vote: "5"})
+
+      assert updated.name == "Alice"
+      assert updated.room_id == room.id
+      assert updated.vote == "5"
+
+      reloaded = Users.get_user!(user.id)
+      assert reloaded.name == "Alice"
+      assert reloaded.room_id == room.id
+    end
+
+    test "rejects a vote label that is not part of the deck" do
       room = create_room!()
       {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
-      assert {:error, %Ecto.Changeset{}} = Users.update_user(user, %{name: nil})
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.update_user(user, %{vote: "javascript:alert(1)"})
+
+      assert %{vote: ["is invalid"]} = errors_on(changeset)
+      assert Users.get_user!(user.id).vote == nil
     end
 
     test "silently ignores :is_host so a regular user cannot escalate to host" do

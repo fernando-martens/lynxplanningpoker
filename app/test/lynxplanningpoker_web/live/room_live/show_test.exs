@@ -7,7 +7,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
   alias Lynxplanningpoker.Users
 
   defp setup_room_with_user(name \\ "Alice", opts \\ []) do
-    {:ok, room} = Rooms.create_room(%{is_active: true})
+    {:ok, room} = Rooms.create_room(%{})
 
     attrs =
       %{room_id: room.id, name: name}
@@ -32,7 +32,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
 
     test "redirects to invite page when session has no current_user_id", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
 
       assert {:error, {:live_redirect, %{to: target}}} = live(conn, ~p"/rooms/#{room.id}")
       assert target == ~p"/rooms/invite/#{room.id}"
@@ -40,7 +40,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
     test "redirects to invite page when session user does not belong to this room", %{conn: conn} do
       {_room1, user} = setup_room_with_user("Stranger")
-      {:ok, other_room} = Rooms.create_room(%{is_active: true})
+      {:ok, other_room} = Rooms.create_room(%{})
 
       conn = logged_in_conn(conn, user.id)
 
@@ -158,6 +158,16 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
       assert html =~ "room-user-vote-num"
       assert html =~ ">8<"
+    end
+
+    test "ignores a vote payload whose card label is not part of the deck", %{conn: conn} do
+      {room, user} = setup_room_with_user()
+      conn = logged_in_conn(conn, user.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      render_hook(view, "vote", %{"card" => "javascript:alert(1)"})
+
+      assert Users.get_user!(user.id).vote == nil
     end
 
     test "hides other users' vote numbers when the room is not revealed", %{conn: conn} do
@@ -357,6 +367,37 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
 
       assert Rooms.get_room!(room.id)
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(bob.id) end
+    end
+
+    test "presence leave cleanup is skipped when this client is not the leader",
+         %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice", is_host: true)
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      # Track a fake presence whose key sorts before any real UUID, so alice's
+      # LiveView sees it as the elected leader and defers cleanup.
+      topic = Lynxplanningpoker.Presence.room_topic(room.id)
+      fake_leader_id = "00000000-0000-0000-0000-000000000000"
+      fake_pid = spawn(fn -> Process.sleep(:infinity) end)
+      {:ok, _} = Lynxplanningpoker.Presence.track(fake_pid, topic, fake_leader_id, %{})
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      send(
+        view.pid,
+        %Phoenix.Socket.Broadcast{
+          topic: topic,
+          event: "presence_diff",
+          payload: %{joins: %{}, leaves: %{bob.id => %{metas: [%{}]}}}
+        }
+      )
+
+      _ = render(view)
+
+      assert Users.get_user!(bob.id)
+
+      Process.exit(fake_pid, :kill)
     end
 
     test "presence leave of the host deletes the entire room", %{conn: conn} do

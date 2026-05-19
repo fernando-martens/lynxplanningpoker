@@ -57,12 +57,18 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   end
 
   @impl true
-  def handle_event("vote", %{"card" => label}, socket) do
-    case socket.assigns.current_user do
-      nil ->
+  def handle_event("vote", %{"card" => label}, socket)
+      when is_binary(label) do
+    current_user = socket.assigns.current_user
+
+    cond do
+      is_nil(current_user) ->
         {:noreply, socket}
 
-      current_user ->
+      label not in @cards ->
+        {:noreply, socket}
+
+      true ->
         new_vote = if current_user.vote == label, do: nil, else: label
         base_attrs = %{vote: new_vote}
 
@@ -95,6 +101,10 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     end
   end
 
+  # `reveal` and `reset` are intentionally collaborative — any participant in
+  # the room can trigger them, not just the host. The host gate is reserved
+  # for actions that close the session for everyone (`end_planning`); the
+  # voting flow itself is a shared ritual that any teammate can drive.
   @impl true
   def handle_event("reveal", _params, socket) do
     Dev.maybe_slow_down_reveal()
@@ -156,6 +166,13 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     {:noreply, redirect(socket, to: ~p"/rooms/leave")}
   end
 
+  # Every LiveView in the room receives `presence_diff`. To avoid N parallel
+  # cleanups (and the resulting DB races), we elect a leader from the Presence
+  # snapshot: the participant with the lowest-sorted user_id still present
+  # runs the cleanup. Phoenix.Presence is a CRDT, so every client computes the
+  # same leader from the same state without explicit coordination. If nobody
+  # is left, there is no one to clean up — the room becomes orphaned only if
+  # every client left simultaneously, which is acceptable for this app.
   @impl true
   def handle_info(
         %Phoenix.Socket.Broadcast{event: "presence_diff", payload: %{leaves: leaves}},
@@ -164,21 +181,24 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     if map_size(leaves) > 0 do
       room_id = socket.assigns.room.id
       still_present = Presence.list(Presence.room_topic(room_id))
+      leader_id = still_present |> Map.keys() |> Enum.sort() |> List.first()
 
-      for {user_id, _meta} <- leaves, not Map.has_key?(still_present, user_id) do
-        try do
-          user = Users.get_user!(user_id)
+      if leader_id == socket.assigns.current_user_id do
+        for {user_id, _meta} <- leaves, not Map.has_key?(still_present, user_id) do
+          try do
+            user = Users.get_user!(user_id)
 
-          if user.is_host do
-            case Rooms.get_room(user.room_id) do
-              nil -> :ok
-              room -> Rooms.delete_room(room)
+            if user.is_host do
+              case Rooms.get_room(user.room_id) do
+                nil -> :ok
+                room -> Rooms.delete_room(room)
+              end
+            else
+              Users.delete_user(user)
             end
-          else
-            Users.delete_user(user)
+          rescue
+            Ecto.NoResultsError -> :ok
           end
-        rescue
-          Ecto.NoResultsError -> :ok
         end
       end
     end
@@ -344,8 +364,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
           readonly
           value={url(~p"/rooms/invite/#{@room.id}")}
           data-copy-feedback="copy-feedback"
+          data-select-on-click
           class="flex-1 input input-bordered rounded-xl border border-base-300 bg-base-100 px-4 py-3 text-sm"
-          onclick="this.select()"
         />
         <div class="relative">
           <button

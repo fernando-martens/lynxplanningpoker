@@ -16,6 +16,13 @@ config :lynxplanningpoker, :rate_limit,
   global: [limit: 300, scale_ms: 60_000],
   room_create: [limit: 10, scale_ms: 60_000]
 
+# Periodic sweeper that deletes orphaned rooms left behind when every client
+# disconnects without firing presence/leave. Disabled in tests (see test.exs).
+config :lynxplanningpoker, :room_cleaner,
+  enabled: true,
+  sweep_interval: :timer.minutes(10),
+  max_idle: :timer.hours(2)
+
 # CIDRs of reverse proxies allowed to set `X-Forwarded-For`. Defaults to `[]`
 # (header ignored, TCP peer used). Prod overrides this in runtime.exs from the
 # `TRUSTED_PROXIES` env var (e.g. Cloudflare ranges).

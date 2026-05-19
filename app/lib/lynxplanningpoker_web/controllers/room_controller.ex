@@ -88,7 +88,7 @@ defmodule LynxplanningpokerWeb.RoomController do
     end
   end
 
-  def acceptInvite(conn, %{"id" => room_id, "name" => user_name}) do
+  def accept_invite(conn, %{"id" => room_id, "name" => user_name}) do
     case Rooms.get_room(room_id) do
       nil ->
         conn

@@ -58,7 +58,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
   describe "POST /rooms" do
     test "creates a room and a host user, sets session and redirects to the room", %{conn: conn} do
       conn =
-        post(conn, ~p"/rooms", %{"room" => %{"name" => "Alice", "is_active" => "true"}})
+        post(conn, ~p"/rooms", %{"room" => %{"name" => "Alice"}})
 
       assert %{id: room_id} = redirected_params(conn)
       assert redirected_to(conn) == ~p"/rooms/#{room_id}"
@@ -68,16 +68,6 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       assert user.name == "Alice"
       assert get_session(conn, :current_user_id) == user.id
     end
-
-    test "re-renders form when room params are invalid", %{conn: conn} do
-      conn =
-        post(conn, ~p"/rooms", %{
-          "room" => %{"name" => "Alice", "is_active" => "not-a-boolean"}
-        })
-
-      assert html_response(conn, 200) =~ "Who are you?"
-      assert Rooms.list_rooms() == []
-    end
   end
 
   describe "POST /rooms with Turnstile enabled" do
@@ -86,7 +76,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     test "blocks creation and re-renders the form when verification fails", %{conn: conn} do
       conn =
         post(conn, ~p"/rooms", %{
-          "room" => %{"name" => "Alice", "is_active" => "true"},
+          "room" => %{"name" => "Alice"},
           "cf-turnstile-response" => "any-token"
         })
 
@@ -100,7 +90,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   describe "GET /rooms/invite/:id" do
     test "renders the invite page for an existing room", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
       conn = get(conn, ~p"/rooms/invite/#{room.id}")
       response = html_response(conn, 200)
       assert response =~ "invited"
@@ -116,7 +106,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   describe "POST /rooms/invite/:id" do
     test "creates user, sets session and redirects to the room", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
 
       conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => "Bob"})
       assert redirected_to(conn) == ~p"/rooms/#{room}"
@@ -127,14 +117,14 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "re-renders invite page when name is blank", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
       conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => ""})
       assert html_response(conn, 200) =~ "Join the room"
       assert Users.list_users_by_room(room.id) == []
     end
 
     test "rejects the 16th player with a flash and does not create the user", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
 
       for i <- 1..Users.max_users_per_room() do
         {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
@@ -150,7 +140,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   describe "room capacity on GET /rooms/invite/:id" do
     test "redirects home with a flash when the room is full", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
 
       for i <- 1..Users.max_users_per_room() do
         {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
@@ -163,7 +153,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "still lets an existing member through when the room is full", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
 
       [first | _] =
         for i <- 1..Users.max_users_per_room() do
@@ -182,12 +172,12 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   describe "cleanup of previous session when entering a new room" do
     test "POST /rooms deletes the user from the previous room when not host", %{conn: conn} do
-      {:ok, old_room} = Rooms.create_room(%{is_active: true})
+      {:ok, old_room} = Rooms.create_room(%{})
       {:ok, old_user} = Users.create_user(%{room_id: old_room.id, name: "Alice"})
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_user.id})
-      |> post(~p"/rooms", %{"room" => %{"name" => "Alice", "is_active" => "true"}})
+      |> post(~p"/rooms", %{"room" => %{"name" => "Alice"}})
 
       # Previous room still exists, but the previous user record is gone
       assert Rooms.get_room!(old_room.id)
@@ -195,14 +185,14 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "POST /rooms deletes the previous room entirely when user was host", %{conn: conn} do
-      {:ok, old_room} = Rooms.create_room(%{is_active: true})
+      {:ok, old_room} = Rooms.create_room(%{})
 
       {:ok, old_host} =
         Users.create_user(%{room_id: old_room.id, name: "Alice", is_host: true})
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_host.id})
-      |> post(~p"/rooms", %{"room" => %{"name" => "Alice", "is_active" => "true"}})
+      |> post(~p"/rooms", %{"room" => %{"name" => "Alice"}})
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(old_room.id) end
     end
@@ -210,9 +200,9 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     test "POST /rooms/invite/:id deletes the user from the previous room when not host", %{
       conn: conn
     } do
-      {:ok, old_room} = Rooms.create_room(%{is_active: true})
+      {:ok, old_room} = Rooms.create_room(%{})
       {:ok, old_user} = Users.create_user(%{room_id: old_room.id, name: "Alice"})
-      {:ok, new_room} = Rooms.create_room(%{is_active: true})
+      {:ok, new_room} = Rooms.create_room(%{})
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_user.id})
@@ -224,12 +214,12 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "POST /rooms/invite/:id deletes the previous room when user was host", %{conn: conn} do
-      {:ok, old_room} = Rooms.create_room(%{is_active: true})
+      {:ok, old_room} = Rooms.create_room(%{})
 
       {:ok, old_host} =
         Users.create_user(%{room_id: old_room.id, name: "Alice", is_host: true})
 
-      {:ok, new_room} = Rooms.create_room(%{is_active: true})
+      {:ok, new_room} = Rooms.create_room(%{})
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_host.id})
@@ -241,7 +231,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
     test "GET /rooms/invite/:id redirects straight to the room when user is already a member",
          %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
       {:ok, host} = Users.create_user(%{room_id: room.id, name: "Alice", is_host: true})
 
       conn =
@@ -259,7 +249,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   describe "GET /rooms/leave" do
     test "deletes the user, clears the session and redirects home", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{is_active: true})
+      {:ok, room} = Rooms.create_room(%{})
       {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
 
       conn =

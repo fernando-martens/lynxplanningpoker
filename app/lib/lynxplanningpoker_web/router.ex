@@ -8,6 +8,7 @@ defmodule LynxplanningpokerWeb.Router do
     plug(:put_root_layout, html: {LynxplanningpokerWeb.Layouts, :root})
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug(LynxplanningpokerWeb.Plugs.ContentSecurityPolicy)
     plug(LynxplanningpokerWeb.Plugs.Locale)
 
     plug(LynxplanningpokerWeb.Plugs.RateLimit,
@@ -39,7 +40,7 @@ defmodule LynxplanningpokerWeb.Router do
 
     scope "/rooms" do
       get("/invite/:id", RoomController, :show)
-      post("/invite/:id", RoomController, :acceptInvite)
+      post("/invite/:id", RoomController, :accept_invite)
       get("/leave", RoomController, :leave)
 
       live_session :default, on_mount: LynxplanningpokerWeb.LiveHooks.Locale do

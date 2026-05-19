@@ -94,39 +94,25 @@ if config_env() == :prod do
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
       ip: {0, 0, 0, 0, 0, 0, 0, 0}
     ],
-    secret_key_base: secret_key_base
+    secret_key_base: secret_key_base,
+    # TLS is terminated at the proxy/CDN (see DEPLOY.md §4 Option A), so
+    # `rewrite_on: [:x_forwarded_proto]` tells Plug.SSL to honor the proxy's
+    # `X-Forwarded-Proto` header when deciding whether the original request
+    # was HTTPS. Without it, every request would look like plain HTTP to the
+    # endpoint and `force_ssl` would loop redirects.
+    force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]],
+    # Reject WebSocket/LiveView upgrades whose `Origin` header doesn't match
+    # the public host. The default (`true`) would also work since the URL
+    # host is configured above, but listing the schemes explicitly makes the
+    # accepted set unambiguous and easy to audit.
+    check_origin: ["https://#{host}", "//#{host}"]
 
   # ## SSL Support
   #
-  # To get SSL working, you will need to add the `https` key
-  # to your endpoint configuration:
-  #
-  #     config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
-  #       https: [
-  #         ...,
-  #         port: 443,
-  #         cipher_suite: :strong,
-  #         keyfile: System.get_env("SOME_APP_SSL_KEY_PATH"),
-  #         certfile: System.get_env("SOME_APP_SSL_CERT_PATH")
-  #       ]
-  #
-  # The `cipher_suite` is set to `:strong` to support only the
-  # latest and more secure SSL ciphers. This means old browsers
-  # and clients may not be supported. You can set it to
-  # `:compatible` for wider support.
-  #
-  # `:keyfile` and `:certfile` expect an absolute path to the key
-  # and cert in disk or a relative path inside priv, for example
-  # "priv/ssl/server.key". For all supported SSL configuration
-  # options, see https://hexdocs.pm/plug/Plug.SSL.html#configure/1
-  #
-  # We also recommend setting `force_ssl` in your config/prod.exs,
-  # ensuring no data is ever sent via http, always redirecting to https:
-  #
-  #     config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
-  #       force_ssl: [hsts: true]
-  #
-  # Check `Plug.SSL` for all available options in `force_ssl`.
+  # `force_ssl` above adds HSTS and redirects any HTTP request that escapes
+  # the proxy to HTTPS. If you instead want to terminate TLS directly in
+  # Bandit, configure the `https` key with `keyfile`/`certfile` — see
+  # https://hexdocs.pm/plug/Plug.SSL.html#configure/1 for all options.
 
   # ## Configuring the mailer
   #

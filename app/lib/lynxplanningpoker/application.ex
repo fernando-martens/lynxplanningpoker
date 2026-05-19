@@ -7,18 +7,21 @@ defmodule Lynxplanningpoker.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      LynxplanningpokerWeb.Telemetry,
-      Lynxplanningpoker.Repo,
-      {DNSCluster, query: Application.get_env(:lynxplanningpoker, :dns_cluster_query) || :ignore},
-      {Phoenix.PubSub, name: Lynxplanningpoker.PubSub},
-      {Lynxplanningpoker.RateLimit, [clean_period: :timer.minutes(10)]},
-      Lynxplanningpoker.Presence,
-      # Start a worker by calling: Lynxplanningpoker.Worker.start_link(arg)
-      # {Lynxplanningpoker.Worker, arg},
-      # Start to serve requests, typically the last entry
-      LynxplanningpokerWeb.Endpoint
-    ]
+    children =
+      [
+        LynxplanningpokerWeb.Telemetry,
+        Lynxplanningpoker.Repo,
+        {DNSCluster,
+         query: Application.get_env(:lynxplanningpoker, :dns_cluster_query) || :ignore},
+        {Phoenix.PubSub, name: Lynxplanningpoker.PubSub},
+        {Lynxplanningpoker.RateLimit, [clean_period: :timer.minutes(10)]},
+        Lynxplanningpoker.Presence
+      ] ++
+        room_cleaner_child() ++
+        [
+          # Start to serve requests, typically the last entry
+          LynxplanningpokerWeb.Endpoint
+        ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -32,5 +35,16 @@ defmodule Lynxplanningpoker.Application do
   def config_change(changed, _new, removed) do
     LynxplanningpokerWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  defp room_cleaner_child do
+    cfg = Application.get_env(:lynxplanningpoker, :room_cleaner, [])
+
+    if Keyword.get(cfg, :enabled, false) do
+      opts = Keyword.take(cfg, [:sweep_interval, :max_idle])
+      [{Lynxplanningpoker.Rooms.Cleaner, opts}]
+    else
+      []
+    end
   end
 end

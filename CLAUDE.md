@@ -45,13 +45,13 @@ mix ecto.migrate # apenas roda as migrations pendentes
 ```
 lib/
   lynxplanningpoker/
-    rooms/room.ex          # Schema: Room (id UUID, is_active bool)
+    rooms/room.ex          # Schema: Room (id UUID, revealed bool)
     rooms.ex               # Contexto de Rooms (CRUD + PubSub)
     users/user.ex          # Schema: User (id UUID, name, vote int, belongs_to room)
     users.ex               # Contexto de Users (CRUD + PubSub)
   lynxplanningpoker_web/
     controllers/
-      room_controller.ex   # new/create/show/acceptInvite
+      room_controller.ex   # new/create/show/accept_invite
       room_html/           # Templates: new.html.heex, invite.html.heex
     live/
       room_live/show.ex    # LiveView da sala de jogo em tempo real
@@ -114,7 +114,7 @@ test/
   lynxplanningpoker_web/
     controllers/
       page_controller_test.exs                  # Home page
-      room_controller_test.exs                  # new/create/show(invite)/acceptInvite + sessão
+      room_controller_test.exs                  # new/create/show(invite)/accept_invite + sessão
     live/
       room_live/show_test.exs                   # Mount com/sem sessão, vote, reveal, reset, PubSub
 ```

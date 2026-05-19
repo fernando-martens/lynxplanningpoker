@@ -7,6 +7,7 @@ defmodule Lynxplanningpoker.Rooms do
   alias Lynxplanningpoker.Repo
 
   alias Lynxplanningpoker.Rooms.Room
+  alias Lynxplanningpoker.Users.User
 
   @doc """
   Returns the list of rooms.
@@ -135,6 +136,35 @@ defmodule Lynxplanningpoker.Rooms do
   """
   def subscribe_to_room(room_id) do
     Phoenix.PubSub.subscribe(Lynxplanningpoker.PubSub, room_topic(room_id))
+  end
+
+  @doc """
+  Deletes rooms with no users that have been idle longer than `max_idle_ms`.
+
+  A room is considered idle when its `updated_at` is older than the threshold.
+  The grace period protects rooms that briefly exist without users — e.g.,
+  during the window between `Rooms.create_room/1` and `Users.create_user/1`
+  in the host onboarding flow.
+
+  Returns the number of rooms deleted.
+  """
+  def delete_orphaned_rooms(max_idle_ms) when is_integer(max_idle_ms) and max_idle_ms >= 0 do
+    threshold =
+      DateTime.utc_now()
+      |> DateTime.add(-max_idle_ms, :millisecond)
+      |> DateTime.truncate(:second)
+
+    orphans =
+      from(r in Room,
+        left_join: u in User,
+        on: u.room_id == r.id,
+        where: is_nil(u.id) and r.updated_at < ^threshold,
+        select: r
+      )
+      |> Repo.all()
+
+    Enum.each(orphans, &delete_room/1)
+    length(orphans)
   end
 
   defp notify_room_update({:ok, %Room{} = room} = result) do

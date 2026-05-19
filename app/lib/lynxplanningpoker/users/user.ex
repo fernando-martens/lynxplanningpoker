@@ -19,17 +19,17 @@ defmodule Lynxplanningpoker.Users.User do
   end
 
   @doc """
-  Changeset for updating an existing user. Does NOT permit `:is_host` — host
-  status is assigned only at creation via `creation_changeset/2`, so a malicious
-  payload reaching `update_user/2` cannot escalate privileges.
+  Changeset for updating an existing user. Only permits voting-related fields
+  (`:vote`, `:vote_changed_after_reveal`). Identity fields (`:room_id`,
+  `:name`) and `:is_host` are set exclusively at creation via
+  `creation_changeset/2`, so a malicious payload reaching `update_user/2`
+  cannot move a user between rooms, rename them, or escalate privileges.
   """
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal])
-    |> validate_required([:room_id, :name])
-    |> validate_length(:name, max: 20)
+    |> cast(attrs, [:vote, :vote_changed_after_reveal])
+    |> validate_inclusion(:vote, Decks.labels())
     |> derive_vote_value()
-    |> foreign_key_constraint(:room_id)
   end
 
   @doc """
@@ -42,6 +42,7 @@ defmodule Lynxplanningpoker.Users.User do
     |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal, :is_host])
     |> validate_required([:room_id, :name])
     |> validate_length(:name, max: 20)
+    |> validate_inclusion(:vote, Decks.labels())
     |> derive_vote_value()
     |> foreign_key_constraint(:room_id)
   end

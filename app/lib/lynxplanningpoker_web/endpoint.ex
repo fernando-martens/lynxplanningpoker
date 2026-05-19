@@ -1,14 +1,17 @@
 defmodule LynxplanningpokerWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :lynxplanningpoker
 
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
+  # Session cookie is signed AND encrypted. The only payload today is the
+  # current_user_id UUID (not secret), so signing alone would suffice; the
+  # encryption_salt is defense-in-depth so future additions to the session
+  # don't accidentally leak. same_site: "Strict" is safe here because the app
+  # has no cross-site flows — every entry point is same-origin navigation.
   @session_options [
     store: :cookie,
     key: "_lynxplanningpoker_key",
     signing_salt: "CfstbrZC",
-    same_site: "Lax"
+    encryption_salt: "TwURRK5y",
+    same_site: "Strict"
   ]
 
   socket "/live", Phoenix.LiveView.Socket,

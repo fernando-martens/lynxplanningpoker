@@ -12,7 +12,11 @@
       "Bash(mix gettext.extract --merge)",
       "PowerShell(mix gettext.extract --merge 2>&1)",
       "Bash(npx playwright *)",
-      "Bash(mix deps.get)"
+      "Bash(mix deps.get)",
+      "Bash(mix precommit *)",
+      "Bash(mix phx.gen.secret 8)",
+      "Bash(elixir -e ':crypto.strong_rand_bytes\\(6\\) |> Base.encode64\\(\\) |> binary_part\\(0, 8\\) |> IO.puts')",
+      "Bash(elixir -e ':crypto.strong_rand_bytes\\(16\\) |> Base.url_encode64\\(padding: false\\) |> binary_part\\(0, 8\\) |> IO.puts')"
     ]
   }
 }

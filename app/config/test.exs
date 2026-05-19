@@ -56,3 +56,8 @@ config :lynxplanningpoker, :turnstile,
   enabled: false,
   site_key: nil,
   secret_key: nil
+
+# Don't start the periodic room sweeper in tests — its cleanup logic is
+# exercised directly via `Lynxplanningpoker.Rooms.delete_orphaned_rooms/1`,
+# so the timer-driven GenServer would just add nondeterminism.
+config :lynxplanningpoker, :room_cleaner, enabled: false
