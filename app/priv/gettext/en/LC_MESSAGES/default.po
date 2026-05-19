@@ -508,3 +508,19 @@ msgid "vote"
 msgid_plural "votes"
 msgstr[0] "vote"
 msgstr[1] "votes"
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:7
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Too many requests"
+msgstr "Too many requests"
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "You are making requests too quickly. Please try again in %{seconds} seconds."
+msgstr "You are making requests too quickly. Please try again in %{seconds} seconds."
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "Back to home"
+msgstr "Back to home"

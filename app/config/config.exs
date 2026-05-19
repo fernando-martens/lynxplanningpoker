@@ -11,6 +11,11 @@ config :lynxplanningpoker,
   ecto_repos: [Lynxplanningpoker.Repo],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
+# Rate limiting (Hammer + ETS). Limits are per IP, per bucket.
+config :lynxplanningpoker, :rate_limit,
+  global: [limit: 300, scale_ms: 60_000],
+  room_create: [limit: 10, scale_ms: 60_000]
+
 config :lynxplanningpoker, Lynxplanningpoker.Repo,
   migration_primary_key: [type: :binary_id],
   migration_foreign_key: [type: :binary_id]

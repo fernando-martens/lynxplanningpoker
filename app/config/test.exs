@@ -43,3 +43,9 @@ config :phoenix,
 # Use English as the default locale in tests so assertions can be written
 # against the canonical source strings instead of pt_BR translations.
 config :lynxplanningpoker, LynxplanningpokerWeb.Gettext, default_locale: "en"
+
+# Make rate limits effectively a no-op in the test suite. Dedicated plug
+# tests construct their own plug options with low limits.
+config :lynxplanningpoker, :rate_limit,
+  global: [limit: 1_000_000, scale_ms: 60_000],
+  room_create: [limit: 1_000_000, scale_ms: 60_000]

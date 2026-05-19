@@ -9,6 +9,18 @@ defmodule LynxplanningpokerWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(LynxplanningpokerWeb.Plugs.Locale)
+
+    plug(LynxplanningpokerWeb.Plugs.RateLimit,
+      bucket: :global,
+      config: :global
+    )
+  end
+
+  pipeline :rate_limit_room_create do
+    plug(LynxplanningpokerWeb.Plugs.RateLimit,
+      bucket: :room_create,
+      config: :room_create
+    )
   end
 
   pipeline :api do
@@ -21,7 +33,7 @@ defmodule LynxplanningpokerWeb.Router do
     get("/", PageController, :home)
     get("/how-it-works", PageController, :how_it_works)
     get("/pricing", PageController, :pricing)
-    resources("/rooms", RoomController, only: [:new, :create])
+    get("/rooms/new", RoomController, :new)
 
     get("/locale/:locale", LocaleController, :update)
 
@@ -34,6 +46,12 @@ defmodule LynxplanningpokerWeb.Router do
         live("/:id", RoomLive.Show, :show)
       end
     end
+  end
+
+  scope "/", LynxplanningpokerWeb do
+    pipe_through([:browser, :rate_limit_room_create])
+
+    post("/rooms", RoomController, :create)
   end
 
   # Other scopes may use custom stacks.
