@@ -16,7 +16,15 @@
       "Bash(mix precommit *)",
       "Bash(mix phx.gen.secret 8)",
       "Bash(elixir -e ':crypto.strong_rand_bytes\\(6\\) |> Base.encode64\\(\\) |> binary_part\\(0, 8\\) |> IO.puts')",
-      "Bash(elixir -e ':crypto.strong_rand_bytes\\(16\\) |> Base.url_encode64\\(padding: false\\) |> binary_part\\(0, 8\\) |> IO.puts')"
+      "Bash(elixir -e ':crypto.strong_rand_bytes\\(16\\) |> Base.url_encode64\\(padding: false\\) |> binary_part\\(0, 8\\) |> IO.puts')",
+      "Bash(perl -v)",
+      "Bash(perl -i -0pe ' *)",
+      "Bash(perl .tmp_fill_msgstr.pl priv/gettext/en/LC_MESSAGES/default.po)",
+      "Bash(perl app/.tmp_fill_msgstr.pl app/priv/gettext/en/LC_MESSAGES/default.po)",
+      "Bash(perl app/.tmp_apply_translations.pl app/priv/gettext/pt_BR/LC_MESSAGES/default.po app/.tmp_pt_BR.tsv)",
+      "Bash(perl app/.tmp_apply_translations.pl app/priv/gettext/fr/LC_MESSAGES/default.po app/.tmp_fr.tsv)",
+      "Bash(perl .tmp_apply_translations.pl priv/gettext/pt_BR/LC_MESSAGES/default.po .tmp_pt_BR.tsv)",
+      "Bash(perl .tmp_apply_translations.pl priv/gettext/fr/LC_MESSAGES/default.po .tmp_fr.tsv)"
     ]
   }
 }

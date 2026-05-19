@@ -34,6 +34,7 @@ defmodule LynxplanningpokerWeb.Router do
     get("/", PageController, :home)
     get("/how-it-works", PageController, :how_it_works)
     get("/pricing", PageController, :pricing)
+    get("/privacy", PageController, :privacy)
     get("/rooms/new", RoomController, :new)
 
     get("/locale/:locale", LocaleController, :update)

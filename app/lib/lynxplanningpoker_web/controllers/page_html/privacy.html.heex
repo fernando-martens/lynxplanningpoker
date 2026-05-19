@@ -1,0 +1,164 @@
+<Layouts.app_header />
+<main class="mx-auto max-w-3xl px-6 py-12">
+  <section class="text-center">
+    <h1 class="text-4xl font-semibold tracking-tight">
+      {gettext("Privacy and data handling")}
+    </h1>
+    <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
+      {gettext("How we handle personal data under the GDPR and the LGPD.")}
+    </p>
+    <p class="mt-2 text-xs text-base-content/60">
+      {gettext("Last updated: %{date}", date: format_date(~D[2026-05-19], @locale))}
+    </p>
+  </section>
+
+  <section class="mt-10 rounded-2xl border border-primary/40 bg-primary/5 p-6">
+    <h2 class="text-lg font-semibold">{gettext("In short")}</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-base-content/80">
+      <li>{gettext("No sign-up, no account, no password — we don't know who you are.")}</li>
+      <li>
+        {gettext(
+          "The only personal data we touch is the name you type when you join a room (up to 20 characters)."
+        )}
+      </li>
+      <li>
+        {gettext(
+          "Rooms and participants are ephemeral — everything is deleted when you leave or after two hours of inactivity."
+        )}
+      </li>
+      <li>{gettext("We don't sell, share, or use your data for advertising.")}</li>
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("What data we collect")}</h2>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">{gettext("Display name")}</h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "When you create or join a room you provide a name to identify yourself to the rest of the team. The name is limited to 20 characters and is stored only while you are in the room."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">{gettext("IP address")}</h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Your IP is used in-memory to apply rate limits and to talk to Cloudflare Turnstile (anti-bot verification when creating a room). It is never written to the database. When written to operational logs, the IP is truncated (the last octet for IPv4, the last 80 bits for IPv6) so that the original address cannot be reconstructed."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">{gettext("Vote")}</h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "The card you select during a round is stored alongside your participant record so other players can see it after the reveal. Votes are deleted together with the room."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">{gettext("Session cookie")}</h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "A single cookie (`_lynxplanningpoker_key`) holds an opaque session identifier and your language preference. It is signed and encrypted, marked SameSite=Strict, and contains no personal data beyond what is strictly required to keep you in the same room across page reloads."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 p-6 shadow-sm">
+      <h3 class="text-lg font-semibold">{gettext("What we do not collect")}</h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "We do not ask for and do not store: email addresses, phone numbers, government IDs, dates of birth, location data, or any kind of marketing/analytics tracker."
+        )}
+      </p>
+    </article>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("Why we process this data")}</h2>
+    <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-base-content/80">
+      <li>
+        {gettext(
+          "Provide the service: the name and the vote let the room function as a real-time planning poker session."
+        )}
+      </li>
+      <li>
+        {gettext(
+          "Protect the service: rate limiting and Turnstile prevent spam and abuse. The legal basis under the GDPR is legitimate interest (Art. 6(1)(f)); under the LGPD it is the regular exercise of rights (Art. 7, VI)."
+        )}
+      </li>
+      <li>
+        {gettext(
+          "Remember your language: the locale you pick stays in the session cookie so you do not have to set it again on the next visit."
+        )}
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("How long we keep it")}</h2>
+    <ul class="mt-3 list-disc space-y-2 pl-5 text-sm text-base-content/80">
+      <li>
+        {gettext(
+          "Participant record (name + vote): deleted when you leave the room. If you close the tab without leaving, an automated sweeper deletes the room after roughly two hours of inactivity."
+        )}
+      </li>
+      <li>
+        {gettext("Rate-limit buckets: in-memory only, expire automatically after a few minutes.")}
+      </li>
+      <li>
+        {gettext(
+          "Operational logs (with anonymized IP): retained by the infrastructure provider according to their retention policy, typically a few weeks."
+        )}
+      </li>
+      <li>
+        {gettext("Session cookie: cleared when you log out of the room or close your browser.")}
+      </li>
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("Third parties")}</h2>
+    <p class="mt-3 text-sm text-base-content/80">
+      {gettext(
+        "Cloudflare Turnstile is used to detect automated room creation. Cloudflare receives your IP address and a small amount of browser metadata strictly for that check; it does not set advertising cookies. See Cloudflare's privacy policy at https://www.cloudflare.com/privacypolicy/."
+      )}
+    </p>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("Your rights")}</h2>
+    <p class="mt-3 text-sm text-base-content/80">
+      {gettext(
+        "Under the GDPR (Arts. 15-22) and the LGPD (Art. 18) you have the right to access, correct, delete, restrict, object to and export the personal data we hold about you, and to withdraw any consent you have given."
+      )}
+    </p>
+    <p class="mt-3 text-sm text-base-content/80">
+      {gettext(
+        "Because the service is anonymous and the data is ephemeral, most rights are exercised directly: leaving the room (or waiting two hours) deletes everything we have about you. For anything else, write to us at the address below."
+      )}
+    </p>
+  </section>
+
+  <section class="mt-12 border-t border-base-200 pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-2xl font-semibold">{gettext("Contact")}</h2>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Questions about this page or about a request related to your personal data? Email us — we read every message."
+        )}
+      </p>
+    </div>
+    <a
+      href="mailto:contact@lynx.com"
+      class="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-85 sm:self-auto"
+    >
+      <.icon name="hero-envelope" class="size-4" /> contact@lynx.com
+    </a>
+  </section>
+</main>

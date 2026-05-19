@@ -12,4 +12,8 @@ defmodule LynxplanningpokerWeb.PageController do
   def pricing(conn, _params) do
     render(conn, :pricing)
   end
+
+  def privacy(conn, _params) do
+    render(conn, :privacy)
+  end
 end

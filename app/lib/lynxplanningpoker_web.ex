@@ -86,6 +86,8 @@ defmodule LynxplanningpokerWeb do
       import Phoenix.HTML
       # Core UI components
       import LynxplanningpokerWeb.CoreComponents
+      # Locale-aware view helpers (format_date/2, etc.)
+      import LynxplanningpokerWeb.LocaleHelpers
 
       # Common modules used in templates
       alias LynxplanningpokerWeb.Layouts

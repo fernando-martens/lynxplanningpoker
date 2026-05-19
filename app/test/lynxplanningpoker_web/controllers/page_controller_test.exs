@@ -6,13 +6,18 @@ defmodule LynxplanningpokerWeb.PageControllerTest do
     assert html_response(conn, 200) =~ "Lynx planning poker"
   end
 
-  test "GET /how-it-works renders the three steps", %{conn: conn} do
+  test "GET /how-it-works renders the three steps, FAQ and CTA", %{conn: conn} do
     conn = get(conn, ~p"/how-it-works")
     response = html_response(conn, 200)
     assert response =~ "How it works"
     assert response =~ "Create a room"
     assert response =~ "Invite your team"
     assert response =~ "Vote and reveal"
+    assert response =~ "Frequently asked questions"
+    assert response =~ "Is it really free?"
+    assert response =~ "Ready to start?"
+    assert response =~ ~s(href="/rooms/new")
+    assert response =~ ~s(href="/privacy")
   end
 
   test "GET /pricing renders both plans and emphasises the free one", %{conn: conn} do
@@ -24,6 +29,23 @@ defmodule LynxplanningpokerWeb.PageControllerTest do
     assert response =~ "Premium"
     assert response =~ "On the roadmap"
     assert response =~ "Not available yet"
+  end
+
+  test "GET /privacy renders the GDPR/LGPD page with the expected sections", %{conn: conn} do
+    conn = get(conn, ~p"/privacy")
+    response = html_response(conn, 200)
+    assert response =~ "Privacy and data handling"
+    assert response =~ "What data we collect"
+    assert response =~ "Your rights"
+    assert response =~ "GDPR"
+    assert response =~ "LGPD"
+  end
+
+  test "the home page links to /privacy", %{conn: conn} do
+    conn = get(conn, ~p"/")
+    response = html_response(conn, 200)
+    assert response =~ ~s(href="/privacy")
+    assert response =~ "How we handle your data"
   end
 
   describe "security headers" do
