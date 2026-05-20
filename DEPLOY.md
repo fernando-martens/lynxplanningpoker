@@ -118,7 +118,7 @@ A app **não** termina TLS sozinha por padrão. Duas opções:
 
 Termine TLS na Cloudflare / nginx / Caddy / load balancer e mande HTTP plano pra Bandit (porta 4000). É a abordagem mais simples e é o que `PHX_HOST` + `TRUSTED_PROXIES` assumem.
 
-`force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]]` já está habilitado no bloco prod de [`runtime.exs`](app/config/runtime.exs) — qualquer requisição HTTP que escape do proxy é redirecionada pra HTTPS, e o cabeçalho HSTS é emitido. O `rewrite_on` faz Plug.SSL respeitar o `X-Forwarded-Proto` do proxy (sem isso, a app vê todo request como HTTP e cai em loop de redirect).
+`force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto], exclude: [...]]` já está habilitado em [`prod.exs`](app/config/prod.exs) — qualquer requisição HTTP que escape do proxy é redirecionada pra HTTPS, e o cabeçalho HSTS é emitido. O `rewrite_on` faz Plug.SSL respeitar o `X-Forwarded-Proto` do proxy (sem isso, a app vê todo request como HTTP e cai em loop de redirect). **`:force_ssl` precisa ficar em `prod.exs` (compile-time), não em `runtime.exs`** — defini-lo nos dois lugares com valores diferentes faz o boot abortar com erro de `validate_compile_env`.
 
 ### Opção B — TLS direto no Bandit
 
@@ -204,7 +204,7 @@ config :swoosh, :api_client, Swoosh.ApiClient.Req
 - [ ] `CLOUDFLARE_TURNSTILE_SITE_KEY` / `..._SECRET_KEY` são as chaves de prod (não as `1x0000...` de dev).
 - [ ] `TRUSTED_PROXIES` contém todas as faixas do CDN/LB usado.
 - [ ] Origin firewallado para aceitar tráfego só do CDN.
-- [x] `force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]]` ativo em `runtime.exs` (prod).
+- [x] `force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]]` ativo em `prod.exs` (compile-time).
 - [x] `check_origin` do socket LiveView restringe ao domínio de prod (derivado de `PHX_HOST`).
 - [x] CSP configurado no `put_secure_browser_headers` (router.ex `@csp`).
 - [ ] Migrations rodadas: `bin/lynxplanningpoker eval "Lynxplanningpoker.Release.migrate"`.

@@ -95,12 +95,6 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0}
     ],
     secret_key_base: secret_key_base,
-    # TLS is terminated at the proxy/CDN (see DEPLOY.md §4 Option A), so
-    # `rewrite_on: [:x_forwarded_proto]` tells Plug.SSL to honor the proxy's
-    # `X-Forwarded-Proto` header when deciding whether the original request
-    # was HTTPS. Without it, every request would look like plain HTTP to the
-    # endpoint and `force_ssl` would loop redirects.
-    force_ssl: [hsts: true, rewrite_on: [:x_forwarded_proto]],
     # Reject WebSocket/LiveView upgrades whose `Origin` header doesn't match
     # the public host. The default (`true`) would also work since the URL
     # host is configured above, but listing the schemes explicitly makes the
