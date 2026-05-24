@@ -1,0 +1,1140 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:32
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:26
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:73
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:41
+#, elixir-autogen
+msgid "Create a room"
+msgstr "Criar uma sala"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:38
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:4
+#, elixir-autogen
+msgid "How it works"
+msgstr "Como funciona"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:29
+#, elixir-autogen
+msgid "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+msgstr "Na página inicial, clique em \"Criar uma sala\", informe seu nome e você se tornará o host de uma nova sessão de planejamento."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:39
+#, elixir-autogen
+msgid "Invite your team"
+msgstr "Convide seu time"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:42
+#, elixir-autogen
+msgid "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+msgstr "Use o botão \"Convidar\" para copiar o link da sala e compartilhe com seu time. Qualquer pessoa com o link pode entrar — sem cadastro."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:52
+#, elixir-autogen
+msgid "Vote and reveal"
+msgstr "Vote e revele"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:55
+#, elixir-autogen
+msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
+msgstr "Cada jogador escolhe uma carta para estimar a tarefa. Quando todos votarem, o host revela os resultados e a média é exibida. Use \"Recomeçar\" para começar a próxima rodada."
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:9
+#, elixir-autogen
+msgid "Who are you?"
+msgstr "Quem é você?"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:12
+#, elixir-autogen
+msgid "Say your name and create your room"
+msgstr "Digite seu nome e crie sua sala"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:28
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:23
+#, elixir-autogen
+msgid "Your name"
+msgstr "Seu nome"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:29
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:24
+#, elixir-autogen
+msgid "Enter your name"
+msgstr "Digite seu nome"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:35
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:30
+#, elixir-autogen
+msgid "Visible to everyone in the room"
+msgstr "Visível para todos na sala"
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:33
+#, elixir-autogen
+msgid "Please complete the human verification before continuing."
+msgstr "Conclua a verificação humana antes de continuar."
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:54
+#, elixir-autogen
+msgid "Join your room"
+msgstr "Entrar na sua sala"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:9
+#, elixir-autogen
+msgid "You're invited!"
+msgstr "Você foi convidado!"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:12
+#, elixir-autogen
+msgid "Enter your name to join the room"
+msgstr "Digite seu nome para entrar na sala"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:39
+#, elixir-autogen
+msgid "Join the room"
+msgstr "Entrar na sala"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:366
+#: lib/lynxplanningpoker_web/components/layouts.ex:406
+#, elixir-autogen
+msgid "Features"
+msgstr "Funcionalidades"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:369
+#: lib/lynxplanningpoker_web/components/layouts.ex:412
+#, elixir-autogen
+msgid "Pricing"
+msgstr "Preços"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:543
+#: lib/lynxplanningpoker_web/components/layouts.ex:545
+#, elixir-autogen
+msgid "Restart"
+msgstr "Recomeçar"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:550
+#: lib/lynxplanningpoker_web/components/layouts.ex:553
+#, elixir-autogen
+msgid "Invite"
+msgstr "Convidar"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:379
+#, elixir-autogen
+msgid "Invitation link"
+msgstr "Link de convite"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:396
+#, elixir-autogen
+msgid "Copy"
+msgstr "Copiar"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:404
+#, elixir-autogen
+msgid "Link copied!"
+msgstr "Link copiado!"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:412
+#, elixir-autogen
+msgid "Anyone with this link can join the room"
+msgstr "Qualquer pessoa com este link pode entrar na sala"
+
+#: lib/lynxplanningpoker_web/components/core_components.ex:144
+#, elixir-autogen
+msgid "Close"
+msgstr "Fechar"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:560
+#: lib/lynxplanningpoker_web/components/layouts.ex:563
+#, elixir-autogen
+msgid "End planning"
+msgstr "Encerrar planning"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:570
+#: lib/lynxplanningpoker_web/components/layouts.ex:573
+#, elixir-autogen
+msgid "Leave"
+msgstr "Sair"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:141
+#, elixir-autogen
+msgid "Settings"
+msgstr "Configurações"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:152
+#: lib/lynxplanningpoker_web/components/layouts.ex:427
+#, elixir-autogen
+msgid "Theme"
+msgstr "Tema"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:158
+#: lib/lynxplanningpoker_web/components/layouts.ex:202
+#: lib/lynxplanningpoker_web/components/layouts.ex:433
+#, elixir-autogen
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Portuguese"
+msgstr "Português"
+
+msgid "English"
+msgstr "Inglês"
+
+msgid "French"
+msgstr "Francês"
+
+msgid "Spanish"
+msgstr "Espanhol"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:608
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:615
+#, elixir-autogen
+msgid "Reveal"
+msgstr "Revelar"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:617
+#, elixir-autogen
+msgid "Click the fire to reveal"
+msgstr "Clique na lareira para revelar"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:453
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:599
+#, elixir-autogen
+msgid "Average"
+msgstr "Média"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:573
+#, elixir-autogen
+msgid "Vote changed after reveal"
+msgstr "Voto alterado após revelar"
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:87
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:111
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:20
+#, elixir-autogen
+msgid "This room does not exist or has already ended."
+msgstr "Essa sala não existe ou já foi encerrada."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:286
+#, elixir-autogen
+msgid "Could not register your vote. Please try again."
+msgstr "Não foi possível registrar seu voto. Tente novamente."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:202
+#, elixir-autogen
+msgid "The room was ended by the host."
+msgstr "A sala foi encerrada pelo host."
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:203
+#, elixir-autogen
+msgid "You left the room."
+msgstr "Você saiu da sala."
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:98
+#, elixir-autogen
+msgid "We can't find the internet"
+msgstr "Sem conexão com a internet"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:103
+#: lib/lynxplanningpoker_web/components/layouts.ex:115
+#, elixir-autogen
+msgid "Attempting to reconnect"
+msgstr "Tentando reconectar"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:110
+#, elixir-autogen
+msgid "Something went wrong!"
+msgstr "Algo deu errado!"
+
+#: lib/lynxplanningpoker_web/components/core_components.ex:94
+#, elixir-autogen
+msgid "close"
+msgstr "fechar"
+
+#: lib/lynxplanningpoker_web/components/core_components.ex:463
+#, elixir-autogen
+msgid "Actions"
+msgstr "Ações"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:5
+#, elixir-autogen
+msgid "Plans and pricing"
+msgstr "Planos e preços"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:8
+#, elixir-autogen
+msgid "Everything you use today will always be free. Premium features for agile teams are on our roadmap for the future."
+msgstr "Tudo que você usa hoje será sempre gratuito. Funcionalidades premium para times ágeis estão no nosso roadmap para o futuro."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:19
+#, elixir-autogen
+msgid "Available today"
+msgstr "Disponível hoje"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:171
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:27
+#, elixir-autogen
+msgid "Free forever"
+msgstr "Gratuito para sempre"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:29
+#, elixir-autogen
+msgid "Everything you use today, free forever — no card, no catch."
+msgstr "Tudo que você usa hoje, gratuito para sempre — sem cartão, sem pegadinha."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:11
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:33
+#, elixir-autogen
+msgid "Free"
+msgstr "Grátis"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:34
+#, elixir-autogen
+msgid "forever"
+msgstr "para sempre"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:47
+#, elixir-autogen
+msgid "Unlimited rooms, up to 15 players each"
+msgstr "Salas ilimitadas, com até 15 jogadores cada"
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:126
+#, elixir-autogen
+msgid "This room is full (maximum %{max} players)."
+msgstr "Esta sala está cheia (máximo de %{max} jogadores)."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:51
+#, elixir-autogen
+msgid "Real-time voting and reveal"
+msgstr "Votação e revelação em tempo real"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:55
+#, elixir-autogen
+msgid "No sign-up — share a link and play"
+msgstr "Sem cadastro — compartilhe um link e comece"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:59
+#, elixir-autogen
+msgid "Vote average shown after reveal"
+msgstr "Média dos votos exibida após a revelação"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:68
+#, elixir-autogen
+msgid "Every feature listed here stays free — forever."
+msgstr "Todas as funcionalidades listadas aqui continuam gratuitas — para sempre."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:80
+#, elixir-autogen
+msgid "Premium"
+msgstr "Premium"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:82
+#, elixir-autogen
+msgid "On the roadmap"
+msgstr "No roadmap"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:86
+#, elixir-autogen
+msgid "Extra features designed to help agile teams go further."
+msgstr "Funcionalidades extras pensadas para ajudar times ágeis a ir além."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:91
+#, elixir-autogen
+msgid "Coming soon"
+msgstr "Em breve"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:100
+#, elixir-autogen
+msgid "Not available yet"
+msgstr "Ainda não disponível"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:104
+#, elixir-autogen
+msgid "Ideas we're exploring"
+msgstr "Ideias que estamos explorando"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:109
+#, elixir-autogen
+msgid "Sprint history and team analytics"
+msgstr "Histórico de sprints e analytics do time"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:113
+#, elixir-autogen
+msgid "Custom card decks per team"
+msgstr "Baralhos personalizados por time"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:117
+#, elixir-autogen
+msgid "Persistent team workspaces"
+msgstr "Workspaces persistentes para times"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:121
+#, elixir-autogen
+msgid "Integrations with Jira, Linear and others"
+msgstr "Integrações com Jira, Linear e outras"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:125
+#, elixir-autogen
+msgid "Priority support for paying teams"
+msgstr "Suporte prioritário para times pagantes"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:130
+#, elixir-autogen
+msgid "These features have no release date yet. Even when they ship, the free plan above will keep working exactly as it does today."
+msgstr "Essas funcionalidades ainda não têm data de lançamento. Mesmo quando forem lançadas, o plano gratuito acima continuará funcionando exatamente como hoje."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:139
+#, elixir-autogen
+msgid "Got an idea for what should be in Premium?"
+msgstr "Tem uma ideia do que deveria estar no Premium?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:144
+#, elixir-autogen
+msgid "Tell us by email"
+msgstr "Conte pra gente por e-mail"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:427
+#, elixir-autogen, elixir-format
+msgid "All participants will be disconnected and the room will be permanently closed."
+msgstr "Todos os participantes serão desconectados e a sala será encerrada permanentemente."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:420
+#, elixir-autogen, elixir-format
+msgid "End planning?"
+msgstr "Encerrar planning?"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:421
+#, elixir-autogen, elixir-format
+msgid "Leave the room?"
+msgstr "Sair da sala?"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:436
+#, elixir-autogen, elixir-format
+msgid "No"
+msgstr "Não"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:440
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:444
+#, elixir-autogen, elixir-format
+msgid "Yes"
+msgstr "Sim"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:428
+#, elixir-autogen, elixir-format
+msgid "You will leave the room. You can rejoin using the invite link."
+msgstr "Você sairá da sala. Pode entrar novamente usando o link de convite."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:521
+#, elixir-autogen, elixir-format
+msgid "%{count} participant did not vote"
+msgid_plural "%{count} participants did not vote"
+msgstr[0] "%{count} participante não votou"
+msgstr[1] "%{count} participantes não votaram"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:472
+#, elixir-autogen, elixir-format
+msgid "Consensus reached!"
+msgstr "Consenso alcançado!"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:476
+#, elixir-autogen, elixir-format
+msgid "Distribution"
+msgstr "Distribuição"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:461
+#, elixir-autogen, elixir-format
+msgid "Max"
+msgstr "Máx."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:457
+#, elixir-autogen, elixir-format
+msgid "Min"
+msgstr "Mín."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:479
+#, elixir-autogen, elixir-format
+msgid "No votes were cast."
+msgstr "Nenhum voto registrado."
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:587
+#, elixir-autogen, elixir-format
+msgid "View voting statistics"
+msgstr "Ver estatísticas da votação"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:465
+#, elixir-autogen, elixir-format
+msgid "Voted"
+msgstr "Votaram"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:450
+#, elixir-autogen, elixir-format
+msgid "Voting statistics"
+msgstr "Estatísticas da votação"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:596
+#, elixir-autogen, elixir-format
+msgid "Click to see statistics"
+msgstr "Ver estatísticas da votação"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:503
+#, elixir-autogen, elixir-format
+msgid "Individual votes"
+msgstr "Votos individuais"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:495
+#, elixir-autogen, elixir-format
+msgid "vote"
+msgid_plural "votes"
+msgstr[0] "voto"
+msgstr[1] "votos"
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:6
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "Too many requests"
+msgstr "Muitas requisições"
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "You are making requests too quickly. Please try again in %{seconds} seconds."
+msgstr "Você está fazendo requisições rápido demais. Tente novamente em %{seconds} segundos."
+
+#: lib/lynxplanningpoker_web/controllers/error_html/429.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Back to home"
+msgstr "Voltar para o início"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:71
+#, elixir-autogen, elixir-format
+msgid "A single cookie (`_lynxplanningpoker_key`) holds an opaque session identifier and your language preference. It is signed and encrypted, marked SameSite=Strict, and contains no personal data beyond what is strictly required to keep you in the same room across page reloads."
+msgstr "Um único cookie (`_lynxplanningpoker_key`) guarda um identificador opaco de sessão e a sua preferência de idioma. Ele é assinado e criptografado, marcado como SameSite=Strict, e não contém nenhum dado pessoal além do estritamente necessário para manter você na mesma sala entre recargas de página."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:156
+#, elixir-autogen, elixir-format
+msgid "Because the service is anonymous and the data is ephemeral, most rights are exercised directly: leaving the room (or waiting two hours) deletes everything we have about you. For anything else, write to us at the address below."
+msgstr "Como o serviço é anônimo e os dados são efêmeros, a maioria dos direitos é exercida diretamente: sair da sala (ou esperar duas horas) apaga tudo o que temos sobre você. Para qualquer outra coisa, escreva para nós no endereço abaixo."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:142
+#, elixir-autogen, elixir-format
+msgid "Cloudflare Turnstile is used to detect automated room creation. Cloudflare receives your IP address and a small amount of browser metadata strictly for that check; it does not set advertising cookies. See Cloudflare's privacy policy at https://www.cloudflare.com/privacypolicy/."
+msgstr "O Cloudflare Turnstile é usado para detectar criação automatizada de salas. A Cloudflare recebe o seu endereço IP e uma pequena quantidade de metadados do navegador estritamente para essa verificação; não define cookies de publicidade. Veja a política de privacidade da Cloudflare em https://www.cloudflare.com/privacypolicy/."
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:499
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:164
+#, elixir-autogen, elixir-format
+msgid "Contact"
+msgstr "Contato"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Display name"
+msgstr "Nome de exibição"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:118
+#, elixir-autogen, elixir-format
+msgid "How long we keep it"
+msgstr "Tempo de retenção"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "How we handle personal data under the GDPR and the LGPD."
+msgstr "Como tratamos dados pessoais sob a GDPR e a LGPD."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:70
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:233
+#, elixir-autogen, elixir-format
+msgid "How we handle your data"
+msgstr "Como tratamos seus dados"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:51
+#, elixir-autogen, elixir-format
+msgid "IP address"
+msgstr "Endereço IP"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:16
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "In short"
+msgstr "Em resumo"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:18
+#, elixir-autogen, elixir-format
+msgid "No sign-up, no account, no password — we don't know who you are."
+msgstr "Sem cadastro, sem conta, sem senha — não sabemos quem você é."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Operational logs (with anonymized IP): retained by the infrastructure provider according to their retention policy, typically a few weeks."
+msgstr "Logs operacionais (com IP anonimizado): retidos pelo provedor de infraestrutura conforme a política dele, normalmente algumas semanas."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "Participant record (name + vote): deleted when you leave the room. If you close the tab without leaving, an automated sweeper deletes the room after roughly two hours of inactivity."
+msgstr "Registro de participante (nome + voto): apagado quando você sai da sala. Se fechar a aba sem sair, uma rotina automática apaga a sala após cerca de duas horas de inatividade."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Privacy and data handling"
+msgstr "Privacidade e tratamento de dados"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:105
+#, elixir-autogen, elixir-format
+msgid "Protect the service: rate limiting and Turnstile prevent spam and abuse. The legal basis under the GDPR is legitimate interest (Art. 6(1)(f)); under the LGPD it is the regular exercise of rights (Art. 7, VI)."
+msgstr "Proteger o serviço: rate limiting e Turnstile previnem spam e abusos. A base legal sob a GDPR é o legítimo interesse (Art. 6(1)(f)); sob a LGPD é o exercício regular de direitos (Art. 7º, VI)."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:100
+#, elixir-autogen, elixir-format
+msgid "Provide the service: the name and the vote let the room function as a real-time planning poker session."
+msgstr "Prestar o serviço: o nome e o voto permitem que a sala funcione como uma sessão de planning poker em tempo real."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:166
+#, elixir-autogen, elixir-format
+msgid "Questions about this page or about a request related to your personal data? Email us — we read every message."
+msgstr "Dúvidas sobre esta página ou sobre uma solicitação relacionada aos seus dados pessoais? Mande um email — lemos cada mensagem."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:126
+#, elixir-autogen, elixir-format
+msgid "Rate-limit buckets: in-memory only, expire automatically after a few minutes."
+msgstr "Buckets de rate limit: somente em memória, expiram automaticamente após alguns minutos."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:110
+#, elixir-autogen, elixir-format
+msgid "Remember your language: the locale you pick stays in the session cookie so you do not have to set it again on the next visit."
+msgstr "Lembrar do seu idioma: o idioma escolhido fica no cookie de sessão para você não precisar configurar de novo na próxima visita."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Rooms and participants are ephemeral — everything is deleted when you leave or after two hours of inactivity."
+msgstr "Salas e participantes são efêmeros — tudo é apagado quando você sai ou após duas horas de inatividade."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:69
+#, elixir-autogen, elixir-format
+msgid "Session cookie"
+msgstr "Cookie de sessão"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:134
+#, elixir-autogen, elixir-format
+msgid "Session cookie: cleared when you log out of the room or close your browser."
+msgstr "Cookie de sessão: apagado quando você sai da sala ou fecha o navegador."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:62
+#, elixir-autogen, elixir-format
+msgid "The card you select during a round is stored alongside your participant record so other players can see it after the reveal. Votes are deleted together with the room."
+msgstr "A carta que você escolhe durante uma rodada é armazenada junto com o seu registro de participante para que os outros jogadores possam vê-la após a revelação. Os votos são apagados junto com a sala."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "The only personal data we touch is the name you type when you join a room (up to 20 characters)."
+msgstr "O único dado pessoal que tocamos é o nome que você digita ao entrar numa sala (até 20 caracteres)."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:140
+#, elixir-autogen, elixir-format
+msgid "Third parties"
+msgstr "Terceiros"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:151
+#, elixir-autogen, elixir-format
+msgid "Under the GDPR (Arts. 15-22) and the LGPD (Art. 18) you have the right to access, correct, delete, restrict, object to and export the personal data we hold about you, and to withdraw any consent you have given."
+msgstr "Sob a GDPR (Arts. 15-22) e a LGPD (Art. 18) você tem o direito de acessar, corrigir, apagar, restringir, opor-se ao tratamento e exportar os dados pessoais que mantemos sobre você, e de revogar qualquer consentimento dado."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "Vote"
+msgstr "Voto"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:39
+#, elixir-autogen, elixir-format
+msgid "What data we collect"
+msgstr "Quais dados coletamos"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "What we do not collect"
+msgstr "O que não coletamos"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:44
+#, elixir-autogen, elixir-format
+msgid "When you create or join a room you provide a name to identify yourself to the rest of the team. The name is limited to 20 characters and is stored only while you are in the room."
+msgstr "Ao criar ou entrar numa sala você fornece um nome para se identificar para o resto do time. O nome é limitado a 20 caracteres e é armazenado apenas enquanto você está na sala."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:97
+#, elixir-autogen, elixir-format
+msgid "Why we process this data"
+msgstr "Por que processamos esses dados"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:149
+#, elixir-autogen, elixir-format
+msgid "Your rights"
+msgstr "Seus direitos"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:11
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Last updated: %{date}"
+msgstr "Última atualização: %{date}"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:52
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:150
+#, elixir-autogen, elixir-format
+msgid "Can I use it in my language?"
+msgstr "Posso usar no meu idioma?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Create, invite, vote — your team estimates a story in under a minute."
+msgstr "Crie, convide, vote — seu time estima uma história em menos de um minuto."
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:31
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:99
+#, elixir-autogen, elixir-format
+msgid "Do my teammates need to sign up?"
+msgstr "Meus colegas precisam se cadastrar?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:78
+#, elixir-autogen, elixir-format
+msgid "Frequently asked questions"
+msgstr "Perguntas frequentes"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:38
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:115
+#, elixir-autogen, elixir-format
+msgid "How many people can join a room?"
+msgstr "Quantas pessoas podem entrar em uma sala?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:24
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:83
+#, elixir-autogen, elixir-format
+msgid "Is it really free?"
+msgstr "É realmente grátis?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:33
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:107
+#, elixir-autogen, elixir-format
+msgid "No accounts, no passwords. Anyone with the room link types a name and they're in. The name is only kept while they are in the room."
+msgstr "Sem contas, sem senhas. Qualquer pessoa com o link da sala digita um nome e entra. O nome é mantido apenas enquanto a pessoa está na sala."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:48
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "No sign-up"
+msgstr "Sem cadastro"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:143
+#, elixir-autogen, elixir-format
+msgid "Read the privacy details"
+msgstr "Leia os detalhes de privacidade"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:63
+#, elixir-autogen, elixir-format
+msgid "Ready to start?"
+msgstr "Pronto para começar?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:15
+#, elixir-autogen, elixir-format
+msgid "Real-time"
+msgstr "Em tempo real"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:47
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:139
+#, elixir-autogen, elixir-format
+msgid "Rooms are ephemeral: everything is deleted when the host leaves or after two hours of inactivity. We don't sell data and we don't run ads."
+msgstr "As salas são efêmeras: tudo é apagado quando o host sai ou após duas horas de inatividade. Não vendemos dados e não veiculamos anúncios."
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:40
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:123
+#, elixir-autogen, elixir-format
+msgid "Up to 15 participants per room, which covers the vast majority of planning sessions. If you need bigger groups, get in touch."
+msgstr "Até 15 participantes por sala, o que cobre a grande maioria das sessões de planejamento. Se você precisa de grupos maiores, entre em contato."
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:45
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:131
+#, elixir-autogen, elixir-format
+msgid "What happens to my data?"
+msgstr "O que acontece com meus dados?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:26
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:91
+#, elixir-autogen, elixir-format
+msgid "Yes. The core planning poker experience — creating rooms, inviting your team, voting, revealing — is free forever. We have no paid tier today; if we add one in the future, it will only cover advanced features and the basic flow will remain free."
+msgstr "Sim. A experiência principal de planning poker — criar salas, convidar o time, votar, revelar — é gratuita para sempre. Não temos plano pago hoje; se adicionarmos um no futuro, ele cobrirá apenas funcionalidades avançadas e o fluxo básico continuará gratuito."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Your first room takes less than 10 seconds to set up."
+msgstr "Criar sua primeira sala leva menos de 10 segundos."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/pricing.html.heex:63
+#, elixir-autogen, elixir-format
+msgid "Light and dark themes, four languages"
+msgstr "Temas claro e escuro, quatro idiomas"
+
+#: lib/lynxplanningpoker_web/controllers/page_html.ex:54
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:158
+#, elixir-autogen, elixir-format
+msgid "The interface is available in Portuguese (Brazil), English, French and Spanish. Switch from the header menu — your choice sticks across sessions."
+msgstr "A interface está disponível em português (Brasil), inglês, francês e espanhol. Troque pelo menu do cabeçalho — sua escolha é mantida entre sessões."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/how_it_works.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "pt / en / fr / es"
+msgstr "pt / en / fr / es"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:18
+#, elixir-autogen, elixir-format
+msgid "A free, real-time planning poker tool for agile and scrum teams. Create a room, invite your team and estimate user stories together — no sign-up required."
+msgstr "Uma ferramenta de planning poker gratuita e em tempo real para times ágeis e de scrum. Crie uma sala, convide seu time e estime histórias de usuário juntos — sem precisar de cadastro."
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:40
+#, elixir-autogen, elixir-format
+msgid "Create a Room · Lynx Poker"
+msgstr "Criar uma sala · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:9
+#, elixir-autogen, elixir-format
+msgid "Planning poker for agile teams · Lynx planning poker"
+msgstr "Planning poker para times ágeis · Lynx planning poker"
+
+#: lib/lynxplanningpoker_web/components/layouts/root.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Free, real-time planning poker for agile teams. Create a room, share the link and estimate user stories together — no sign-up required."
+msgstr "Planning poker gratuito e em tempo real para times ágeis. Crie uma sala, compartilhe o link e estime histórias de usuário juntos — sem precisar de cadastro."
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:28
+#, elixir-autogen, elixir-format
+msgid "How Planning Poker Works · Lynx Poker"
+msgstr "Como funciona o Planning Poker · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:51
+#, elixir-autogen, elixir-format
+msgid "Join the Planning Room · Lynx Poker"
+msgstr "Entrar na sala de planning · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:31
+#, elixir-autogen, elixir-format
+msgid "Learn to run a planning poker session in under a minute: create a room, invite your team, vote on a user story and reveal the estimate together."
+msgstr "Aprenda a conduzir uma sessão de planning poker em menos de um minuto: crie uma sala, convide seu time, vote em uma história de usuário e revele a estimativa juntos."
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:44
+#, elixir-autogen, elixir-format
+msgid "Lynx Planning Poker is free forever: unlimited rooms, up to 15 players and real-time voting. No credit card, no ads, no catch."
+msgstr "O Lynx Planning Poker é gratuito para sempre: salas ilimitadas, até 15 jogadores e votação em tempo real. Sem cartão de crédito, sem anúncios, sem pegadinha."
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:41
+#, elixir-autogen, elixir-format
+msgid "Pricing · Lynx Poker"
+msgstr "Planos e preços · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:53
+#, elixir-autogen, elixir-format
+msgid "Privacy & Data Protection · Lynx Poker"
+msgstr "Privacidade e proteção de dados · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:12
+#, elixir-autogen, elixir-format
+msgid "Run free, real-time planning poker with your agile team. No sign-up, no install — just create a room, share the link, and estimate user stories in seconds."
+msgstr "Planning poker gratuito e em tempo real. Sem cadastro nem instalação — é só criar uma sala, compartilhar o link e estimar user stories em segundos."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:181
+#, elixir-autogen, elixir-format
+msgid "Four languages"
+msgstr "Quatro idiomas"
+
+#: lib/lynxplanningpoker_web/components/layouts/root.html.heex:51
+#: lib/lynxplanningpoker_web/components/layouts/root.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Lynx Planning Poker — free, real-time planning poker for agile teams"
+msgstr "Lynx Planning Poker — planning poker gratuito e em tempo real para times ágeis"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "Lynx mascot, the Lynx Planning Poker app"
+msgstr "Mascote do Lynx Planning Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:161
+#, elixir-autogen, elixir-format
+msgid "No accounts, ever"
+msgstr "Nunca precisa de conta"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:183
+#, elixir-autogen, elixir-format
+msgid "Play in English, Portuguese, French or Spanish."
+msgstr "Jogue em inglês, português, francês ou espanhol."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:151
+#, elixir-autogen, elixir-format
+msgid "Real-time by default"
+msgstr "Tempo real por padrão"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:163
+#, elixir-autogen, elixir-format
+msgid "Share the room link and your teammates join with just a name."
+msgstr "Compartilhe o link da sala e seus colegas entram só com um nome."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:173
+#, elixir-autogen, elixir-format
+msgid "Unlimited rooms for up to 15 players, with no ads and no credit card."
+msgstr "Salas ilimitadas para até 15 jogadores, sem anúncios e sem cartão de crédito."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:153
+#, elixir-autogen, elixir-format
+msgid "Votes, reveals and resets sync instantly for everyone in the room."
+msgstr "Votos, revelações e reinícios sincronizam na hora para todos na sala."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:94
+#, elixir-autogen, elixir-format
+msgid "What is planning poker?"
+msgstr "O que é planning poker?"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:143
+#, elixir-autogen, elixir-format
+msgid "Why teams choose Lynx Planning Poker"
+msgstr "Por que os times escolhem o Lynx Planning Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:202
+#, elixir-autogen, elixir-format
+msgid "Lynx is private by design — built so your planning sessions leave no trace."
+msgstr "O Lynx é private by design — feito para que suas sessões de planning não deixem rastro."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:208
+#, elixir-autogen, elixir-format
+msgid "No accounts and no passwords — we never ask who you are."
+msgstr "Sem contas e sem senhas — nunca perguntamos quem você é."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:213
+#, elixir-autogen, elixir-format
+msgid "Rooms are ephemeral: everything is deleted when the host leaves or after two hours of inactivity."
+msgstr "As salas são efêmeras: tudo é apagado quando o host sai ou após duas horas de inatividade."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:198
+#, elixir-autogen, elixir-format
+msgid "Your data stays yours"
+msgstr "Seus dados continuam seus"
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:392
+#, elixir-autogen, elixir-format
+msgid "Menu"
+msgstr "Menu"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:24
+#, elixir-autogen, elixir-format
+msgid "Free, fast, and no sign-up needed."
+msgstr "Grátis, rápido e sem cadastro."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:60
+#, elixir-autogen, elixir-format
+msgid "GDPR"
+msgstr "LGPD"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:43
+#, elixir-autogen, elixir-format
+msgid "Privacy and security highlights"
+msgstr "Destaques de privacidade e segurança"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:56
+#, elixir-autogen, elixir-format
+msgid "Rooms auto-delete"
+msgstr "Salas temporárias"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "A strict Content-Security-Policy with a fresh nonce on every request."
+msgstr "Uma Content-Security-Policy rigorosa, com um nonce novo a cada requisição."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:83
+#, elixir-autogen, elixir-format
+msgid "Abuse protection"
+msgstr "Proteção contra abuso"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:18
+#, elixir-autogen, elixir-format
+msgid "All traffic runs over HTTPS, enforced with HSTS."
+msgstr "Todo o tráfego usa HTTPS, reforçado com HSTS."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:95
+#, elixir-autogen, elixir-format
+msgid "Anonymous by design"
+msgstr "Anônimo por design"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "Content Security Policy"
+msgstr "Política de Segurança de Conteúdo (CSP)"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "Encrypted connections"
+msgstr "Conexões criptografadas"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Every request is served over HTTPS. In production the app sends the Strict-Transport-Security header (HSTS), so browsers refuse to fall back to plain HTTP after the first visit. The connection between the app and its database is encrypted too."
+msgstr "Toda requisição é servida por HTTPS. Em produção, o app envia o cabeçalho Strict-Transport-Security (HSTS), então os navegadores se recusam a voltar para HTTP puro após a primeira visita. A conexão entre o app e o banco de dados também é criptografada."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:50
+#, elixir-autogen, elixir-format
+msgid "Every response carries a Content-Security-Policy built per request with a unique cryptographic nonce. Scripts may only load from the app itself and the Cloudflare Turnstile widget. The policy also sets frame-ancestors 'none', which blocks the site from being embedded in an iframe and defeats clickjacking. Standard secure browser headers are sent on every page."
+msgstr "Toda resposta carrega uma Content-Security-Policy construída por requisição com um nonce criptográfico único. Scripts só podem ser carregados do próprio app e do widget Cloudflare Turnstile. A política também define frame-ancestors 'none', que impede o site de ser embutido em um iframe e neutraliza o clickjacking. Cabeçalhos de segurança padrão do navegador são enviados em todas as páginas."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:112
+#, elixir-autogen, elixir-format
+msgid "Found a security issue? We want to hear about it. Email us and we'll respond as quickly as we can."
+msgstr "Encontrou um problema de segurança? Queremos saber. Escreva para nós e responderemos o mais rápido possível."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:59
+#, elixir-autogen, elixir-format
+msgid "Hardened sessions"
+msgstr "Sessões reforçadas"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:68
+#, elixir-autogen, elixir-format
+msgid "How Lynx Planning Poker keeps your planning sessions secure: HTTPS everywhere, a strict Content-Security-Policy, hardened sessions, unguessable room links and abuse protection."
+msgstr "Como o Lynx Planning Poker mantém suas sessões de planejamento seguras: HTTPS em tudo, uma Content-Security-Policy rigorosa, sessões reforçadas, links de sala impossíveis de adivinhar e proteção contra abuso."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "How Lynx is built to keep your planning sessions safe."
+msgstr "Como o Lynx é construído para manter suas sessões de planejamento seguras."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "How we protect the app"
+msgstr "Como protegemos o app"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:23
+#, elixir-autogen, elixir-format
+msgid "No accounts and no passwords — there are no credentials to steal."
+msgstr "Sem contas e sem senhas — não há credenciais para roubar."
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:487
+#, elixir-autogen, elixir-format
+msgid "Privacy"
+msgstr "Privacidade"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Rate limiting and an anti-bot check keep abuse out."
+msgstr "Rate limiting e uma verificação anti-bot mantêm o abuso longe."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:86
+#, elixir-autogen, elixir-format
+msgid "Requests are rate-limited per IP address, with a stricter cap on room creation to stop spam. Creating a room also requires passing a Cloudflare Turnstile anti-bot check. Real-time (WebSocket) connections are accepted only when their origin matches the site's own host."
+msgstr "As requisições têm rate limiting por endereço IP, com um limite mais rígido na criação de salas para impedir spam. Criar uma sala também exige passar por uma verificação anti-bot do Cloudflare Turnstile. Conexões em tempo real (WebSocket) só são aceitas quando a origem corresponde ao próprio host do site."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:110
+#, elixir-autogen, elixir-format
+msgid "Responsible disclosure"
+msgstr "Divulgação responsável"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:74
+#, elixir-autogen, elixir-format
+msgid "Rooms and participants are identified by random UUIDs, used directly as database keys. There are no sequential IDs to enumerate, so a room link cannot be guessed — only the people you share it with can reach the room."
+msgstr "Salas e participantes são identificados por UUIDs aleatórios, usados diretamente como chaves no banco de dados. Não há IDs sequenciais para enumerar, então um link de sala não pode ser adivinhado — só as pessoas com quem você o compartilha conseguem chegar à sala."
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:493
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Security"
+msgstr "Segurança"
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:65
+#, elixir-autogen, elixir-format
+msgid "Security · Lynx Poker"
+msgstr "Segurança · Lynx Poker"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:102
+#, elixir-autogen, elixir-format
+msgid "See the privacy page for the full picture."
+msgstr "Veja a página de privacidade para o quadro completo."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:62
+#, elixir-autogen, elixir-format
+msgid "The single session cookie is both signed and encrypted, and marked SameSite=Strict so it is never sent on cross-site requests. Every form is protected against cross-site request forgery (CSRF). The cookie holds only an opaque session identifier and your language preference — no personal data."
+msgstr "O único cookie de sessão é assinado e criptografado, e marcado como SameSite=Strict, então nunca é enviado em requisições cross-site. Todos os formulários são protegidos contra cross-site request forgery (CSRF). O cookie guarda apenas um identificador de sessão opaco e sua preferência de idioma — nenhum dado pessoal."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:98
+#, elixir-autogen, elixir-format
+msgid "The strongest protection is the data that never exists. Lynx has no accounts, no passwords and no email addresses, so there are no credentials to breach. The only data stored is a display name and a vote, both deleted when the room ends."
+msgstr "A proteção mais forte é o dado que nunca existe. O Lynx não tem contas, senhas nem endereços de e-mail, então não há credenciais para vazar. O único dado armazenado é um nome de exibição e um voto, ambos apagados quando a sala termina."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/security.html.heex:71
+#, elixir-autogen, elixir-format
+msgid "Unguessable room links"
+msgstr "Links de sala impossíveis de adivinhar"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:114
+#, elixir-autogen, elixir-format
+msgid "All the cards are revealed at the same time."
+msgstr "Todas as cartas são reveladas ao mesmo tempo."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:108
+#, elixir-autogen, elixir-format
+msgid "Everyone privately picks a card to size a user story."
+msgstr "Cada pessoa escolhe em particular uma carta para dimensionar uma user story."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:121
+#, elixir-autogen, elixir-format
+msgid "The discussion that follows turns scattered guesses into a shared estimate."
+msgstr "A discussão que se segue transforma palpites dispersos em uma estimativa compartilhada."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:98
+#, elixir-autogen, elixir-format
+msgid "Planning poker is a consensus-based estimation technique for agile and scrum teams."
+msgstr "Planning poker é uma técnica de estimativa baseada em consenso para times ágeis e scrum."
+
+#: lib/lynxplanningpoker_web/controllers/page_controller.ex:56
+#, elixir-autogen, elixir-format
+msgid "How Lynx Planning Poker handles your data under the GDPR and the LGPD. Rooms are ephemeral and deleted automatically — no ads and no data selling."
+msgstr "Como o Lynx Planning Poker trata seus dados sob o GDPR e a LGPD. As salas são efêmeras e excluídas automaticamente — sem anúncios e sem venda de dados."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:78
+#, elixir-autogen, elixir-format
+msgid "Usage analytics"
+msgstr "Análise de uso"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:89
+#, elixir-autogen, elixir-format
+msgid "We do not ask for and do not store: email addresses, phone numbers, government IDs, dates of birth, location data, or advertising trackers."
+msgstr "Não pedimos e não armazenamos: endereços de e-mail, números de telefone, documentos de identidade, datas de nascimento, dados de localização ou rastreadores de publicidade."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "We don't sell your data or use it for advertising."
+msgstr "Não vendemos seus dados nem os usamos para publicidade."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:221
+#, elixir-autogen, elixir-format
+msgid "No ads and no trackers — we never sell your data, and we comply with the GDPR."
+msgstr "Sem anúncios e sem rastreadores — nunca vendemos seus dados, e cumprimos a LGPD."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:52
+#, elixir-autogen, elixir-format
+msgid "Zero trackers"
+msgstr "Zero rastreadores"
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:80
+#, elixir-autogen, elixir-format
+msgid "We count unique daily visitors: visiting the site multiple times in a day counts as one, and coming back tomorrow counts as one more. Instead of a cookie, each visit is fingerprinted in memory with a one-way SHA-256 hash of your IP, your User-Agent, the date and a server secret — and only that hash and a 2-letter country code (supplied by Cloudflare, the CDN in front of the site) are stored. Because the date is part of the hash input, the same person produces a different hash every day, so visits cannot be linked across days. The IP and User-Agent themselves are never written to the database."
+msgstr "Contamos visitantes únicos por dia: visitar o site várias vezes em um dia conta como uma vez, e voltar amanhã conta como mais uma. Em vez de um cookie, cada visita é identificada em memória por um hash SHA-256 unidirecional do seu IP, do seu User-Agent, da data e de um segredo do servidor — só esse hash e um código de país de 2 letras (fornecido pela Cloudflare, o CDN na frente do site) são armazenados. Como a data faz parte da entrada do hash, a mesma pessoa produz um hash diferente todo dia, então as visitas não podem ser ligadas entre dias. O IP e o User-Agent em si nunca são gravados no banco de dados."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "We keep a simple, anonymous count of unique daily visitors — no cookies, no identifiers, no third-party analytics service."
+msgstr "Mantemos uma contagem simples e anônima de visitantes únicos por dia — sem cookies, sem identificadores, sem serviço de análise de terceiros."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "Your IP is used in-memory for three things: to apply rate limits, to talk to Cloudflare Turnstile (anti-bot verification when creating a room), and — together with your User-Agent header, the date and a server secret — to produce a one-way hash that lets us count unique daily visitors without identifying you. None of these inputs are written to the database; only the hash is stored. When written to operational logs, the IP is truncated (the last octet for IPv4, the last 80 bits for IPv6) so that the original address cannot be reconstructed."
+msgstr "Seu IP é usado em memória para três coisas: aplicar limites de requisições, falar com o Cloudflare Turnstile (verificação anti-bot ao criar uma sala) e — junto com o seu cabeçalho User-Agent, a data e um segredo do servidor — produzir um hash unidirecional que nos permite contar visitantes únicos por dia sem identificar você. Nenhuma dessas entradas é gravada no banco de dados; só o hash é armazenado. Quando gravado em logs operacionais, o IP é truncado (o último octeto no IPv4, os últimos 80 bits no IPv6) para que o endereço original não possa ser reconstruído."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/home.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "View source on GitHub"
+msgstr "Ver código no GitHub"

@@ -1,0 +1,110 @@
+# This file is responsible for configuring your application
+# and its dependencies with the aid of the Config module.
+#
+# This configuration file is loaded before any dependency and
+# is restricted to this project.
+
+# General application configuration
+import Config
+
+config :lynxplanningpoker,
+  ecto_repos: [Lynxplanningpoker.Repo],
+  generators: [timestamp_type: :utc_datetime, binary_id: true]
+
+# Rate limiting (Hammer + ETS). Limits are per IP, per bucket.
+config :lynxplanningpoker, :rate_limit,
+  global: [limit: 300, scale_ms: 60_000],
+  room_create: [limit: 10, scale_ms: 60_000]
+
+# Periodic sweeper that deletes orphaned rooms left behind when every client
+# disconnects without firing presence/leave. Disabled in tests (see test.exs).
+config :lynxplanningpoker, :room_cleaner,
+  enabled: true,
+  sweep_interval: :timer.minutes(10),
+  max_idle: :timer.hours(2)
+
+# CIDRs of reverse proxies allowed to set `X-Forwarded-For`. Defaults to `[]`
+# (header ignored, TCP peer used). Prod overrides this in runtime.exs from the
+# `TRUSTED_PROXIES` env var (e.g. Cloudflare ranges).
+config :lynxplanningpoker, :trusted_proxies, []
+
+# Cloudflare Turnstile. Dev defaults to the official "always passes" test
+# keys (https://developers.cloudflare.com/turnstile/troubleshooting/testing/);
+# prod is overridden in runtime.exs with real env-var-backed values;
+# test disables verification entirely (see test.exs).
+#
+# NOTE: these are public documented test credentials, not real secrets.
+# Real Turnstile/SECRET_KEY_BASE/etc. values MUST come from runtime.exs
+# env vars only — never committed. Sobelow's Config.Secrets check is
+# silenced project-wide based on this invariant (see `.sobelow-conf`).
+config :lynxplanningpoker, :turnstile,
+  enabled: true,
+  site_key: "1x00000000000000000000AA",
+  secret_key: "1x0000000000000000000000000000000AA"
+
+config :lynxplanningpoker, Lynxplanningpoker.Repo,
+  migration_primary_key: [type: :binary_id],
+  migration_foreign_key: [type: :binary_id]
+
+# Configure the endpoint
+config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
+  url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
+  render_errors: [
+    formats: [html: LynxplanningpokerWeb.ErrorHTML, json: LynxplanningpokerWeb.ErrorJSON],
+    layout: false
+  ],
+  pubsub_server: Lynxplanningpoker.PubSub,
+  live_view: [signing_salt: "PJrzM9w1"]
+
+# Internationalisation. English is the default locale: it renders when no
+# locale is chosen and is served prefix-free at the URL root. pt_BR, fr and es
+# are served under a URL path prefix — see `LynxplanningpokerWeb.Locales`.
+config :lynxplanningpoker, LynxplanningpokerWeb.Gettext, default_locale: "en"
+
+# Configure the mailer
+#
+# By default it uses the "Local" adapter which stores the emails
+# locally. You can see the emails in your browser, at "/dev/mailbox".
+#
+# For production it's recommended to configure a different adapter
+# at the `config/runtime.exs`.
+config :lynxplanningpoker, Lynxplanningpoker.Mailer, adapter: Swoosh.Adapters.Local
+
+# Configure esbuild (the version is required)
+config :esbuild,
+  version: "0.25.4",
+  lynxplanningpoker: [
+    args:
+      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets/js --external:/fonts/* --external:/images/* --alias:@=.),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]}
+  ]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "4.1.12",
+  lynxplanningpoker: [
+    args: ~w(
+      --input=assets/css/app.css
+      --output=priv/static/assets/css/app.css
+    ),
+    cd: Path.expand("..", __DIR__)
+  ]
+
+# Configure Elixir's Logger
+config :logger, :default_formatter,
+  format: "$time $metadata[$level] $message\n",
+  metadata: [:request_id]
+
+# Use Jason for JSON parsing in Phoenix
+config :phoenix, :json_library, Jason
+
+# Silence the Windows symlink warning emitted by Phoenix.LiveView.ColocatedJS.
+# We don't import from assets/node_modules in colocated hooks, so the symlink
+# isn't needed.
+config :phoenix_live_view, :colocated_js, disable_symlink_warning: true
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{config_env()}.exs"

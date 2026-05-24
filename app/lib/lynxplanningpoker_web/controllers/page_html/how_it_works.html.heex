@@ -1,0 +1,166 @@
+<Layouts.app_header conn={@conn} />
+<main class="mx-auto max-w-5xl px-6 py-12">
+  <section class="text-center">
+    <h1 class="text-4xl font-semibold tracking-tight">{gettext("How it works")}</h1>
+
+    <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
+      {gettext("Create, invite, vote — your team estimates a story in under a minute.")}
+    </p>
+
+    <ul class="mt-6 flex flex-wrap items-center justify-center gap-2 text-xs font-medium">
+      <li class="rounded-full bg-base-200 px-3 py-1">{gettext("Free")}</li>
+
+      <li class="rounded-full bg-base-200 px-3 py-1">{gettext("No sign-up")}</li>
+
+      <li class="rounded-full bg-base-200 px-3 py-1">{gettext("Real-time")}</li>
+
+      <li class="rounded-full bg-base-200 px-3 py-1">{gettext("pt / en / fr / es")}</li>
+    </ul>
+  </section>
+
+  <section class="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+    <article class="flex flex-col items-center rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-xl font-bold text-white">
+        1
+      </span>
+      <h2 class="mt-3 text-lg font-semibold">{gettext("Create a room")}</h2>
+
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "On the home page, click \"Create a room\", enter your name, and you'll become the host of a brand new planning session."
+        )}
+      </p>
+    </article>
+
+    <article class="flex flex-col items-center rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-xl font-bold text-white">
+        2
+      </span>
+      <h2 class="mt-3 text-lg font-semibold">{gettext("Invite your team")}</h2>
+
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Use the \"Invite\" button to copy the room link and share it with your team. Anyone with the link can join — no sign-up required."
+        )}
+      </p>
+    </article>
+
+    <article class="flex flex-col items-center rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-xl font-bold text-white">
+        3
+      </span>
+      <h2 class="mt-3 text-lg font-semibold">{gettext("Vote and reveal")}</h2>
+
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
+        )}
+      </p>
+    </article>
+  </section>
+
+  <section class="mt-12 flex flex-col items-center gap-4 rounded-2xl bg-primary/5 border border-primary/20 px-6 py-10 text-center">
+    <h2 class="text-2xl font-semibold">{gettext("Ready to start?")}</h2>
+
+    <p class="max-w-xl text-sm text-base-content/70">
+      {gettext("Your first room takes less than 10 seconds to set up.")}
+    </p>
+
+    <.link
+      navigate={localized_path(@locale, ~p"/rooms/new")}
+      class="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-bold whitespace-nowrap text-white shadow-lg transition hover:brightness-85"
+    >
+      {gettext("Create a room")} <.icon name="hero-plus" class="size-5" />
+    </.link>
+  </section>
+
+  <section class="mt-16">
+    <h2 class="text-2xl font-semibold text-center">{gettext("Frequently asked questions")}</h2>
+
+    <div class="mt-6 flex flex-col gap-3">
+      <details class="group rounded-xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-5 shadow-sm">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
+          {gettext("Is it really free?")}
+          <.icon
+            name="hero-chevron-down"
+            class="size-5 shrink-0 transition group-open:rotate-180"
+          />
+        </summary>
+
+        <p class="mt-3 text-sm text-base-content/70">
+          {gettext(
+            "Yes. The core planning poker experience — creating rooms, inviting your team, voting, revealing — is free forever. We have no paid tier today; if we add one in the future, it will only cover advanced features and the basic flow will remain free."
+          )}
+        </p>
+      </details>
+
+      <details class="group rounded-xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-5 shadow-sm">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
+          {gettext("Do my teammates need to sign up?")}
+          <.icon
+            name="hero-chevron-down"
+            class="size-5 shrink-0 transition group-open:rotate-180"
+          />
+        </summary>
+
+        <p class="mt-3 text-sm text-base-content/70">
+          {gettext(
+            "No accounts, no passwords. Anyone with the room link types a name and they're in. The name is only kept while they are in the room."
+          )}
+        </p>
+      </details>
+
+      <details class="group rounded-xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-5 shadow-sm">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
+          {gettext("How many people can join a room?")}
+          <.icon
+            name="hero-chevron-down"
+            class="size-5 shrink-0 transition group-open:rotate-180"
+          />
+        </summary>
+
+        <p class="mt-3 text-sm text-base-content/70">
+          {gettext(
+            "Up to 15 participants per room, which covers the vast majority of planning sessions. If you need bigger groups, get in touch."
+          )}
+        </p>
+      </details>
+
+      <details class="group rounded-xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-5 shadow-sm">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
+          {gettext("What happens to my data?")}
+          <.icon
+            name="hero-chevron-down"
+            class="size-5 shrink-0 transition group-open:rotate-180"
+          />
+        </summary>
+
+        <p class="mt-3 text-sm text-base-content/70">
+          {gettext(
+            "Rooms are ephemeral: everything is deleted when the host leaves or after two hours of inactivity. We don't sell data and we don't run ads."
+          )}
+          <.link navigate={localized_path(@locale, ~p"/privacy")} class="font-semibold underline">
+            {gettext("Read the privacy details")}
+          </.link>
+        </p>
+      </details>
+
+      <details class="group rounded-xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-5 shadow-sm">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 text-base font-semibold">
+          {gettext("Can I use it in my language?")}
+          <.icon
+            name="hero-chevron-down"
+            class="size-5 shrink-0 transition group-open:rotate-180"
+          />
+        </summary>
+
+        <p class="mt-3 text-sm text-base-content/70">
+          {gettext(
+            "The interface is available in Portuguese (Brazil), English, French and Spanish. Switch from the header menu — your choice sticks across sessions."
+          )}
+        </p>
+      </details>
+    </div>
+  </section>
+</main>
+<Layouts.footer conn={@conn} />

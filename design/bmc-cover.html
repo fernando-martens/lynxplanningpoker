@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Buy Me a Coffee — cover</title>
+<style>
+  @font-face {
+    font-family: "Baloo 2";
+    font-style: normal;
+    font-weight: 400 800;
+    src: url("../app/priv/static/fonts/baloo2-latin.woff2") format("woff2");
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    background: oklch(92% 0.004 286);
+    font-family: "Baloo 2", system-ui, sans-serif;
+    /* room scenery tree colors (light theme) */
+    --tree-fill: oklch(55% 0.04 90);
+    --tree-stroke: oklch(12% 0.01 90);
+  }
+
+  /*
+    Buy Me a Coffee cover — 1500 x 500 (3:1).
+    BMC overlays profile cards on the LOWER part of the cover, so all
+    content lives in the top "safe zone" and the composition is
+    horizontally centered (BMC center-crops the cover on mobile).
+    Decorative trees (reused from the room scene) are scattered along
+    the edges — never over the central content.
+  */
+  .cover {
+    position: relative;
+    width: 1500px;
+    height: 500px;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 56px;
+    background:
+      linear-gradient(160deg,
+        oklch(99% 0 0) 0%,
+        oklch(96% 0.003 286) 58%,
+        oklch(93.5% 0.005 286) 100%);
+  }
+
+  /* scattered forest — decorative layer behind the content */
+  .forest {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .tree {
+    position: absolute;
+    height: auto;
+    display: block;
+  }
+
+  /* centered logo lockup: mascot + wordmark */
+  .group {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+  }
+
+  .mascot {
+    flex: none;
+  }
+  .mascot img {
+    display: block;
+    height: 232px;
+    width: auto;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 62px;
+    font-weight: 800;
+    line-height: 1.02;
+    color: oklch(24% 0.02 281);
+    letter-spacing: -0.01em;
+  }
+  h1 .accent { color: oklch(45% 0.21 273); }
+
+  .tagline {
+    margin-top: 14px;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.32;
+    color: oklch(46% 0.015 286);
+    max-width: 470px;
+  }
+
+  .meta {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 19px;
+    font-weight: 700;
+    color: oklch(40% 0.01 286);
+  }
+  .meta .sep {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: oklch(52% 0.19 273);
+  }
+</style>
+</head>
+<body>
+  <!-- tree shape, reused from RoomLive scenery -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="tree-shape" viewBox="0 0 27 37">
+      <path
+        d="M4.78807 13.4467C9.3978 9.39699 12.4241 2.90051 13.2205 0.510025C13.8295 2.66615 16.0032 8.75015 20.9502 13.0249C18.027 12.6874 16.3592 11.4781 15.8908 10.9156C16.8277 12.978 19.854 17.9465 24.4637 21.3213C21.4281 21.4338 18.2331 19.587 17.0151 18.6496C17.6241 20.2432 20.2194 24.5555 25.7286 29.0552C23.2551 29.2802 21.0439 28.4927 20.2475 28.0709C20.6223 28.8208 22.3556 30.9957 26.2908 33.6955C25.054 33.9205 23.152 33.3205 22.3556 32.9924L22.7773 34.258C21.0908 33.9205 18.4205 32.6175 17.2962 32.0081C17.5773 32.7581 18.2519 34.3705 18.7016 34.8205C17.4648 34.8205 15.9845 33.883 15.4691 33.4143V36.7891H11.3935V32.5706C10.0443 33.6955 7.08356 34.5392 5.77185 34.8205C5.91239 34.3049 6.19347 33.1049 6.19347 32.43C4.50699 33.4424 1.93041 33.6955 0.852934 33.6955C1.83672 32.8987 4.00104 30.9113 4.78807 29.3364C2.87672 29.5614 0.993474 28.9614 0.290771 28.6333C2.67996 26.8522 7.40212 22.7837 7.17726 20.7588C6.33401 21.04 4.22591 21.5463 2.53942 21.3213C4.46014 19.8214 8.58266 16.1466 9.70699 13.4467C9.19167 13.5874 5.68753 14.0092 4.78807 13.4467Z"
+        fill="var(--tree-fill)"
+        stroke="var(--tree-stroke)"
+        stroke-width="0.3"
+      />
+    </symbol>
+  </svg>
+
+  <div class="cover">
+    <div class="forest">
+      <!-- left edge -->
+      <svg class="tree" style="left:1%;top:8%;width:70px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:9%;top:3%;width:50px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:15%;top:15%;width:58px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:2%;top:31%;width:78px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:10%;top:25%;width:54px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:18%;top:39%;width:46px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:4%;top:53%;width:62px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:13%;top:49%;width:42px"><use href="#tree-shape" /></svg>
+      <!-- right edge -->
+      <svg class="tree" style="left:92%;top:7%;width:72px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:84%;top:2%;width:48px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:78%;top:17%;width:56px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:90%;top:27%;width:78px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:81%;top:35%;width:50px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:95%;top:45%;width:44px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:85%;top:51%;width:60px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:76%;top:41%;width:42px"><use href="#tree-shape" /></svg>
+      <!-- bottom band -->
+      <svg class="tree" style="left:2%;top:66%;width:74px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:11%;top:81%;width:54px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:20%;top:70%;width:68px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:29%;top:85%;width:46px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:37%;top:74%;width:70px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:46%;top:87%;width:50px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:54%;top:76%;width:76px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:64%;top:85%;width:48px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:72%;top:71%;width:66px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:81%;top:84%;width:56px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:89%;top:73%;width:64px"><use href="#tree-shape" /></svg>
+      <svg class="tree" style="left:96%;top:83%;width:42px"><use href="#tree-shape" /></svg>
+    </div>
+
+    <div class="group">
+      <div class="mascot">
+        <img src="../app/priv/static/images/lynx.svg" alt="Lynx mascot" />
+      </div>
+      <div class="text">
+        <h1>Lynx<br />Planning&nbsp;<span class="accent">Poker</span></h1>
+        <p class="tagline">
+          Free, real-time story-point estimation for agile&nbsp;&amp;&nbsp;scrum teams.
+        </p>
+        <div class="meta">
+          <span>No sign-up</span>
+          <span class="sep"></span>
+          <span>Real-time</span>
+          <span class="sep"></span>
+          <span>100% free</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

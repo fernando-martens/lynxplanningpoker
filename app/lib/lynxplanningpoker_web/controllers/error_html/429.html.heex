@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang={Gettext.get_locale(LynxplanningpokerWeb.Gettext)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{gettext("Too many requests")} · Lynx planning poker</title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+  </head>
+  <body class="bg-base-100 text-base-content">
+    <main class="min-h-screen flex flex-col items-center justify-center px-6 text-center gap-4">
+      <div class="text-6xl font-bold tracking-tight">429</div>
+      <h1 class="text-2xl md:text-3xl font-bold">
+        {gettext("Too many requests")}
+      </h1>
+      <p class="text-base md:text-lg max-w-md opacity-80">
+        {gettext("You are making requests too quickly. Please try again in %{seconds} seconds.",
+          seconds: @retry_after_s
+        )}
+      </p>
+      <a
+        href={~p"/"}
+        class="bg-primary text-white px-6 py-3 rounded-full font-bold hover:brightness-85 transition shadow-lg"
+      >
+        {gettext("Back to home")}
+      </a>
+    </main>
+  </body>
+</html>

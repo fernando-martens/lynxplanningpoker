@@ -1,0 +1,10 @@
+# Enforce LF line endings — this app builds and runs on Linux (Fly.io).
+# core.autocrlf is per-machine and unreliable. Without this, Windows checkouts
+# get CRLF, and CRLF in the release shell scripts corrupts the boot
+# (env.sh -> RELEASE_NODE) and makes the Fly machine exit abruptly.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

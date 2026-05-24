@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang={bcp47(@locale)}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <% title = assigns[:page_title] || "Lynx Planning Poker" %>
+    <% description =
+      assigns[:meta_description] ||
+        gettext(
+          "Free, real-time planning poker for agile teams. Create a room, share the link and estimate user stories together — no sign-up required."
+        ) %>
+    <.live_title>Lynx planning poker</.live_title>
+    <meta name="description" content={description} />
+
+    <%= if assigns[:noindex] do %>
+      <meta name="robots" content="noindex, follow" />
+    <% else %>
+      <% base = base_path(@conn.request_path) %>
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+      <link rel="canonical" href={SEO.absolute_url(localized_path(@locale, base))} />
+      <link
+        :for={alt <- all()}
+        rel="alternate"
+        hreflang={bcp47(alt)}
+        href={SEO.absolute_url(localized_path(alt, base))}
+      />
+      <link rel="alternate" hreflang="x-default" href={SEO.absolute_url(base)} />
+    <% end %>
+
+    <%!-- Plain (non-digested) paths: phx.digest renames root-level files to
+      favicon-<hash>.ico, which Plug.Static's exact-match `only` filter would
+      404 in prod. The undigested originals are kept and served fine. --%>
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#7c3aed" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Lynx Planning Poker" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={url(~p"/images/og-image.png")} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content={gettext("Lynx Planning Poker — free, real-time planning poker for agile teams")}
+    />
+    <meta property="og:locale" content={og_locale(@locale)} />
+    <%= unless assigns[:noindex] do %>
+      <meta
+        property="og:url"
+        content={SEO.absolute_url(localized_path(@locale, base_path(@conn.request_path)))}
+      />
+    <% end %>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={url(~p"/images/og-image.png")} />
+    <meta
+      name="twitter:image:alt"
+      content={gettext("Lynx Planning Poker — free, real-time planning poker for agile teams")}
+    />
+
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href={~p"/fonts/baloo2-latin.woff2"}
+      crossorigin
+    />
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    </script>
+    <%= for data <- assigns[:structured_data] || [] do %>
+      <script type="application/ld+json" nonce={assigns[:csp_nonce]} phx-no-format><%= Phoenix.HTML.raw(Jason.encode!(data, escape: :html_safe)) %></script>
+    <% end %>
+    <script nonce={assigns[:csp_nonce]}>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+        window.addEventListener("storage", (e) => e.key === "phx:theme" && setTheme(e.newValue || "system"));
+
+        window.addEventListener("phx:set-theme", (e) => setTheme(e.target.dataset.phxTheme));
+      })();
+    </script>
+  </head>
+
+  <body><Layouts.flash_group flash={@flash} /> {@inner_content}</body>
+</html>

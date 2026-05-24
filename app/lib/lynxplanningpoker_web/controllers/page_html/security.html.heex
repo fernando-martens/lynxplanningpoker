@@ -1,0 +1,125 @@
+<Layouts.app_header conn={@conn} />
+<main class="mx-auto max-w-3xl px-6 py-12">
+  <section class="text-center">
+    <h1 class="text-4xl font-semibold tracking-tight">
+      {gettext("Security")}
+    </h1>
+    <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
+      {gettext("How Lynx is built to keep your planning sessions safe.")}
+    </p>
+    <p class="mt-2 text-xs text-base-content/60">
+      {gettext("Last updated: %{date}", date: format_date(~D[2026-05-21], @locale))}
+    </p>
+  </section>
+
+  <section class="mt-10 rounded-2xl border border-primary/40 bg-primary/5 p-6">
+    <h2 class="text-lg font-semibold">{gettext("In short")}</h2>
+    <ul class="mt-3 list-disc space-y-1 pl-5 text-sm text-base-content/80">
+      <li>{gettext("All traffic runs over HTTPS, enforced with HSTS.")}</li>
+      <li>
+        {gettext("A strict Content-Security-Policy with a fresh nonce on every request.")}
+      </li>
+      <li>
+        {gettext("No accounts and no passwords — there are no credentials to steal.")}
+      </li>
+      <li>{gettext("Rate limiting and an anti-bot check keep abuse out.")}</li>
+    </ul>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="text-2xl font-semibold">{gettext("How we protect the app")}</h2>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-lock-closed" class="size-5 shrink-0 text-primary" />
+        {gettext("Encrypted connections")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Every request is served over HTTPS. In production the app sends the Strict-Transport-Security header (HSTS), so browsers refuse to fall back to plain HTTP after the first visit. The connection between the app and its database is encrypted too."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-shield-check" class="size-5 shrink-0 text-primary" />
+        {gettext("Content Security Policy")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Every response carries a Content-Security-Policy built per request with a unique cryptographic nonce. Scripts may only load from the app itself and the Cloudflare Turnstile widget. The policy also sets frame-ancestors 'none', which blocks the site from being embedded in an iframe and defeats clickjacking. Standard secure browser headers are sent on every page."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-key" class="size-5 shrink-0 text-primary" />
+        {gettext("Hardened sessions")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "The single session cookie is both signed and encrypted, and marked SameSite=Strict so it is never sent on cross-site requests. Every form is protected against cross-site request forgery (CSRF). The cookie holds only an opaque session identifier and your language preference — no personal data."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-link" class="size-5 shrink-0 text-primary" />
+        {gettext("Unguessable room links")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Rooms and participants are identified by random UUIDs, used directly as database keys. There are no sequential IDs to enumerate, so a room link cannot be guessed — only the people you share it with can reach the room."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-bolt" class="size-5 shrink-0 text-primary" />
+        {gettext("Abuse protection")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Requests are rate-limited per IP address, with a stricter cap on room creation to stop spam. Creating a room also requires passing a Cloudflare Turnstile anti-bot check. Real-time (WebSocket) connections are accepted only when their origin matches the site's own host."
+        )}
+      </p>
+    </article>
+
+    <article class="mt-4 rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 shadow-sm">
+      <h3 class="flex items-center gap-2 text-lg font-semibold">
+        <.icon name="hero-user-circle" class="size-5 shrink-0 text-primary" />
+        {gettext("Anonymous by design")}
+      </h3>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "The strongest protection is the data that never exists. Lynx has no accounts, no passwords and no email addresses, so there are no credentials to breach. The only data stored is a display name and a vote, both deleted when the room ends."
+        )}
+        <.link navigate={localized_path(@locale, ~p"/privacy")} class="font-semibold underline">
+          {gettext("See the privacy page for the full picture.")}
+        </.link>
+      </p>
+    </article>
+  </section>
+
+  <section class="mt-12 border-t border-base-200 pt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div>
+      <h2 class="text-2xl font-semibold">{gettext("Responsible disclosure")}</h2>
+      <p class="mt-2 text-sm text-base-content/70">
+        {gettext(
+          "Found a security issue? We want to hear about it. Email us and we'll respond as quickly as we can."
+        )}
+      </p>
+    </div>
+    <a
+      href="mailto:contact@lynxplanningpoker.com"
+      class="inline-flex shrink-0 items-center gap-2 self-start rounded-full bg-primary px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-85 sm:self-auto"
+    >
+      <.icon name="hero-envelope" class="size-4" /> contact@lynxplanningpoker.com
+    </a>
+  </section>
+</main>
+<Layouts.footer conn={@conn} />

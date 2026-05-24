@@ -1,0 +1,1133 @@
+:root {
+  --fire1: #b54040;
+  --fire2: #cd6d3d;
+  --fire3: #e6993a;
+  --fire4: #fec637;
+}
+
+#campfire {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  transform: scale(1.3);
+  transform-origin: center;
+}
+
+#wood {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 20px;
+  z-index: 3;
+}
+
+#wood::after,
+#wood::before {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 4px;
+  background-color: #4b2e1f;
+  border-radius: 4px;
+  left: 50%;
+  top: 50%;
+}
+
+#wood::after {
+  transform: translate(-50%, -50%) rotate(15deg);
+}
+
+#wood::before {
+  transform: translate(-50%, -50%) rotate(-15deg);
+}
+
+#wood span {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  width: 2px;
+  height: 2px;
+}
+
+#wood span::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--fire3);
+  border-radius: 50%;
+  animation: spark2 2s infinite;
+}
+
+#wood span::before {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 3px;
+  background: var(--fire2);
+  border-radius: 50%;
+  animation: spark3 3s infinite;
+}
+
+@keyframes spark2 {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  50% {
+    bottom: 10px;
+    opacity: 1;
+    left: -2px;
+  }
+
+  100% {
+    bottom: 20px;
+    opacity: 0;
+  }
+}
+
+@keyframes spark3 {
+  0% {
+    bottom: 0;
+    opacity: 0;
+  }
+
+  50% {
+    bottom: 8px;
+    opacity: 1;
+    left: 3px;
+  }
+
+  100% {
+    bottom: 18px;
+    opacity: 0;
+  }
+}
+
+/* Fogo */
+#fire {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateX(-50%) rotate(-45deg);
+  border-radius: 100% 0 100% 100%;
+  background: radial-gradient(var(--fire3) 24%, var(--fire4));
+  box-shadow:
+    -3px 3px 10px -2px var(--fire2),
+    0 0 0 1px var(--fire1) inset,
+    0 0 0 2px var(--fire2) inset,
+    0 0 0 3px var(--fire3) inset;
+  animation: fire 4s linear infinite alternate;
+  z-index: 4;
+}
+
+@keyframes fire {
+
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-45deg) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(-47deg) scale(1.05);
+  }
+}
+
+/* ─── Settled campfire (after reveal) ─────────────────────────
+   When votes are revealed, the fire dies down to a calm ember —
+   the meeting is over, the group is just chatting around it. */
+.campfire--settled #fire {
+  bottom: 11px;
+  background: radial-gradient(var(--fire2) 28%, var(--fire3));
+  box-shadow:
+    -2px 2px 6px -2px var(--fire1),
+    0 0 0 1px var(--fire1) inset,
+    0 0 0 2px var(--fire2) inset;
+  animation: fire-ember 6s linear infinite alternate;
+}
+
+@keyframes fire-ember {
+
+  0%,
+  100% {
+    transform: translateX(-50%) rotate(-45deg) scale(0.55);
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(-44deg) scale(0.62);
+  }
+}
+
+/* ─── Room layout ─────────────────────────────────────────── */
+
+.room-scene {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--room-bg);
+}
+
+/* Game area fills the screen with padding for header and cards */
+.room-game-area {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 88px;
+  padding-bottom: 160px;
+  z-index: 1;
+}
+
+/* Scattered forest along the edges of the scene — never over the central
+   table where users sit. Sits above .room-game-area in the stack so the
+   tree spans can catch clicks (the container itself stays click-through
+   via pointer-events: none, only the .room-forest-tree spans opt back in). */
+.room-forest {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.room-forest-tree {
+  position: absolute;
+  width: 22px;
+  display: block;
+  transform: translate(-50%, -50%) scale(var(--tree-scale, 1));
+  transform-origin: center;
+  opacity: 0.85;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Invisible hit-area expansion so tiny trees are comfortable to click/tap.
+   The pseudo-element inherits the parent's scale, so we use a generous inset
+   on desktop and an even larger one on mobile to compensate for the smaller
+   tree width and finger-sized targets. */
+.room-forest-tree::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  /* Sits below the SVG so it doesn't intercept the shake animation visuals. */
+  z-index: -1;
+}
+
+.room-tree {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: 50% 100%;
+}
+
+/* When the user clicks a tree, the inner SVG sways for half a second.
+   transform-origin is at the trunk so the canopy actually rocks. */
+.room-forest-tree.is-shaking .room-tree {
+  animation: tree-shake 0.55s ease-in-out;
+}
+
+@keyframes tree-shake {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  18% {
+    transform: rotate(-9deg);
+  }
+
+  38% {
+    transform: rotate(7deg);
+  }
+
+  58% {
+    transform: rotate(-4deg);
+  }
+
+  78% {
+    transform: rotate(2deg);
+  }
+}
+
+
+/* Forest density tapers with viewport size — on tablets we thin out a
+   quarter of the trees, and on phones we hide the forest entirely so the
+   central play area can breathe. */
+@media (max-width: 1024px) {
+  .room-forest-tree:nth-child(4n) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .room-forest {
+    display: none;
+  }
+}
+
+/* The ellipse table where users sit */
+.room-table {
+  position: relative;
+  width: min(620px, 90vw);
+  height: min(400px, 55vh);
+}
+
+/* Campfire wrap. Anchored by the campfire (top of content), NOT centered on
+   its own midline — so the campfire stays in exactly the same spot whether
+   the room is revealed or not, even though the revealed state has extra
+   content (hint + average) below the campfire. The -54px offset matches the
+   half-height of the unrevealed content (50 fire + 8 gap + 50 reserved hint)
+   so visually the campfire remains roughly centered on the table. */
+.room-campfire-wrap {
+  position: absolute;
+  top: calc(50% - 54px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* User token around campfire */
+.room-user {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  /* Smoothly slide to new spot when the ring resizes (someone joins/leaves) */
+  transition: left 0.4s ease, top 0.4s ease;
+}
+
+.room-user-avatar {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--room-avatar-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--room-avatar-content);
+}
+
+.room-user-avatar--voted {
+  background-color: var(--room-avatar-voted);
+}
+
+.room-user-avatar--empty {
+  background-color: transparent;
+  border-radius: 0;
+}
+
+.room-user-tent {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* "Zzz" floating up from the tent peak while the user hasn't voted.
+   We animate `top` + `opacity` (not transform) because animating transform
+   on small text on Windows promotes the element to a GPU layer that
+   bilinear-filters the glyph bitmap each frame, which reads as stutter.
+   Animating `top` does cause layout, but three tiny absolutely-positioned
+   spans cost effectively nothing and the text stays pixel-crisp. */
+.room-user-zzz {
+  position: absolute;
+  top: 4px;
+  font-weight: 700;
+  font-size: 8px;
+  line-height: 1;
+  pointer-events: none;
+  color: var(--room-zzz);
+  opacity: 0;
+  animation: room-user-zzz 2s linear infinite;
+}
+
+.room-user-zzz--1 {
+  right: 8px;
+  animation-delay: 0s;
+}
+
+.room-user-zzz--2 {
+  right: 1px;
+  animation-delay: 0.66s;
+}
+
+.room-user-zzz--3 {
+  right: 5px;
+  animation-delay: 1.33s;
+}
+
+@keyframes room-user-zzz {
+  0% {
+    opacity: 0;
+    top: 4px;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  85% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    top: -18px;
+  }
+}
+
+.room-user-vote-num {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--room-avatar-content);
+}
+
+.room-user-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--room-user-name);
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.room-user-edit-badge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--color-warning);
+  color: var(--color-base-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  border: 2px solid var(--room-bg);
+}
+
+/* Campfire-as-button (used when room is not revealed) */
+.room-campfire-btn {
+  position: relative;
+  background: none;
+  border: none;
+  /* Pad so the click area matches the visually scaled fire (~75×75) */
+  padding: 0px;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+/* Invisible hit-area expansion — same trick used on the forest trees.
+   Makes the reveal target comfortable to click/tap without changing layout
+   or the visible campfire size. */
+.room-campfire-btn::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  z-index: -1;
+}
+
+/* Localized spinner shown on top of the campfire while reveal is in flight.
+   Replaces the full-screen overlay for this action since the reveal is fast
+   and a global blur feels heavier than the interaction warrants. */
+.room-campfire-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid oklch(0% 0 0 / 0.15);
+  border-top-color: var(--fire2);
+  animation: room-card-spin 0.7s linear infinite;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.room-campfire-btn.phx-click-loading {
+  pointer-events: none;
+}
+
+.room-campfire-btn.phx-click-loading::after {
+  opacity: 1;
+}
+
+.room-campfire-btn.phx-click-loading #campfire {
+  opacity: 0.35;
+  transition: opacity 0.15s ease;
+}
+
+.room-campfire-btn:hover,
+.room-campfire-btn:focus-visible {
+  transform: scale(1.12);
+  outline: none;
+}
+
+.room-campfire-btn:active {
+  transform: scale(1.05);
+}
+
+/* Hint text shown under the campfire. min-height matches .room-average's
+   natural height so the layout doesn't shift when the room is revealed. */
+.room-campfire-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  text-align: center;
+  white-space: nowrap;
+  margin: 0;
+  pointer-events: none;
+  min-height: 50px;
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Hint shown between the campfire and the average card after reveal. Sits
+   naturally in the flex column flow at the same vertical position as the
+   unrevealed .room-campfire-hint text (both come right after the campfire +
+   8px gap), so the explanatory text doesn't shift between states. */
+.room-stats-hint {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  margin: 0;
+}
+
+/* Unified button covering the whole central area (campfire + hint + average)
+   after reveal. Clicking anywhere inside opens the statistics modal. The
+   layout (column, gap 8px, centered) matches the unrevealed campfire wrap
+   so the campfire stays in exactly the same spot between states. */
+.room-reveal-summary {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.room-reveal-summary:focus-visible {
+  outline: none;
+}
+
+.room-reveal-summary:focus-visible .room-average-value {
+  text-decoration: underline;
+}
+
+/* Scale the campfire (not the rest of the button) on hover of the unified
+   button. The base transform is already scale(1.3) on #campfire, so the
+   hover state composes to ~1.46 for a similar feel to the unrevealed
+   .room-campfire-btn hover. */
+.room-reveal-summary #campfire {
+  transition: transform 0.2s ease;
+}
+
+.room-reveal-summary:hover #campfire,
+.room-reveal-summary:focus-visible #campfire {
+  transform: scale(1.46);
+}
+
+.room-reveal-summary:active #campfire {
+  transform: scale(1.36);
+}
+
+/* Vote average shown after reveal — plain inline text (no card), placed
+   right under the hint so it doesn't crowd the player sitting at the
+   bottom of the seating ring. */
+.room-average {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+}
+
+.room-average-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  opacity: 0.7;
+}
+
+.room-average-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--room-card-selected);
+  line-height: 1.1;
+}
+
+/* ─── Cards bar ───────────────────────────────────────────── */
+
+.room-cards-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  /* Grid column capped at max-content but shrinkable to 0 — guarantees the
+     inner never exceeds the viewport, so its overflow-x kicks in reliably. */
+  display: grid;
+  grid-template-columns: minmax(0, max-content);
+  justify-content: center;
+  padding: 16px 12px 24px;
+  /* Above the forest layer so the cards pill stays clickable. The container
+     itself is click-through — only .room-cards-inner re-enables pointer
+     events — so trees in the bottom corners outside the pill still respond. */
+  z-index: 3;
+  pointer-events: none;
+}
+
+.room-cards-inner,
+.room-cards-bar .room-card {
+  pointer-events: auto;
+}
+
+.room-cards-inner {
+  display: flex;
+  gap: 8px;
+  background: oklch(97% 0.005 270 / 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid oklch(88% 0.02 270);
+  border-radius: 20px;
+  padding: 14px 16px;
+  box-shadow: 0 4px 24px oklch(0% 0 0 / 0.08);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0% 0 0 / 0.3) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.room-cards-inner::-webkit-scrollbar {
+  height: 8px;
+  -webkit-appearance: none;
+}
+
+.room-cards-inner::-webkit-scrollbar-track {
+  background: oklch(0% 0 0 / 0.06);
+  border-radius: 4px;
+}
+
+.room-cards-inner::-webkit-scrollbar-thumb {
+  background: oklch(0% 0 0 / 0.3);
+  border-radius: 4px;
+}
+
+.room-cards-inner::-webkit-scrollbar-thumb:hover {
+  background: oklch(0% 0 0 / 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .room-cards-inner {
+    scrollbar-color: oklch(100% 0 0 / 0.3) transparent;
+  }
+
+  :root:not([data-theme="light"]) .room-cards-inner::-webkit-scrollbar-track {
+    background: oklch(100% 0 0 / 0.06);
+  }
+
+  :root:not([data-theme="light"]) .room-cards-inner::-webkit-scrollbar-thumb {
+    background: oklch(100% 0 0 / 0.3);
+  }
+}
+
+[data-theme="dark"] .room-cards-inner {
+  scrollbar-color: oklch(100% 0 0 / 0.3) transparent;
+}
+
+[data-theme="dark"] .room-cards-inner::-webkit-scrollbar-track {
+  background: oklch(100% 0 0 / 0.06);
+}
+
+[data-theme="dark"] .room-cards-inner::-webkit-scrollbar-thumb {
+  background: oklch(100% 0 0 / 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .room-cards-inner {
+    background: oklch(20% 0.025 260 / 0.88);
+    border-color: oklch(30% 0.03 260);
+  }
+}
+
+[data-theme="dark"] .room-cards-inner {
+  background: oklch(20% 0.025 260 / 0.88);
+  border-color: oklch(30% 0.03 260);
+}
+
+.room-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 72px;
+  border-radius: 10px;
+  background: var(--room-card-bg);
+  border: 1.5px solid oklch(85% 0.03 270);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background-color 0.15s, border-color 0.15s;
+  outline: none;
+}
+
+.room-card:not(.room-card--selected):hover {
+  transform: translateY(-4px);
+  border-color: oklch(65% 0.12 270);
+}
+
+.room-card--selected {
+  background: var(--room-card-selected);
+  border-color: var(--room-card-selected);
+  box-shadow:
+    0 0 0 3px var(--room-card-bg),
+    0 0 0 5px var(--room-card-selected),
+    0 12px 24px oklch(55% 0.18 270 / 0.45);
+}
+
+.room-card-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--room-card-text);
+  position: relative;
+  z-index: 1;
+}
+
+.room-card--selected .room-card-value {
+  color: var(--room-card-selected-content);
+}
+
+.room-card-paw {
+  position: absolute;
+  font-size: 0.55rem;
+  opacity: 0.35;
+  color: var(--room-card-paw);
+  line-height: 1;
+}
+
+.room-card--selected .room-card-paw {
+  color: oklch(90% 0.06 270);
+}
+
+.room-card-paw--tl {
+  top: 5px;
+  left: 5px;
+}
+
+.room-card-paw--br {
+  bottom: 5px;
+  right: 5px;
+  transform: rotate(180deg);
+}
+
+.room-card-spinner {
+  display: none;
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2.5px solid var(--room-card-text);
+  border-top-color: transparent;
+  opacity: 0.7;
+  z-index: 2;
+  animation: room-card-spin 0.7s linear infinite;
+  pointer-events: none;
+}
+
+.room-card.phx-click-loading {
+  pointer-events: none;
+}
+
+.room-cards-inner:has(.room-card.phx-click-loading) .room-card {
+  pointer-events: none;
+}
+
+.room-cards-inner:has(.room-card.phx-click-loading) .room-card:not(.phx-click-loading) {
+  opacity: 0.5;
+}
+
+.room-card.phx-click-loading .room-card-value,
+.room-card.phx-click-loading .room-card-paw {
+  visibility: hidden;
+}
+
+.room-card.phx-click-loading .room-card-spinner {
+  display: block;
+}
+
+.room-card--selected.phx-click-loading .room-card-spinner {
+  border-color: var(--room-card-selected-content);
+  border-top-color: transparent;
+}
+
+@keyframes room-card-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Full-screen loading overlay while reveal/reset is in flight */
+.room-loading-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  background-color: oklch(0% 0 0 / 0.45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+body:has(button.phx-click-loading[phx-click="reset"]) .room-loading-overlay,
+body:has(button.phx-click-loading[phx-click="end_planning"]) .room-loading-overlay,
+body:has(button.phx-click-loading[phx-click="leave_room"]) .room-loading-overlay {
+  display: flex;
+}
+
+.room-loading-spinner {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 4px solid oklch(100% 0 0 / 0.25);
+  border-top-color: oklch(100% 0 0 / 0.9);
+  animation: room-card-spin 0.7s linear infinite;
+}
+
+/* ─── Mobile (≤ 768px) ───────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Compact header buttons: icon-only, square-ish tap targets */
+  .room-header-btn {
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
+    min-height: 2.25rem;
+    height: 2.25rem;
+  }
+
+  /* Less padding so the game area gets more vertical room */
+  .room-game-area {
+    padding-top: 64px;
+    padding-bottom: 128px;
+  }
+
+  /* Table uses more of the viewport width and most of the vertical space */
+  .room-table {
+    width: min(580px, 94vw);
+    height: min(380px, 55vh);
+  }
+
+  .room-user-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+
+  .room-user-vote-num {
+    font-size: 1rem;
+  }
+
+  .room-user-name {
+    font-size: 0.85rem;
+    max-width: 88px;
+  }
+
+  .room-user-edit-badge {
+    width: 16px;
+    height: 16px;
+    font-size: 0.65rem;
+    border-width: 1.5px;
+  }
+
+  .room-cards-bar {
+    padding: 10px 8px 14px;
+  }
+
+  .room-cards-inner {
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 16px;
+  }
+
+  .room-card {
+    width: 48px;
+    height: 66px;
+  }
+
+  .room-card-value {
+    font-size: 1rem;
+  }
+
+  /* Disable lift-on-hover: pointless on touch and triggers on tap */
+  .room-card:not(.room-card--selected):hover {
+    transform: none;
+  }
+
+  .room-average {
+    gap: 5px;
+  }
+
+  .room-average-label {
+    font-size: 0.8rem;
+  }
+
+  .room-average-value {
+    font-size: 1rem;
+  }
+
+  .room-campfire-hint {
+    font-size: 0.7rem;
+  }
+
+  /* With up to 12 bars side-by-side, the word "votes" makes each per-bar
+     count wider than the bar itself on mobile and overlaps neighbors.
+     Hide just the word — the count number stays visible. */
+  .stats-bar-count-word {
+    display: none;
+  }
+}
+
+/* ─── Very small phones (≤ 380px) ────────────────────────── */
+@media (max-width: 380px) {
+  .room-user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .room-user-name {
+    font-size: 0.78rem;
+    max-width: 72px;
+  }
+
+  .room-card {
+    width: 44px;
+    height: 62px;
+  }
+}
+
+/* ─── Statistics modal ──────────────────────────────────── */
+
+.stats-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stats-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  border-radius: 12px;
+  background-color: var(--color-base-200);
+  border: 1px solid var(--color-base-300);
+}
+
+.stats-summary-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-base-content);
+  opacity: 0.6;
+}
+
+.stats-summary-value {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--room-card-selected);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+.stats-consensus {
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: var(--color-success);
+  color: var(--color-success-content);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.stats-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-base-content);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+/* Vertical bar chart — one column per voted card. Bars grow from the bottom
+   of a fixed-height track; height is set inline as a percentage of the most
+   voted card so the tallest bar always fills the track. */
+.stats-distribution {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  min-height: 120px;
+}
+
+.stats-bar-item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.stats-bar-track {
+  width: 100%;
+  max-width: 110px;
+  height: 80px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.stats-bar-fill {
+  width: 100%;
+  min-height: 8px;
+  border-radius: 14px 14px 4px 4px;
+  transition: height 0.35s ease;
+}
+
+/* Pastel palette cycled by card index so adjacent bars stay visually distinct
+   without depending on the deck size. */
+.stats-bar-fill--0 {
+  background-color: oklch(82% 0.07 165);
+}
+
+.stats-bar-fill--1 {
+  background-color: oklch(83% 0.08 25);
+}
+
+.stats-bar-fill--2 {
+  background-color: oklch(83% 0.08 340);
+}
+
+.stats-bar-fill--3 {
+  background-color: oklch(83% 0.08 270);
+}
+
+.stats-bar-label {
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--color-base-content);
+}
+
+.stats-bar-count {
+  font-size: 0.8rem;
+  color: var(--color-base-content);
+  opacity: 0.6;
+  white-space: nowrap;
+  display: inline-flex;
+  gap: 4px;
+}
+
+.stats-row-count {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-align: right;
+  color: var(--color-base-content);
+  opacity: 0.75;
+}
+
+.stats-abstained {
+  margin-top: 14px;
+  font-size: 0.8rem;
+  color: var(--color-base-content);
+  opacity: 0.65;
+  text-align: center;
+}
+
+.stats-section-title--spaced {
+  margin-top: 18px;
+}
+
+.stats-voters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.stats-voter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background-color: var(--color-base-200);
+}
+
+.stats-voter-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-base-content);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats-voter-vote {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--room-card-selected);
+  min-width: 24px;
+  text-align: right;
+}
+
+.stats-voter-vote--empty {
+  color: var(--color-base-content);
+  opacity: 0.4;
+  font-weight: 600;
+}

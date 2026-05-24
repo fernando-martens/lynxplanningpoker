@@ -1,0 +1,241 @@
+<div class="flex min-h-screen flex-col overflow-x-clip">
+  <Layouts.app_header conn={@conn} />
+  <main class="flex-grow">
+    <section class="flex min-h-[calc(100vh-5.5rem)] flex-col items-center justify-center px-6 text-center">
+      <div class="lynx-wrapper relative mb-8 flex w-full flex-col items-center">
+        <div
+          class="absolute -bottom-3 h-12 w-64 rounded-[50%] bg-[var(--floor-lynx)]"
+          style="z-index: 0;"
+        >
+        </div>
+
+        <img
+          src="/images/lynx.svg"
+          alt={gettext("Lynx mascot, the Lynx Planning Poker app")}
+          class="relative z-10 h-48 w-48 object-contain md:h-56 md:w-56"
+        />
+      </div>
+
+      <h1 class="mb-3 text-4xl font-bold tracking-tight md:text-5xl">
+        Lynx planning poker
+      </h1>
+
+      <p class="mb-6 text-lg font-semibold md:text-xl">
+        {gettext("Free, fast, and no sign-up needed.")}
+      </p>
+
+      <div class="flex w-full max-w-xs flex-col items-center justify-center gap-4 sm:w-auto sm:max-w-none sm:flex-row">
+        <.link
+          navigate={localized_path(@locale, ~p"/rooms/new")}
+          class="bg-primary text-white w-full sm:w-auto px-8 py-4 rounded-full text-lg font-bold whitespace-nowrap hover:brightness-85 transition shadow-lg inline-flex items-center justify-center gap-2"
+        >
+          {gettext("Create a room")} <.icon name="hero-plus" class="size-5" />
+        </.link>
+        <.link
+          navigate={localized_path(@locale, ~p"/how-it-works")}
+          class="bg-secondary w-full sm:w-auto px-8 py-4 rounded-full text-lg font-bold whitespace-nowrap hover:brightness-85 transition inline-flex items-center justify-center gap-2"
+        >
+          {gettext("How it works")} <.icon name="hero-book-open" class="size-5" />
+        </.link>
+      </div>
+
+      <ul
+        aria-label={gettext("Privacy and security highlights")}
+        class="mt-6 flex flex-wrap items-center justify-center gap-2"
+      >
+        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-base-100 dark:bg-base-200 px-3 py-1.5 text-xs font-semibold text-base-content/80">
+          <.icon name="hero-user-circle" class="size-3.5 text-primary dark:text-white" />
+          {gettext("No sign-up")}
+        </li>
+        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-base-100 dark:bg-base-200 px-3 py-1.5 text-xs font-semibold text-base-content/80">
+          <.icon name="hero-eye-slash" class="size-3.5 text-primary dark:text-white" />
+          {gettext("Zero trackers")}
+        </li>
+        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-base-100 dark:bg-base-200 px-3 py-1.5 text-xs font-semibold text-base-content/80">
+          <.icon name="hero-clock" class="size-3.5 text-primary dark:text-white" />
+          {gettext("Rooms auto-delete")}
+        </li>
+        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-base-100 dark:bg-base-200 px-3 py-1.5 text-xs font-semibold text-base-content/80">
+          <.icon name="hero-shield-check" class="size-3.5 text-primary dark:text-white" />
+          {gettext("GDPR")}
+        </li>
+      </ul>
+
+      <div class="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+        <.link
+          navigate={localized_path(@locale, ~p"/privacy")}
+          class="inline-flex items-center gap-1.5 text-sm text-base-content/70 hover:text-base-content hover:underline"
+        >
+          <.icon name="hero-shield-check" class="size-4" />
+          {gettext("How we handle your data")}
+        </.link>
+
+        <.link
+          href="https://github.com/fernando-martens/lynxplanningpoker"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 text-sm text-base-content/70 hover:text-base-content hover:underline"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            aria-hidden="true"
+            class="size-4"
+          >
+            <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.87-1.54-3.87-1.54-.52-1.32-1.27-1.67-1.27-1.67-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.69 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.45.11-3.03 0 0 .97-.31 3.18 1.18a11.04 11.04 0 015.8 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.58.23 2.74.11 3.03.74.81 1.18 1.84 1.18 3.1 0 4.43-2.7 5.41-5.27 5.69.41.36.78 1.06.78 2.14 0 1.55-.01 2.79-.01 3.17 0 .31.21.67.8.56C20.21 21.38 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z" />
+          </svg>
+          {gettext("View source on GitHub")}
+        </.link>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-3xl px-6 py-16">
+      <h2 class="text-center text-3xl font-bold tracking-tight">
+        {gettext("What is planning poker?")}
+      </h2>
+
+      <p class="mx-auto mt-4 max-w-2xl text-center text-base text-base-content/70">
+        {gettext(
+          "Planning poker is a consensus-based estimation technique for agile and scrum teams."
+        )}
+      </p>
+
+      <ol class="mx-auto mt-6 flex max-w-xl flex-col gap-3 text-base text-base-content/80">
+        <li class="flex items-start gap-3">
+          <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+            1
+          </span>
+          <span>{gettext("Everyone privately picks a card to size a user story.")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+            2
+          </span>
+          <span>{gettext("All the cards are revealed at the same time.")}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white">
+            3
+          </span>
+          <span>
+            {gettext(
+              "The discussion that follows turns scattered guesses into a shared estimate."
+            )}
+          </span>
+        </li>
+      </ol>
+
+      <ul
+        class="mt-8 flex flex-wrap items-center justify-center gap-2"
+        aria-hidden="true"
+      >
+        <li
+          :for={card <- Lynxplanningpoker.Decks.labels()}
+          class="flex h-14 w-10 items-center justify-center rounded-lg border-2 border-primary/30 bg-base-100 text-sm font-bold text-primary shadow-sm"
+        >
+          {card}
+        </li>
+      </ul>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-6 py-16">
+      <h2 class="text-center text-3xl font-bold tracking-tight">
+        {gettext("Why teams choose Lynx Planning Poker")}
+      </h2>
+
+      <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <.icon name="hero-bolt" class="size-6" />
+          </div>
+          <h3 class="mt-4 text-lg font-semibold">{gettext("Real-time by default")}</h3>
+          <p class="mt-2 text-sm text-base-content/70">
+            {gettext("Votes, reveals and resets sync instantly for everyone in the room.")}
+          </p>
+        </article>
+
+        <article class="rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <.icon name="hero-link" class="size-6" />
+          </div>
+          <h3 class="mt-4 text-lg font-semibold">{gettext("No accounts, ever")}</h3>
+          <p class="mt-2 text-sm text-base-content/70">
+            {gettext("Share the room link and your teammates join with just a name.")}
+          </p>
+        </article>
+
+        <article class="rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <.icon name="hero-gift" class="size-6" />
+          </div>
+          <h3 class="mt-4 text-lg font-semibold">{gettext("Free forever")}</h3>
+          <p class="mt-2 text-sm text-base-content/70">
+            {gettext("Unlimited rooms for up to 15 players, with no ads and no credit card.")}
+          </p>
+        </article>
+
+        <article class="rounded-2xl border border-base-200 bg-base-100 dark:border-base-300 dark:bg-base-200 p-6 text-center shadow-sm">
+          <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <.icon name="hero-language" class="size-6" />
+          </div>
+          <h3 class="mt-4 text-lg font-semibold">{gettext("Four languages")}</h3>
+          <p class="mt-2 text-sm text-base-content/70">
+            {gettext("Play in English, Portuguese, French or Spanish.")}
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-6 py-16 pb-16">
+      <div class="rounded-3xl border border-primary/30 bg-primary/5 p-8">
+        <div class="flex justify-center">
+          <div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <.icon name="hero-shield-check" class="size-6" />
+          </div>
+        </div>
+
+        <h2 class="mt-4 text-center text-3xl font-bold tracking-tight">
+          {gettext("Your data stays yours")}
+        </h2>
+
+        <p class="mx-auto mt-3 max-w-xl text-center text-base text-base-content/70">
+          {gettext("Lynx is private by design — built so your planning sessions leave no trace.")}
+        </p>
+
+        <ul class="mx-auto mt-6 flex max-w-xl flex-col gap-3 text-sm text-base-content/80">
+          <li class="flex items-start gap-3">
+            <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+            <span>{gettext("No accounts and no passwords — we never ask who you are.")}</span>
+          </li>
+          <li class="flex items-start gap-3">
+            <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+            <span>
+              {gettext(
+                "Rooms are ephemeral: everything is deleted when the host leaves or after two hours of inactivity."
+              )}
+            </span>
+          </li>
+          <li class="flex items-start gap-3">
+            <.icon name="hero-check-circle" class="size-5 shrink-0 text-primary" />
+            <span>
+              {gettext(
+                "No ads and no trackers — we never sell your data, and we comply with the GDPR."
+              )}
+            </span>
+          </li>
+        </ul>
+
+        <div class="mt-6 flex justify-center">
+          <.link
+            navigate={localized_path(@locale, ~p"/privacy")}
+            class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+          >
+            {gettext("How we handle your data")} <.icon name="hero-arrow-right" class="size-4" />
+          </.link>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Layouts.footer conn={@conn} />
+</div>

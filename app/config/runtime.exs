@@ -1,0 +1,136 @@
+import Config
+
+# config/runtime.exs is executed for all environments, including
+# during releases. It is executed after compilation and before the
+# system starts, so it is typically used to load production configuration
+# and secrets from environment variables or elsewhere. Do not define
+# any compile-time configuration in here, as it won't be applied.
+# The block below contains prod specific runtime configuration.
+
+# ## Using releases
+#
+# If you use `mix release`, you need to explicitly enable the server
+# by passing the PHX_SERVER=true when you start it:
+#
+#     PHX_SERVER=true bin/lynxplanningpoker start
+#
+# Alternatively, you can use `mix phx.gen.release` to generate a `bin/server`
+# script that automatically sets the env var above.
+if System.get_env("PHX_SERVER") do
+  config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint, server: true
+end
+
+config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
+  http: [port: String.to_integer(System.get_env("PORT", "4000"))]
+
+trusted_proxies =
+  case System.get_env("TRUSTED_PROXIES") do
+    nil -> []
+    "" -> []
+    raw -> raw |> String.split(",") |> Enum.map(&String.trim/1) |> Enum.reject(&(&1 == ""))
+  end
+
+config :lynxplanningpoker, :trusted_proxies, trusted_proxies
+
+if config_env() == :prod do
+  turnstile_site_key =
+    System.get_env("CLOUDFLARE_TURNSTILE_SITE_KEY") ||
+      raise """
+      environment variable CLOUDFLARE_TURNSTILE_SITE_KEY is missing.
+      Get it from the Cloudflare Turnstile dashboard.
+      """
+
+  turnstile_secret_key =
+    System.get_env("CLOUDFLARE_TURNSTILE_SECRET_KEY") ||
+      raise """
+      environment variable CLOUDFLARE_TURNSTILE_SECRET_KEY is missing.
+      Get it from the Cloudflare Turnstile dashboard.
+      """
+
+  config :lynxplanningpoker, :turnstile,
+    enabled: true,
+    site_key: turnstile_site_key,
+    secret_key: turnstile_secret_key
+
+  database_url =
+    System.get_env("DATABASE_URL") ||
+      raise """
+      environment variable DATABASE_URL is missing.
+      For example: ecto://USER:PASS@HOST/DATABASE
+      """
+
+  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
+
+  config :lynxplanningpoker, Lynxplanningpoker.Repo,
+    url: database_url,
+    # AWS RDS supports TLS on the standard port; `verify_none` encrypts the
+    # connection without shipping the RDS CA bundle into the release image.
+    ssl: [verify: :verify_none],
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    # For machines with several cores, consider starting multiple pools of `pool_size`
+    # pool_count: 4,
+    socket_options: maybe_ipv6
+
+  # The secret key base is used to sign/encrypt cookies and other secrets.
+  # A default value is used in config/dev.exs and config/test.exs but you
+  # want to use a different value for prod and you most likely don't want
+  # to check this value into version control, so we use an environment
+  # variable instead.
+  secret_key_base =
+    System.get_env("SECRET_KEY_BASE") ||
+      raise """
+      environment variable SECRET_KEY_BASE is missing.
+      You can generate one by calling: mix phx.gen.secret
+      """
+
+  host = System.get_env("PHX_HOST") || "example.com"
+
+  # The canonical public host. The `CanonicalHost` plug 301-redirects every
+  # other host (notably the Fly-issued *.fly.dev subdomain) here, so the app
+  # has a single origin. Only set in :prod — unset elsewhere makes the plug a
+  # no-op.
+  config :lynxplanningpoker, :canonical_host, host
+
+  config :lynxplanningpoker, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
+
+  config :lynxplanningpoker, LynxplanningpokerWeb.Endpoint,
+    url: [host: host, port: 443, scheme: "https"],
+    http: [
+      # Enable IPv6 and bind on all interfaces.
+      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
+      # See the documentation on https://hexdocs.pm/bandit/Bandit.html#t:options/0
+      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
+      ip: {0, 0, 0, 0, 0, 0, 0, 0}
+    ],
+    secret_key_base: secret_key_base,
+    # Reject WebSocket/LiveView upgrades whose `Origin` header doesn't match
+    # the public host. The default (`true`) would also work since the URL
+    # host is configured above, but listing the schemes explicitly makes the
+    # accepted set unambiguous and easy to audit.
+    check_origin: ["https://#{host}", "//#{host}"]
+
+  # ## SSL Support
+  #
+  # `force_ssl` above adds HSTS and redirects any HTTP request that escapes
+  # the proxy to HTTPS. If you instead want to terminate TLS directly in
+  # Bandit, configure the `https` key with `keyfile`/`certfile` — see
+  # https://hexdocs.pm/plug/Plug.SSL.html#configure/1 for all options.
+
+  # ## Configuring the mailer
+  #
+  # In production you need to configure the mailer to use a different adapter.
+  # Here is an example configuration for Mailgun:
+  #
+  #     config :lynxplanningpoker, Lynxplanningpoker.Mailer,
+  #       adapter: Swoosh.Adapters.Mailgun,
+  #       api_key: System.get_env("MAILGUN_API_KEY"),
+  #       domain: System.get_env("MAILGUN_DOMAIN")
+  #
+  # Most non-SMTP adapters require an API client. Swoosh supports Req, Hackney,
+  # and Finch out-of-the-box. This configuration is typically done at
+  # compile-time in your config/prod.exs:
+  #
+  #     config :swoosh, :api_client, Swoosh.ApiClient.Req
+  #
+  # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+end

@@ -1,0 +1,9 @@
+# See https://www.robotstxt.org/robotstxt.html for documentation.
+
+User-agent: *
+Allow: /
+# Action-only endpoints with no indexable content.
+Disallow: /locale/
+Disallow: /rooms/leave
+
+Sitemap: https://lynxplanningpoker.com/sitemap.xml
