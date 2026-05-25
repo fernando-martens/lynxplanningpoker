@@ -74,4 +74,90 @@ defmodule Lynxplanningpoker.AnalyticsTest do
       assert Analytics.total_visitors() == 0
     end
   end
+
+  describe "record_room_created/2" do
+    test "inserts a session row for the given room id" do
+      room_id = Ecto.UUID.generate()
+      now = ~U[2026-05-24 10:00:00Z]
+
+      assert {:ok, _} = Analytics.record_room_created(room_id, now: now)
+      assert Analytics.total_rooms() == 1
+    end
+
+    test "is idempotent for the same room id" do
+      room_id = Ecto.UUID.generate()
+      Analytics.record_room_created(room_id)
+      Analytics.record_room_created(room_id)
+
+      assert Analytics.total_rooms() == 1
+    end
+  end
+
+  describe "record_room_ended/2" do
+    test "fills in ended_at on a live session" do
+      room_id = Ecto.UUID.generate()
+      started = ~U[2026-05-24 10:00:00Z]
+      ended = ~U[2026-05-24 10:30:00Z]
+
+      Analytics.record_room_created(room_id, now: started)
+
+      assert {:ok, 1} = Analytics.record_room_ended(room_id, now: ended)
+      assert Analytics.average_room_duration_seconds() == 1800.0
+    end
+
+    test "is a no-op when the room was never created" do
+      assert {:ok, 0} = Analytics.record_room_ended(Ecto.UUID.generate())
+    end
+
+    test "is a no-op when the session has already ended" do
+      room_id = Ecto.UUID.generate()
+      Analytics.record_room_created(room_id, now: ~U[2026-05-24 10:00:00Z])
+      Analytics.record_room_ended(room_id, now: ~U[2026-05-24 10:30:00Z])
+
+      assert {:ok, 0} = Analytics.record_room_ended(room_id, now: ~U[2026-05-24 11:00:00Z])
+      assert Analytics.average_room_duration_seconds() == 1800.0
+    end
+  end
+
+  describe "rooms_by_day/0" do
+    test "groups by started_at date, most recent first" do
+      Analytics.record_room_created(Ecto.UUID.generate(), now: ~U[2026-05-22 10:00:00Z])
+      Analytics.record_room_created(Ecto.UUID.generate(), now: ~U[2026-05-22 11:00:00Z])
+      Analytics.record_room_created(Ecto.UUID.generate(), now: ~U[2026-05-23 09:00:00Z])
+
+      assert Analytics.rooms_by_day() == [
+               {~D[2026-05-23], 1},
+               {~D[2026-05-22], 2}
+             ]
+    end
+  end
+
+  describe "average_room_duration_seconds/0" do
+    test "returns nil when no room has ended" do
+      Analytics.record_room_created(Ecto.UUID.generate())
+      assert Analytics.average_room_duration_seconds() == nil
+    end
+
+    test "averages only rooms with ended_at filled in" do
+      r1 = Ecto.UUID.generate()
+      r2 = Ecto.UUID.generate()
+      r3 = Ecto.UUID.generate()
+
+      Analytics.record_room_created(r1, now: ~U[2026-05-24 10:00:00Z])
+      Analytics.record_room_ended(r1, now: ~U[2026-05-24 10:10:00Z])
+
+      Analytics.record_room_created(r2, now: ~U[2026-05-24 10:00:00Z])
+      Analytics.record_room_ended(r2, now: ~U[2026-05-24 10:30:00Z])
+
+      Analytics.record_room_created(r3, now: ~U[2026-05-24 10:00:00Z])
+
+      assert Analytics.average_room_duration_seconds() == 1200.0
+    end
+  end
+
+  describe "total_rooms/0" do
+    test "is zero when nothing has been recorded" do
+      assert Analytics.total_rooms() == 0
+    end
+  end
 end

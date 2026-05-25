@@ -4,6 +4,7 @@ defmodule Lynxplanningpoker.Rooms do
   """
 
   import Ecto.Query, warn: false
+  alias Lynxplanningpoker.Analytics
   alias Lynxplanningpoker.Repo
 
   alias Lynxplanningpoker.Rooms.Room
@@ -66,9 +67,14 @@ defmodule Lynxplanningpoker.Rooms do
 
   """
   def create_room(attrs) do
-    %Room{}
-    |> Room.changeset(attrs)
-    |> Repo.insert()
+    case %Room{} |> Room.changeset(attrs) |> Repo.insert() do
+      {:ok, room} = result ->
+        Analytics.record_room_created(room.id)
+        result
+
+      error ->
+        error
+    end
   end
 
   @doc """
@@ -105,6 +111,8 @@ defmodule Lynxplanningpoker.Rooms do
   def delete_room(%Room{} = room) do
     case Repo.delete(room) do
       {:ok, deleted_room} = result ->
+        Analytics.record_room_ended(deleted_room.id)
+
         Phoenix.PubSub.broadcast(
           Lynxplanningpoker.PubSub,
           room_topic(deleted_room.id),

@@ -1,6 +1,7 @@
 defmodule Lynxplanningpoker.RoomsTest do
   use Lynxplanningpoker.DataCase, async: true
 
+  alias Lynxplanningpoker.Analytics
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Rooms.Room
 
@@ -22,6 +23,13 @@ defmodule Lynxplanningpoker.RoomsTest do
     test "returns error changeset when revealed is explicitly nil" do
       assert {:error, %Ecto.Changeset{} = changeset} = Rooms.create_room(%{revealed: nil})
       assert %{revealed: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "records the room creation in analytics" do
+      assert {:ok, room} = Rooms.create_room(%{})
+      assert Analytics.total_rooms() == 1
+      assert Analytics.average_room_duration_seconds() == nil
+      assert room.id
     end
   end
 
@@ -106,6 +114,12 @@ defmodule Lynxplanningpoker.RoomsTest do
       {:ok, room} = Rooms.create_room(%{})
       assert {:ok, %Room{}} = Rooms.delete_room(room)
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(room.id) end
+    end
+
+    test "marks the session as ended in analytics" do
+      {:ok, room} = Rooms.create_room(%{})
+      assert {:ok, %Room{}} = Rooms.delete_room(room)
+      assert is_float(Analytics.average_room_duration_seconds())
     end
   end
 

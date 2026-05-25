@@ -16,6 +16,7 @@ defmodule Lynxplanningpoker.Analytics do
   """
   import Ecto.Query
 
+  alias Lynxplanningpoker.Analytics.RoomSession
   alias Lynxplanningpoker.Analytics.Visitor
   alias Lynxplanningpoker.Repo
 
@@ -76,6 +77,71 @@ defmodule Lynxplanningpoker.Analytics do
     |> select([v], {v.country, count(v.id)})
     |> Repo.all()
   end
+
+  @doc """
+  Records that a room was just created. Idempotent per `room_id` — calling
+  twice for the same room is a no-op.
+
+  Optional `:now` overrides the timestamp; tests pass it for determinism.
+  Defaults to `DateTime.utc_now/0` truncated to seconds.
+  """
+  def record_room_created(room_id, opts \\ []) do
+    now = Keyword.get_lazy(opts, :now, &utc_now/0)
+
+    Repo.insert(
+      %RoomSession{room_id: room_id, started_at: now},
+      on_conflict: :nothing,
+      conflict_target: [:room_id]
+    )
+  end
+
+  @doc """
+  Marks a previously-created room as ended. No-op if the room was never
+  recorded as created or has already been ended.
+
+  Optional `:now` overrides the timestamp; tests pass it for determinism.
+  """
+  def record_room_ended(room_id, opts \\ []) do
+    now = Keyword.get_lazy(opts, :now, &utc_now/0)
+
+    {updated, _} =
+      from(s in RoomSession, where: s.room_id == ^room_id and is_nil(s.ended_at))
+      |> Repo.update_all(set: [ended_at: now])
+
+    {:ok, updated}
+  end
+
+  @doc "Total number of rooms ever created."
+  def total_rooms do
+    Repo.aggregate(RoomSession, :count, :id)
+  end
+
+  @doc "Room counts as `{date, count}` tuples by `started_at` date, most recent day first."
+  def rooms_by_day do
+    RoomSession
+    |> group_by([s], fragment("date(?)", s.started_at))
+    |> order_by([s], desc: fragment("date(?)", s.started_at))
+    |> select([s], {fragment("date(?)", s.started_at), count(s.id)})
+    |> Repo.all()
+  end
+
+  @doc """
+  Average duration in seconds across rooms that have ended. Returns `nil`
+  when no room has ended yet.
+  """
+  def average_room_duration_seconds do
+    query =
+      from s in RoomSession,
+        where: not is_nil(s.ended_at),
+        select: avg(fragment("EXTRACT(EPOCH FROM (? - ?))", s.ended_at, s.started_at))
+
+    case Repo.one(query) do
+      nil -> nil
+      %Decimal{} = avg -> avg |> Decimal.round(2) |> Decimal.to_float()
+    end
+  end
+
+  defp utc_now, do: DateTime.utc_now() |> DateTime.truncate(:second)
 
   @doc false
   def visitor_hash(date, ip, user_agent, secret) do
