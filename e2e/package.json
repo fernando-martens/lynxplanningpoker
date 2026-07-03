@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Testes end-to-end do Lynx Planning Poker com Playwright",
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",

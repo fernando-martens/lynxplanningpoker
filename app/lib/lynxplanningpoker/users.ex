@@ -98,6 +98,28 @@ defmodule Lynxplanningpoker.Users do
   end
 
   @doc """
+  Renames a user and broadcasts the updated room.
+  """
+  def rename_user(%User{} = user, attrs) do
+    user
+    |> User.rename_changeset(attrs)
+    |> Repo.update()
+    |> notify_room_update()
+  end
+
+  @doc """
+  Marks a user's name as customized without changing it. Used when the user
+  dismisses the onboarding name prompt ("Skip"), so it never reopens. No
+  broadcast: the name did not change, so other participants have nothing to
+  refresh.
+  """
+  def mark_name_customized(%User{} = user) do
+    user
+    |> Ecto.Changeset.change(%{name_customized: true})
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a user and broadcasts the updated room.
   """
   def delete_user(%User{} = user) do

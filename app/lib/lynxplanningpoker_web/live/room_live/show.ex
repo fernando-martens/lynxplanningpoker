@@ -5,6 +5,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   alias Lynxplanningpoker.Presence
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
+  alias Lynxplanningpoker.Users.User
   alias LynxplanningpokerWeb.RoomLive.Dev
   alias LynxplanningpokerWeb.RoomLive.Forest
   alias LynxplanningpokerWeb.RoomLive.Seating
@@ -37,8 +38,14 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             Dev.maybe_schedule_seating_tick(self())
           end
 
+          # The onboarding name prompt takes precedence: a lone host only sees
+          # the invite modal once they have resolved their name (Save/Skip), so
+          # the two modals never open at the same time.
           show_initial_invite =
-            connected?(socket) and current_user.is_host and length(users) == 1
+            connected?(socket) and current_user.is_host and length(users) == 1 and
+              current_user.name_customized
+
+          show_initial_profile = connected?(socket) and not current_user.name_customized
 
           socket =
             socket
@@ -50,6 +57,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             |> assign(:current_user, current_user)
             |> assign(:cards, @cards)
             |> assign(:show_initial_invite, show_initial_invite)
+            |> assign(:show_initial_profile, show_initial_profile)
+            |> assign(:rename_form, to_form(User.rename_changeset(current_user, %{}), as: :user))
 
           {:ok, socket}
         else
@@ -136,6 +145,53 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   @impl true
   def handle_event("leave_room", _params, socket) do
     {:noreply, redirect(socket, to: ~p"/rooms/leave")}
+  end
+
+  @impl true
+  def handle_event("rename_user", %{"user" => %{"name" => name}}, socket) do
+    case Users.rename_user(socket.assigns.current_user, %{"name" => name}) do
+      {:ok, updated_user} ->
+        # `rename_user/2` broadcasts `{:users_updated, _}`, so every other
+        # participant refreshes via `handle_info`. We reflect the change
+        # locally right away so the current user's own card and form update
+        # without waiting for the round trip, and close the onboarding prompt.
+        updated_user = %{updated_user | has_voted: not is_nil(updated_user.vote)}
+
+        users =
+          Enum.map(socket.assigns.users, fn user ->
+            if user.id == updated_user.id, do: updated_user, else: user
+          end)
+
+        {:noreply,
+         socket
+         |> assign(:current_user, updated_user)
+         |> assign(:users, users)
+         |> assign(:rename_form, to_form(User.rename_changeset(updated_user, %{}), as: :user))
+         |> assign(:show_initial_profile, false)
+         |> put_flash(:info, gettext("Your name has been updated."))}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, :rename_form, to_form(changeset, as: :user))}
+    end
+  end
+
+  @impl true
+  def handle_event("skip_rename", _params, socket) do
+    # The user keeps their temporary name. Mark it customized so the prompt
+    # never reopens, then let a lone host see the invite modal they skipped.
+    case Users.mark_name_customized(socket.assigns.current_user) do
+      {:ok, updated_user} ->
+        show_invite = updated_user.is_host and length(socket.assigns.users) == 1
+
+        {:noreply,
+         socket
+         |> assign(:current_user, %{updated_user | has_voted: not is_nil(updated_user.vote)})
+         |> assign(:show_initial_profile, false)
+         |> assign(:show_initial_invite, show_invite)}
+
+      {:error, _changeset} ->
+        {:noreply, socket}
+    end
   end
 
   # Every LiveView in the room receives `presence_diff`. Cleanup of a vanished
@@ -375,7 +431,44 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       |> assign(:stats_users, stats_users)
 
     ~H"""
-    <Layouts.room_header is_host={@current_user && @current_user.is_host} />
+    <Layouts.room_header
+      is_host={@current_user && @current_user.is_host}
+      revealed={@room.revealed}
+    />
+    <.modal id="profile-modal" title={gettext("Tell us your name")}>
+      <p class="text-sm text-base-content/70 mb-6">
+        {gettext("We gave you a temporary name. You can keep it or set your own.")}
+      </p>
+
+      <.form
+        for={@rename_form}
+        id="rename-form"
+        phx-submit={JS.push("rename_user") |> hide_modal("profile-modal")}
+        class="space-y-4"
+      >
+        <.input
+          field={@rename_form[:name]}
+          id="rename-name-input"
+          type="text"
+          label={gettext("Your name")}
+          placeholder={gettext("Enter your name")}
+          class="input input-bordered w-full"
+          maxlength="20"
+          required
+        />
+        <.button type="submit" class="w-full py-4 text-base font-semibold">
+          {gettext("Save")}
+        </.button>
+      </.form>
+
+      <button
+        type="button"
+        phx-click={JS.push("skip_rename") |> hide_modal("profile-modal")}
+        class="mt-3 w-full text-sm text-base-content/60 hover:text-base-content hover:underline"
+      >
+        {gettext("Skip — keep my temporary name")}
+      </button>
+    </.modal>
     <.modal id="invite-modal" title={gettext("Invitation link")}>
       <div class="flex flex-col sm:flex-row gap-2 items-stretch">
         <input
@@ -527,6 +620,12 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
       <% end %>
     </.modal>
 
+    <div
+      :if={@show_initial_profile}
+      id="initial-profile-trigger"
+      class="hidden"
+      phx-mounted={show_modal("profile-modal") |> JS.dispatch("phx:select", to: "#rename-name-input")}
+    />
     <div
       :if={@show_initial_invite}
       id="initial-invite-trigger"

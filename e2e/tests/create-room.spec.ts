@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { ensureEnglishLocale, createRoomAsHost } from "../helpers/room";
+import {
+  ensureEnglishLocale,
+  createRoomAsHost,
+  waitForLiveView,
+} from "../helpers/room";
 
 test.describe("Criação de sala (host)", () => {
   test.beforeEach(async ({ page }) => {
@@ -10,21 +14,14 @@ test.describe("Criação de sala (host)", () => {
     await page.goto("/rooms/new");
 
     await expect(
-      page.getByRole("heading", { name: /Who are you\?/i }),
+      page.getByRole("heading", { name: /Start a new session/i }),
     ).toBeVisible();
-    await expect(page.getByLabel(/Your name/i)).toBeVisible();
+    // Não há mais campo de nome — só o Turnstile e o botão.
+    await expect(page.getByLabel(/Your name/i)).toHaveCount(0);
     await expect(page.locator(".cf-turnstile")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: /Join your room/i }),
+      page.getByRole("button", { name: /Create room/i }),
     ).toBeVisible();
-  });
-
-  test("não submete o formulário sem nome (required)", async ({ page }) => {
-    await page.goto("/rooms/new");
-    await page.getByRole("button", { name: /Join your room/i }).click();
-
-    // continua na mesma página por causa da validação HTML5
-    await expect(page).toHaveURL(/\/rooms\/new$/);
   });
 
   test("cria uma sala e redireciona para /rooms/:id", async ({ page }) => {
@@ -32,10 +29,28 @@ test.describe("Criação de sala (host)", () => {
     expect(roomUrl).toMatch(/\/rooms\/[0-9a-f-]{36}$/);
   });
 
-  test("após criar a sala, exibe automaticamente a modal de convite para o host sozinho", async ({
+  test("após pular o nome, exibe automaticamente a modal de convite para o host sozinho", async ({
     page,
   }) => {
-    await createRoomAsHost(page, "Host Solo");
+    await page.goto("/rooms/new");
+    await page.waitForFunction(
+      () => {
+        const el = document.querySelector(
+          'input[name="cf-turnstile-response"]',
+        ) as HTMLInputElement | null;
+        return !!el && el.value.length > 0;
+      },
+      null,
+      { timeout: 15_000 },
+    );
+    await page.getByRole("button", { name: /Create room/i }).click();
+    await expect(page).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);
+    await waitForLiveView(page);
+
+    // O prompt de nome abre primeiro; ao pular, a modal de convite aparece.
+    const profile = page.locator("#profile-modal");
+    await expect(profile).toBeVisible();
+    await profile.getByRole("button", { name: /Skip/i }).click();
 
     const modal = page.locator("#invite-modal");
     await expect(modal).toBeVisible();
@@ -56,8 +71,7 @@ test.describe("Criação de sala (host)", () => {
     await page.route("**/challenges.cloudflare.com/**", (route) => route.abort());
 
     await page.goto("/rooms/new");
-    await page.getByLabel(/Your name/i).fill("Anon");
-    await page.getByRole("button", { name: /Join your room/i }).click();
+    await page.getByRole("button", { name: /Create room/i }).click();
 
     // O controller chama render(:new) no caminho de erro, sem redirect, então
     // a URL fica em /rooms (alvo do POST) e o form é re-exibido com o flash.
@@ -65,7 +79,7 @@ test.describe("Criação de sala (host)", () => {
       page.getByText(/Please complete the human verification before continuing\./i),
     ).toBeVisible();
     await expect(
-      page.getByRole("heading", { name: /Who are you\?/i }),
+      page.getByRole("heading", { name: /Start a new session/i }),
     ).toBeVisible();
   });
 });

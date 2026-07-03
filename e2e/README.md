@@ -6,7 +6,7 @@ já está rodando em `http://localhost:4000`.
 
 ## Pré-requisitos
 
-- Node.js 18+ e npm
+- Node.js 18+ e pnpm (via corepack: `corepack enable`)
 - A aplicação Phoenix rodando em outro terminal:
 
 ```sh
@@ -18,8 +18,8 @@ mix phx.server
 
 ```sh
 cd e2e
-npm install
-npx playwright install
+pnpm install
+pnpm exec playwright install
 ```
 
 O segundo comando baixa os binários do Chromium/Firefox/WebKit.
@@ -27,17 +27,17 @@ O segundo comando baixa os binários do Chromium/Firefox/WebKit.
 ## Rodar os testes
 
 ```sh
-npm test              # roda tudo headless
-npm run test:headed   # roda com o browser visível
-npm run test:ui       # abre o modo interativo do Playwright
-npm run test:debug    # roda em modo debug, pausando passo a passo
-npm run report        # abre o último relatório HTML
+pnpm test              # roda tudo headless
+pnpm run test:headed   # roda com o browser visível
+pnpm run test:ui       # abre o modo interativo do Playwright
+pnpm run test:debug    # roda em modo debug, pausando passo a passo
+pnpm run report        # abre o último relatório HTML
 ```
 
 Para rodar um único arquivo:
 
 ```sh
-npx playwright test tests/voting.spec.ts
+pnpm exec playwright test tests/voting.spec.ts
 ```
 
 Para gravar testes interagindo manualmente no browser:
@@ -73,7 +73,7 @@ npm run codegen
   geraria interferência entre testes.
 - Para apontar para outro ambiente, exporte `BASE_URL`:
   ```sh
-  BASE_URL=https://staging.exemplo.com npm test
+  BASE_URL=https://staging.exemplo.com pnpm test
   ```
 
 ## Quando adicionar novos testes

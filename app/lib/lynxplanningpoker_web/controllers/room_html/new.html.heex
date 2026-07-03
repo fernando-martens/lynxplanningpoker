@@ -6,30 +6,16 @@
         <img src="/images/lynx.svg" alt="Lynx Mascot" class="h-20 w-20 object-contain" />
       </div>
 
-      <h1 class="mt-8 text-4xl font-semibold tracking-tight">{gettext("Who are you?")}</h1>
+      <h1 class="mt-8 text-4xl font-semibold tracking-tight">{gettext("Start a new session")}</h1>
 
       <p class="mx-auto mt-3 max-w-2xl text-base text-base-content/70">
-        {gettext("Say your name and create your room")}
+        {gettext(
+          "Click below to create your room. We'll give you a temporary name — change it whenever you like inside."
+        )}
       </p>
     </div>
 
-    <.form for={@changeset} action={@action} class="mt-5 space-y-6" id="create-room-form">
-      <div class="space-y-2">
-        <.input
-          name="room[name]"
-          id="room-name"
-          type="text"
-          value=""
-          label={gettext("Your name")}
-          placeholder={gettext("Enter your name")}
-          class="input input-bordered w-full"
-          phx-mounted={JS.focus()}
-          maxlength="20"
-          required
-        />
-        <p class="text-xs text-base-content/60">{gettext("Visible to everyone in the room")}</p>
-      </div>
-
+    <.form for={%{}} action={@action} id="create-room-form" method="post" class="mt-5 space-y-6">
       <%= if @turnstile_site_key do %>
         <div class="flex justify-center">
           <div
@@ -51,7 +37,7 @@
         disabled={@turnstile_site_key != nil}
         class="w-full py-5 text-lg font-semibold"
       >
-        {gettext("Join your room")}
+        {gettext("Create room")}
       </.button>
     </.form>
   </section>

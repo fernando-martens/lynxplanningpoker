@@ -39,9 +39,9 @@ export async function createRoomAsHost(
 
   await expect(page).toHaveURL(/\/rooms\/new$/);
 
-  await page.getByLabel(/Your name/i).fill(hostName);
-  // Em dev as test keys do Cloudflare Turnstile (1x00...AA) auto-resolvem
-  // o widget; esperamos o hidden input com o token ser preenchido antes de
+  // O formulário não pede nome — o host recebe um nome temporário gerado. Em
+  // dev as test keys do Cloudflare Turnstile (1x00...AA) auto-resolvem o
+  // widget; esperamos o hidden input com o token ser preenchido antes de
   // submeter pra não cair no flash de erro de verificação.
   await page.waitForFunction(
     () => {
@@ -53,7 +53,7 @@ export async function createRoomAsHost(
     null,
     { timeout: 15_000 },
   );
-  await page.getByRole("button", { name: /Join your room/i }).click();
+  await page.getByRole("button", { name: /Create room/i }).click();
 
   await expect(page).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);
   await waitForLiveView(page);
@@ -61,7 +61,31 @@ export async function createRoomAsHost(
   await expect(page.locator("button.room-card").first()).toBeVisible({
     timeout: 15_000,
   });
+  // O modal "Tell us your name" abre sozinho; definimos o nome desejado para
+  // que os specs possam continuar afirmando sobre ele.
+  await setNameViaProfileModal(page, hostName);
   return page.url();
+}
+
+/**
+ * Preenche o nome no modal de perfil (auto-aberto no primeiro acesso) e o
+ * fecha, para que ele pare de interceptar cliques no fundo. Também usado para
+ * dar aos usuários um nome estável e previsível nos specs.
+ */
+export async function setNameViaProfileModal(
+  page: Page,
+  name: string,
+): Promise<void> {
+  const modal = page.locator("#profile-modal");
+  await modal.waitFor({ state: "visible", timeout: 10_000 });
+  await modal.getByLabel(/Your name/i).fill(name);
+  // Save fecha o modal automaticamente.
+  await modal.getByRole("button", { name: /^Save$/i }).click();
+  await expect(modal).toBeHidden();
+  // Confirma que o nome escolhido apareceu no card do próprio usuário.
+  await expect(page.locator(".room-scene").getByText(name)).toBeVisible({
+    timeout: 10_000,
+  });
 }
 
 /**
@@ -86,7 +110,7 @@ export async function joinRoomAsGuest(
   await page.goto(inviteUrl);
 
   await expect(page.getByRole("heading", { name: /You're invited!/i })).toBeVisible();
-  await page.getByLabel(/Your name/i).fill(guestName);
+  // O formulário de convite não pede nome — o guest recebe um nome temporário.
   await page.getByRole("button", { name: /Join the room/i }).click();
 
   await expect(page).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);
@@ -96,6 +120,8 @@ export async function joinRoomAsGuest(
   await expect(page.locator("button.room-card").first()).toBeVisible({
     timeout: 15_000,
   });
+  // O modal "Tell us your name" abre sozinho; definimos o nome do guest.
+  await setNameViaProfileModal(page, guestName);
   return { page, context };
 }
 

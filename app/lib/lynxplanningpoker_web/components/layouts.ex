@@ -513,6 +513,7 @@ defmodule LynxplanningpokerWeb.Layouts do
   """
   attr(:class, :string, default: nil)
   attr(:is_host, :boolean, default: false)
+  attr(:revealed, :boolean, default: false)
 
   def room_header(assigns) do
     assigns = assign(assigns, :class, assigns.class || "")
@@ -540,10 +541,12 @@ defmodule LynxplanningpokerWeb.Layouts do
         </div>
 
         <nav class="flex items-center gap-1 md:gap-2 font-semibold pointer-events-auto">
-          <.button phx-click="reset" class="room-header-btn" aria-label={gettext("Restart")}>
-            <.icon name="hero-arrow-path" class="size-5" />
-            <span class="hidden md:inline">{gettext("Restart")}</span>
-          </.button>
+          <%= if @revealed do %>
+            <.button phx-click="reset" class="room-header-btn" aria-label={gettext("Restart")}>
+              <.icon name="hero-arrow-path" class="size-5" />
+              <span class="hidden md:inline">{gettext("Restart")}</span>
+            </.button>
+          <% end %>
           <.button
             phx-click={show_modal("invite-modal")}
             class="room-header-btn"
@@ -551,6 +554,16 @@ defmodule LynxplanningpokerWeb.Layouts do
           >
             <.icon name="hero-user-plus" class="size-5" />
             <span class="hidden md:inline">{gettext("Invite")}</span>
+          </.button>
+          <.button
+            phx-click={
+              show_modal("profile-modal") |> JS.dispatch("phx:select", to: "#rename-name-input")
+            }
+            class="room-header-btn"
+            aria-label={gettext("Your profile")}
+          >
+            <.icon name="hero-user" class="size-5" />
+            <span class="hidden md:inline">{gettext("Your profile")}</span>
           </.button>
           <%= if @is_host do %>
             <.button

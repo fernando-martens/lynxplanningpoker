@@ -272,6 +272,86 @@ defmodule Lynxplanningpoker.UsersTest do
     end
   end
 
+  describe "rename_user/2" do
+    test "updates the name, marks it customized and broadcasts the room update" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      refute user.name_customized
+      Users.subscribe_to_room(room.id)
+
+      assert {:ok, %User{name: "Alicia", name_customized: true}} =
+               Users.rename_user(user, %{"name" => "Alicia"})
+
+      assert_receive {:users_updated, room_id}
+      assert room_id == room.id
+
+      reloaded = Users.get_user!(user.id)
+      assert reloaded.name == "Alicia"
+      assert reloaded.name_customized
+    end
+
+    test "returns an error changeset when the name is blank" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      assert {:error, %Ecto.Changeset{} = changeset} = Users.rename_user(user, %{"name" => ""})
+      assert %{name: ["can't be blank"]} = errors_on(changeset)
+      assert Users.get_user!(user.id).name == "Alice"
+    end
+
+    test "returns an error changeset when the name is longer than 20 characters" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Users.rename_user(user, %{"name" => String.duplicate("a", 21)})
+
+      assert %{name: ["should be at most 20 character(s)"]} = errors_on(changeset)
+    end
+
+    test "silently ignores :is_host, :room_id and :vote so only the name changes" do
+      room = create_room!()
+      other_room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+
+      {:ok, updated} =
+        Users.rename_user(user, %{
+          "name" => "Mallory",
+          "is_host" => true,
+          "room_id" => other_room.id,
+          "vote" => "5"
+        })
+
+      assert updated.name == "Mallory"
+      assert updated.name_customized
+      refute updated.is_host
+      assert updated.room_id == room.id
+      assert updated.vote == nil
+
+      reloaded = Users.get_user!(user.id)
+      assert reloaded.name == "Mallory"
+      refute reloaded.is_host
+      assert reloaded.room_id == room.id
+      assert reloaded.vote == nil
+    end
+  end
+
+  describe "mark_name_customized/1" do
+    test "flips name_customized from false to true without broadcasting" do
+      room = create_room!()
+      {:ok, user} = Users.create_user(%{room_id: room.id, name: "Alice"})
+      refute user.name_customized
+      Users.subscribe_to_room(room.id)
+
+      assert {:ok, %User{name: "Alice", name_customized: true}} =
+               Users.mark_name_customized(user)
+
+      # The name did not change, so participants are not notified.
+      refute_receive {:users_updated, _}, 50
+      assert Users.get_user!(user.id).name_customized
+    end
+  end
+
   describe "delete_user/1" do
     test "deletes the user and broadcasts the room update" do
       room = create_room!()

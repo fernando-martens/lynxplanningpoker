@@ -1,10 +1,8 @@
 import { test, expect } from "@playwright/test";
 import {
-  ensureEnglishLocale,
   createRoomAsHost,
   joinRoomAsGuest,
   dismissInviteModalIfOpen,
-  waitForLiveView,
 } from "../helpers/room";
 
 test.describe("Sincronização em tempo real entre múltiplos usuários", () => {
@@ -69,18 +67,11 @@ test.describe("Sincronização em tempo real entre múltiplos usuários", () => 
     const roomUrl = await createRoomAsHost(hostPage, "Host Encerra");
     await dismissInviteModalIfOpen(hostPage);
 
-    const guestContext = await browser.newContext();
-    const guestPage = await guestContext.newPage();
-    const inviteUrl = roomUrl.replace(
-      /\/rooms\/([0-9a-f-]{36})$/,
-      "/rooms/invite/$1",
+    const { page: guestPage, context: guestContext } = await joinRoomAsGuest(
+      browser,
+      roomUrl,
+      "Guest Despejado",
     );
-    await ensureEnglishLocale(guestPage);
-    await guestPage.goto(inviteUrl);
-    await guestPage.getByLabel(/Your name/i).fill("Guest Despejado");
-    await guestPage.getByRole("button", { name: /Join the room/i }).click();
-    await expect(guestPage).toHaveURL(/\/rooms\/[0-9a-f-]{36}$/);
-    await waitForLiveView(guestPage);
 
     // espera o host enxergar o guest antes de encerrar (garante sincronização)
     // escopa para .room-scene porque o #stats-modal (oculto) também lista os participantes

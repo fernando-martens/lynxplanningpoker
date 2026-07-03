@@ -465,6 +465,91 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
     end
   end
 
+  describe "onboarding name prompt" do
+    test "auto-prompts a user whose name is not customized yet", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      refute alice.name_customized
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, html} = live(conn, ~p"/rooms/#{room.id}")
+
+      assert :sys.get_state(view.pid).socket.assigns.show_initial_profile
+      # The trigger that opens the profile modal on mount is present.
+      assert html =~ "initial-profile-trigger"
+    end
+
+    test "does not auto-prompt a user who already customized their name", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, _} = Users.mark_name_customized(alice)
+
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, html} = live(conn, ~p"/rooms/#{room.id}")
+
+      refute :sys.get_state(view.pid).socket.assigns.show_initial_profile
+      refute html =~ "initial-profile-trigger"
+    end
+  end
+
+  describe "rename_user event" do
+    test "renames the current user and closes the onboarding prompt", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      html =
+        view
+        |> form("#rename-form", user: %{name: "Alicia"})
+        |> render_submit()
+
+      # The renamed card reflects the new name right away.
+      assert html =~ "Alicia"
+
+      reloaded = Users.get_user!(alice.id)
+      assert reloaded.name == "Alicia"
+      assert reloaded.name_customized
+      refute :sys.get_state(view.pid).socket.assigns.show_initial_profile
+    end
+
+    test "propagates the new name to other participants in real time", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn = logged_in_conn(conn, bob.id)
+      {:ok, bob_view, html} = live(conn, ~p"/rooms/#{room.id}")
+      assert html =~ "Alice"
+
+      {:ok, _} = Users.rename_user(alice, %{"name" => "Alicia"})
+
+      assert render(bob_view) =~ "Alicia"
+    end
+
+    test "re-renders with errors when the name is blank", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      view
+      |> form("#rename-form", user: %{name: ""})
+      |> render_submit()
+
+      assert Users.get_user!(alice.id).name == "Alice"
+    end
+  end
+
+  describe "skip_rename event" do
+    test "keeps the temporary name but stops the prompt from reopening", %{conn: conn} do
+      {room, alice} = setup_room_with_user("Alice")
+      conn = logged_in_conn(conn, alice.id)
+      {:ok, view, _html} = live(conn, ~p"/rooms/#{room.id}")
+
+      render_hook(view, "skip_rename", %{})
+
+      assert Users.get_user!(alice.id).name == "Alice"
+      assert Users.get_user!(alice.id).name_customized
+      refute :sys.get_state(view.pid).socket.assigns.show_initial_profile
+    end
+  end
+
   describe "PubSub updates" do
     test "updates the participant list when another user joins the room", %{conn: conn} do
       {room, alice} = setup_room_with_user("Alice")

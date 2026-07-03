@@ -12,6 +12,7 @@ defmodule Lynxplanningpoker.Users.User do
     field :vote_value, :integer
     field :vote_changed_after_reveal, :boolean, default: false
     field :is_host, :boolean, default: false
+    field :name_customized, :boolean, default: false
     field :has_voted, :boolean, virtual: true, default: false
     belongs_to :room, Lynxplanningpoker.Rooms.Room, type: :binary_id
 
@@ -30,6 +31,22 @@ defmodule Lynxplanningpoker.Users.User do
     |> cast(attrs, [:vote, :vote_changed_after_reveal])
     |> validate_inclusion(:vote, Decks.labels())
     |> derive_vote_value()
+  end
+
+  @doc """
+  Changeset for renaming an existing user. Only permits `:name`, and marks
+  `:name_customized` so the in-room onboarding prompt never reopens once the
+  user has chosen a name. Keeps `:vote`, `:room_id`, `:is_host` out of reach so
+  a payload reaching `rename_user/2` cannot tamper with identity, privileges,
+  or room membership — `:name_customized` is a behavioural flag, not a
+  privilege, so setting it here is safe.
+  """
+  def rename_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:name])
+    |> validate_required([:name])
+    |> validate_length(:name, max: 20)
+    |> put_change(:name_customized, true)
   end
 
   @doc """

@@ -50,55 +50,27 @@ msgstr "Vote and reveal"
 msgid "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
 msgstr "Each player picks a card to estimate the task. When everyone has voted, the host reveals the results and the average is shown. Use \"Restart\" to begin the next round."
 
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:9
-#, elixir-autogen
-msgid "Who are you?"
-msgstr "Who are you?"
-
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:12
-#, elixir-autogen
-msgid "Say your name and create your room"
-msgstr "Say your name and create your room"
-
-#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:28
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:23
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:444
 #, elixir-autogen
 msgid "Your name"
 msgstr "Your name"
 
-#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:29
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:24
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:445
 #, elixir-autogen
 msgid "Enter your name"
 msgstr "Enter your name"
-
-#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:35
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:30
-#, elixir-autogen
-msgid "Visible to everyone in the room"
-msgstr "Visible to everyone in the room"
 
 #: lib/lynxplanningpoker_web/controllers/room_controller.ex:33
 #, elixir-autogen
 msgid "Please complete the human verification before continuing."
 msgstr "Please complete the human verification before continuing."
 
-#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:54
-#, elixir-autogen
-msgid "Join your room"
-msgstr "Join your room"
-
 #: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:9
 #, elixir-autogen
 msgid "You're invited!"
 msgstr "You're invited!"
 
-#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:12
-#, elixir-autogen
-msgid "Enter your name to join the room"
-msgstr "Enter your name to join the room"
-
-#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:39
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:20
 #, elixir-autogen
 msgid "Join the room"
 msgstr "Join the room"
@@ -127,22 +99,22 @@ msgstr "Restart"
 msgid "Invite"
 msgstr "Invite"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:379
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:463
 #, elixir-autogen
 msgid "Invitation link"
 msgstr "Invitation link"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:396
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:480
 #, elixir-autogen
 msgid "Copy"
 msgstr "Copy"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:404
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:488
 #, elixir-autogen
 msgid "Link copied!"
 msgstr "Link copied!"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:412
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:496
 #, elixir-autogen
 msgid "Anyone with this link can join the room"
 msgstr "Anyone with this link can join the room"
@@ -152,14 +124,14 @@ msgstr "Anyone with this link can join the room"
 msgid "Close"
 msgstr "Close"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:560
-#: lib/lynxplanningpoker_web/components/layouts.ex:563
+#: lib/lynxplanningpoker_web/components/layouts.ex:568
+#: lib/lynxplanningpoker_web/components/layouts.ex:571
 #, elixir-autogen
 msgid "End planning"
 msgstr "End planning"
 
-#: lib/lynxplanningpoker_web/components/layouts.ex:570
-#: lib/lynxplanningpoker_web/components/layouts.ex:573
+#: lib/lynxplanningpoker_web/components/layouts.ex:578
+#: lib/lynxplanningpoker_web/components/layouts.ex:581
 #, elixir-autogen
 msgid "Leave"
 msgstr "Leave"
@@ -194,46 +166,46 @@ msgstr "French"
 msgid "Spanish"
 msgstr "Spanish"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:608
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:615
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:698
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:705
 #, elixir-autogen
 msgid "Reveal"
 msgstr "Reveal"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:617
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:707
 #, elixir-autogen
 msgid "Click the fire to reveal"
 msgstr "Click the fire to reveal"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:453
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:599
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:537
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:689
 #, elixir-autogen
 msgid "Average"
 msgstr "Average"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:573
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:663
 #, elixir-autogen
 msgid "Vote changed after reveal"
 msgstr "Vote changed after reveal"
 
-#: lib/lynxplanningpoker_web/controllers/room_controller.ex:87
-#: lib/lynxplanningpoker_web/controllers/room_controller.ex:111
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:20
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:86
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:113
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:21
 #, elixir-autogen
 msgid "This room does not exist or has already ended."
 msgstr "This room does not exist or has already ended."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:286
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:342
 #, elixir-autogen
 msgid "Could not register your vote. Please try again."
 msgstr "Could not register your vote. Please try again."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:202
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:258
 #, elixir-autogen
 msgid "The room was ended by the host."
 msgstr "The room was ended by the host."
 
-#: lib/lynxplanningpoker_web/controllers/room_controller.ex:203
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:205
 #, elixir-autogen
 msgid "You left the room."
 msgstr "You left the room."
@@ -306,7 +278,7 @@ msgstr "forever"
 msgid "Unlimited rooms, up to 15 players each"
 msgstr "Unlimited rooms, up to 15 players each"
 
-#: lib/lynxplanningpoker_web/controllers/room_controller.ex:126
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:128
 #, elixir-autogen
 msgid "This room is full (maximum %{max} players)."
 msgstr "This room is full (maximum %{max} players)."
@@ -401,95 +373,95 @@ msgstr "Got an idea for what should be in Premium?"
 msgid "Tell us by email"
 msgstr "Tell us by email"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:427
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:511
 #, elixir-autogen, elixir-format
 msgid "All participants will be disconnected and the room will be permanently closed."
 msgstr "All participants will be disconnected and the room will be permanently closed."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:420
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:504
 #, elixir-autogen, elixir-format
 msgid "End planning?"
 msgstr "End planning?"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:421
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:505
 #, elixir-autogen, elixir-format
 msgid "Leave the room?"
 msgstr "Leave the room?"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:436
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:520
 #, elixir-autogen, elixir-format
 msgid "No"
 msgstr "No"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:440
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:444
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:524
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:528
 #, elixir-autogen, elixir-format
 msgid "Yes"
 msgstr "Yes"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:428
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:512
 #, elixir-autogen, elixir-format
 msgid "You will leave the room. You can rejoin using the invite link."
 msgstr "You will leave the room. You can rejoin using the invite link."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:521
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:605
 #, elixir-autogen, elixir-format
 msgid "%{count} participant did not vote"
 msgid_plural "%{count} participants did not vote"
 msgstr[0] "%{count} participant did not vote"
 msgstr[1] "%{count} participants did not vote"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:472
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:556
 #, elixir-autogen, elixir-format
 msgid "Consensus reached!"
 msgstr "Consensus reached!"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:476
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:560
 #, elixir-autogen, elixir-format
 msgid "Distribution"
 msgstr "Distribution"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:461
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:545
 #, elixir-autogen, elixir-format
 msgid "Max"
 msgstr "Max"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:457
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:541
 #, elixir-autogen, elixir-format
 msgid "Min"
 msgstr "Min"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:479
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:563
 #, elixir-autogen, elixir-format
 msgid "No votes were cast."
 msgstr "No votes were cast."
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:587
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:677
 #, elixir-autogen, elixir-format
 msgid "View voting statistics"
 msgstr "View voting statistics"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:465
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:549
 #, elixir-autogen, elixir-format
 msgid "Voted"
 msgstr "Voted"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:450
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:534
 #, elixir-autogen, elixir-format
 msgid "Voting statistics"
 msgstr "Voting statistics"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:596
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:686
 #, elixir-autogen, elixir-format
 msgid "Click to see statistics"
 msgstr "Click to see statistics"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:503
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:587
 #, elixir-autogen, elixir-format
 msgid "Individual votes"
 msgstr "Individual votes"
 
-#: lib/lynxplanningpoker_web/live/room_live/show.ex:495
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:579
 #, elixir-autogen, elixir-format
 msgid "vote"
 msgid_plural "votes"
@@ -660,11 +632,6 @@ msgstr "What data we collect"
 msgid "What we do not collect"
 msgstr "What we do not collect"
 
-#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:44
-#, elixir-autogen, elixir-format
-msgid "When you create or join a room you provide a name to identify yourself to the rest of the team. The name is limited to 20 characters and is stored only while you are in the room."
-msgstr "When you create or join a room you provide a name to identify yourself to the rest of the team. The name is limited to 20 characters and is stored only while you are in the room."
-
 #: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Why we process this data"
@@ -812,7 +779,7 @@ msgstr "Free, real-time planning poker for agile teams. Create a room, share the
 msgid "How Planning Poker Works · Lynx Poker"
 msgstr "How Planning Poker Works · Lynx Poker"
 
-#: lib/lynxplanningpoker_web/controllers/room_controller.ex:51
+#: lib/lynxplanningpoker_web/controllers/room_controller.ex:50
 #, elixir-autogen, elixir-format
 msgid "Join the Planning Room · Lynx Poker"
 msgstr "Join the Planning Room · Lynx Poker"
@@ -1138,3 +1105,59 @@ msgstr "Your IP is used in-memory for three things: to apply rate limits, to tal
 #, elixir-autogen, elixir-format
 msgid "View source on GitHub"
 msgstr "View source on GitHub"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:451
+#, elixir-autogen, elixir-format
+msgid "Save"
+msgstr "Save"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Start a new session"
+msgstr "Start a new session"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:171
+#, elixir-autogen, elixir-format
+msgid "Your name has been updated."
+msgstr "Your name has been updated."
+
+#: lib/lynxplanningpoker_web/components/layouts.ex:558
+#: lib/lynxplanningpoker_web/components/layouts.ex:561
+#, elixir-autogen, elixir-format
+msgid "Your profile"
+msgstr "Your profile"
+
+#: lib/lynxplanningpoker_web/controllers/room_html/invite.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "Click Join to enter the room. We'll give you a temporary name — change it whenever you like inside."
+msgstr "Click Join to enter the room. We'll give you a temporary name — change it whenever you like inside."
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "Click below to create your room. We'll give you a temporary name — change it whenever you like inside."
+msgstr "Click below to create your room. We'll give you a temporary name — change it whenever you like inside."
+
+#: lib/lynxplanningpoker_web/controllers/room_html/new.html.heex:40
+#, elixir-autogen, elixir-format
+msgid "Create room"
+msgstr "Create room"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:460
+#, elixir-autogen, elixir-format
+msgid "Skip — keep my temporary name"
+msgstr "Skip — keep my temporary name"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:435
+#, elixir-autogen, elixir-format
+msgid "Tell us your name"
+msgstr "Tell us your name"
+
+#: lib/lynxplanningpoker_web/live/room_live/show.ex:437
+#, elixir-autogen, elixir-format
+msgid "We gave you a temporary name. You can keep it or set your own."
+msgstr "We gave you a temporary name. You can keep it or set your own."
+
+#: lib/lynxplanningpoker_web/controllers/page_html/privacy.html.heex:44
+#, elixir-autogen, elixir-format
+msgid "When you create or join a room, we generate a temporary name for you. You can keep it or set your own at any time inside the room; the name is limited to 20 characters and is stored only while you are in the room."
+msgstr "When you create or join a room, we generate a temporary name for you. You can keep it or set your own at any time inside the room; the name is limited to 20 characters and is stored only while you are in the room."

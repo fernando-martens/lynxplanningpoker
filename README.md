@@ -81,13 +81,13 @@ Run against a Phoenix server already up at `localhost:4000` (start it with `mix 
 
 ```sh
 cd e2e
-npm install
-npx playwright install   # first time only — downloads browser binaries
+pnpm install
+pnpm exec playwright install   # first time only — downloads browser binaries
 
-npm test                 # all specs, headless
-npm run test:headed      # visible browser
-npm run test:ui          # interactive Playwright UI
-npm run report           # open the last HTML report
+pnpm test                 # all specs, headless
+pnpm run test:headed      # visible browser
+pnpm run test:ui          # interactive Playwright UI
+pnpm run report           # open the last HTML report
 ```
 
 Specs cover the critical user flows: home/navigation, room creation, invite flow, voting, reveal/reset, multi-user real-time sync, host vs. guest actions, language switcher, and theme toggle. Full list and conventions in [`e2e/README.md`](e2e/README.md).
@@ -95,7 +95,7 @@ Specs cover the critical user flows: home/navigation, room creation, invite flow
 Point at another environment with `BASE_URL`:
 
 ```sh
-BASE_URL=https://staging.example.com npm test
+BASE_URL=https://staging.example.com pnpm test
 ```
 
 ## Project layout
@@ -118,9 +118,9 @@ LiveView entry point for the game room: [`app/lib/lynxplanningpoker_web/live/roo
 
 ## How it works
 
-1. The host creates a room at `/rooms/new` and chooses a name → a `Room` and a host `User` are created.
+1. The host creates a room at `/rooms/new` — one click, no name needed. We generate a temporary display name that can be changed inside the room at any time. A `Room` and a host `User` are created.
 2. The host shares the `/rooms/invite/:id` link.
-3. Each guest opens the link, picks a name, and is created as a `User` in the room.
+3. Each guest opens the link and joins with one click — they also get a temporary name to change inside the room — and is created as a `User` in the room.
 4. Everyone lands on `/rooms/:id` (a LiveView). Votes, joins, and reveals broadcast over PubSub in real time.
 5. When the host leaves, the room is closed for everyone (presence-aware).
 

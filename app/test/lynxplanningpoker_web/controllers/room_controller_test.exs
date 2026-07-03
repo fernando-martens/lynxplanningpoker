@@ -25,8 +25,11 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     test "renders the create-room form", %{conn: conn} do
       conn = get(conn, ~p"/rooms/new")
       response = html_response(conn, 200)
-      assert response =~ "Who are you?"
-      assert response =~ ~s(name="room[name]")
+      assert response =~ "Start a new session"
+      assert response =~ "Create room"
+      # No name is collected on the form anymore.
+      refute response =~ ~s(name="room[name]")
+      refute response =~ ~s(name="room[user_name]")
     end
 
     test "is marked noindex so search engines skip the form page", %{conn: conn} do
@@ -65,16 +68,19 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
   end
 
   describe "POST /rooms" do
-    test "creates a room and a host user, sets session and redirects to the room", %{conn: conn} do
-      conn =
-        post(conn, ~p"/rooms", %{"room" => %{"name" => "Alice"}})
+    test "creates a room and a host user with a generated name, sets session and redirects",
+         %{conn: conn} do
+      conn = post(conn, ~p"/rooms", %{})
 
       assert %{id: room_id} = redirected_params(conn)
       assert redirected_to(conn) == ~p"/rooms/#{room_id}"
 
       assert Rooms.get_room!(room_id)
       [user] = Users.list_users_by_room(room_id)
-      assert user.name == "Alice"
+      # The host gets a generated temporary name, not customized yet.
+      assert is_binary(user.name) and String.trim(user.name) != ""
+      assert user.is_host
+      refute user.name_customized
       assert get_session(conn, :current_user_id) == user.id
     end
   end
@@ -84,13 +90,10 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
     test "blocks creation and re-renders the form when verification fails", %{conn: conn} do
       conn =
-        post(conn, ~p"/rooms", %{
-          "room" => %{"name" => "Alice"},
-          "cf-turnstile-response" => "any-token"
-        })
+        post(conn, ~p"/rooms", %{"cf-turnstile-response" => "any-token"})
 
       response = html_response(conn, 200)
-      assert response =~ "Who are you?"
+      assert response =~ "Start a new session"
       assert response =~ "human verification"
       assert Rooms.list_rooms() == []
       assert get_session(conn, :current_user_id) == nil
@@ -114,22 +117,19 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
   end
 
   describe "POST /rooms/invite/:id" do
-    test "creates user, sets session and redirects to the room", %{conn: conn} do
+    test "creates a guest with a generated name, sets session and redirects to the room",
+         %{conn: conn} do
       {:ok, room} = Rooms.create_room(%{})
 
-      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => "Bob"})
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{})
       assert redirected_to(conn) == ~p"/rooms/#{room}"
 
       [user] = Users.list_users_by_room(room.id)
-      assert user.name == "Bob"
+      # The guest gets a generated temporary name, not customized yet.
+      assert is_binary(user.name) and String.trim(user.name) != ""
+      refute user.is_host
+      refute user.name_customized
       assert get_session(conn, :current_user_id) == user.id
-    end
-
-    test "re-renders invite page when name is blank", %{conn: conn} do
-      {:ok, room} = Rooms.create_room(%{})
-      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => ""})
-      assert html_response(conn, 200) =~ "Join the room"
-      assert Users.list_users_by_room(room.id) == []
     end
 
     test "rejects the 16th player with a flash and does not create the user", %{conn: conn} do
@@ -139,7 +139,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
         {:ok, _} = Users.create_user(%{room_id: room.id, name: "Player #{i}"})
       end
 
-      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"name" => "Latecomer"})
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{})
 
       assert redirected_to(conn) == ~p"/"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "full"
@@ -186,7 +186,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_user.id})
-      |> post(~p"/rooms", %{"room" => %{"name" => "Alice"}})
+      |> post(~p"/rooms", %{})
 
       # Previous room still exists, but the previous user record is gone
       assert Rooms.get_room!(old_room.id)
@@ -201,7 +201,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_host.id})
-      |> post(~p"/rooms", %{"room" => %{"name" => "Alice"}})
+      |> post(~p"/rooms", %{})
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(old_room.id) end
     end
@@ -215,7 +215,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_user.id})
-      |> post(~p"/rooms/invite/#{new_room.id}", %{"name" => "Alice"})
+      |> post(~p"/rooms/invite/#{new_room.id}", %{})
 
       assert Rooms.get_room!(old_room.id)
       assert Users.list_users_by_room(old_room.id) == []
@@ -232,7 +232,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
       conn
       |> Plug.Test.init_test_session(%{current_user_id: old_host.id})
-      |> post(~p"/rooms/invite/#{new_room.id}", %{"name" => "Alice"})
+      |> post(~p"/rooms/invite/#{new_room.id}", %{})
 
       assert_raise Ecto.NoResultsError, fn -> Rooms.get_room!(old_room.id) end
       assert [_alice_in_new_room] = Users.list_users_by_room(new_room.id)
@@ -307,7 +307,6 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       response = conn |> get(~p"/fr/rooms/new") |> html_response(200)
 
       assert response =~ ~s(<html lang="fr">)
-      assert response =~ ~s(name="room[name]")
       # The form posts back to the same locale-prefixed URL.
       assert response =~ ~s(action="/fr/rooms")
     end
@@ -321,7 +320,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "POST /fr/rooms persists the French locale in the session", %{conn: conn} do
-      conn = post(conn, ~p"/fr/rooms", %{"room" => %{"name" => "Amélie"}})
+      conn = post(conn, ~p"/fr/rooms", %{})
 
       assert %{id: room_id} = redirected_params(conn)
       assert redirected_to(conn) == ~p"/rooms/#{room_id}"
@@ -329,7 +328,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     end
 
     test "POST /rooms persists the default locale in the session", %{conn: conn} do
-      conn = post(conn, ~p"/rooms", %{"room" => %{"name" => "Alice"}})
+      conn = post(conn, ~p"/rooms", %{})
 
       assert get_session(conn, :locale) == "en"
     end
@@ -337,7 +336,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
     test "POST /fr/rooms/invite/:id persists the French locale in the session",
          %{conn: conn} do
       {:ok, room} = Rooms.create_room(%{})
-      conn = post(conn, ~p"/fr/rooms/invite/#{room.id}", %{"name" => "Amélie"})
+      conn = post(conn, ~p"/fr/rooms/invite/#{room.id}", %{})
 
       assert redirected_to(conn) == ~p"/rooms/#{room}"
       assert get_session(conn, :locale) == "fr"

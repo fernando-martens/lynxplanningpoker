@@ -1,25 +1,27 @@
 defmodule LynxplanningpokerWeb.RoomController do
   use LynxplanningpokerWeb, :controller
 
+  alias Lynxplanningpoker.Names
   alias Lynxplanningpoker.Rooms
-  alias Lynxplanningpoker.Rooms.Room
   alias Lynxplanningpoker.Turnstile
   alias Lynxplanningpoker.Users
   alias LynxplanningpokerWeb.ClientIP
   alias LynxplanningpokerWeb.Locales
 
   def new(conn, _params) do
-    changeset = Rooms.change_room(%Room{})
-
-    render_new(conn, changeset)
+    render_new(conn)
   end
 
-  def create(conn, %{"room" => room_params} = params) do
+  def create(conn, params) do
     # Persist the URL's locale so the (prefix-free) live room renders in the
     # language the host went through the creation flow in.
     conn = put_session(conn, :locale, conn.assigns.locale)
-    user_name = room_params["name"]
-    room_params = Map.drop(room_params, ["name"])
+    # The creation form has no fields, so `room` params may be absent — the
+    # room only needs its defaults (`revealed: false`).
+    room_params = Map.get(params, "room", %{})
+    # No name is collected on the form — the host gets a temporary generated
+    # name and personalizes it (or keeps it) later, inside the room.
+    user_name = Names.random_display_name()
     turnstile_token = params["cf-turnstile-response"]
 
     case Turnstile.verify(turnstile_token, ClientIP.from_conn(conn)) do
@@ -27,20 +29,17 @@ defmodule LynxplanningpokerWeb.RoomController do
         do_create(conn, room_params, user_name)
 
       {:error, _reason} ->
-        changeset = Rooms.change_room(%Room{}, room_params)
-
         conn
         |> put_flash(:error, gettext("Please complete the human verification before continuing."))
-        |> render_new(changeset)
+        |> render_new()
     end
   end
 
-  defp render_new(conn, changeset) do
+  defp render_new(conn) do
     conn
     |> assign(:page_title, gettext("Create a Room · Lynx Poker"))
     |> assign(:noindex, true)
     |> render(:new,
-      changeset: changeset,
       action: Locales.localized_path(conn.assigns.locale, ~p"/rooms"),
       turnstile_site_key: Turnstile.site_key()
     )
@@ -75,8 +74,8 @@ defmodule LynxplanningpokerWeb.RoomController do
             |> redirect(to: ~p"/rooms/#{room}")
         end
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render_new(conn, changeset)
+      {:error, %Ecto.Changeset{}} ->
+        render_new(conn)
     end
   end
 
@@ -100,10 +99,13 @@ defmodule LynxplanningpokerWeb.RoomController do
     end
   end
 
-  def accept_invite(conn, %{"id" => room_id, "name" => user_name}) do
+  def accept_invite(conn, %{"id" => room_id}) do
     # Persist the URL's locale so the (prefix-free) live room renders in the
     # language the guest went through the invite flow in.
     conn = put_session(conn, :locale, conn.assigns.locale)
+    # Like the host, the guest gets a temporary generated name and personalizes
+    # it later inside the room — the invite form no longer collects a name.
+    user_name = Names.random_display_name()
 
     case Rooms.get_room(room_id) do
       nil ->

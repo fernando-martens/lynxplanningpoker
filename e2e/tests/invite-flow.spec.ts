@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   ensureEnglishLocale,
   createRoomAsHost,
-  dismissInviteModalIfOpen,
+  joinRoomAsGuest,
 } from "../helpers/room";
 
 test.describe("Fluxo de convite (guest entra na sala)", () => {
@@ -12,21 +12,12 @@ test.describe("Fluxo de convite (guest entra na sala)", () => {
     const hostContext = await browser.newContext();
     const hostPage = await hostContext.newPage();
     const roomUrl = await createRoomAsHost(hostPage, "Anfitriã");
-    const roomId = roomUrl.match(/\/rooms\/([0-9a-f-]{36})$/)![1];
-    await dismissInviteModalIfOpen(hostPage);
 
-    const guestContext = await browser.newContext();
-    const guestPage = await guestContext.newPage();
-    await ensureEnglishLocale(guestPage);
-    await guestPage.goto(`/rooms/invite/${roomId}`);
-
-    await expect(
-      guestPage.getByRole("heading", { name: /You're invited!/i }),
-    ).toBeVisible();
-    await guestPage.getByLabel(/Your name/i).fill("Convidada");
-    await guestPage.getByRole("button", { name: /Join the room/i }).click();
-
-    await expect(guestPage).toHaveURL(new RegExp(`/rooms/${roomId}$`));
+    const { context: guestContext } = await joinRoomAsGuest(
+      browser,
+      roomUrl,
+      "Convidada",
+    );
 
     // o host deve enxergar o nome do convidado em tempo real
     // escopa para .room-scene porque o #stats-modal (oculto) também lista os participantes
@@ -50,7 +41,9 @@ test.describe("Fluxo de convite (guest entra na sala)", () => {
     ).toBeVisible();
   });
 
-  test("não submete o convite sem informar o nome", async ({ browser }) => {
+  test("o convite entra na sala com um clique (nome temporário gerado)", async ({
+    browser,
+  }) => {
     const hostContext = await browser.newContext();
     const hostPage = await hostContext.newPage();
     const roomUrl = await createRoomAsHost(hostPage, "Anfitriã 2");
@@ -60,9 +53,10 @@ test.describe("Fluxo de convite (guest entra na sala)", () => {
     const guestPage = await guestContext.newPage();
     await ensureEnglishLocale(guestPage);
     await guestPage.goto(`/rooms/invite/${roomId}`);
+    // Sem campo de nome: basta clicar em Join para entrar.
     await guestPage.getByRole("button", { name: /Join the room/i }).click();
 
-    await expect(guestPage).toHaveURL(new RegExp(`/rooms/invite/${roomId}$`));
+    await expect(guestPage).toHaveURL(new RegExp(`/rooms/${roomId}$`));
 
     await hostContext.close();
     await guestContext.close();

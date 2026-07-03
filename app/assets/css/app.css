@@ -29,7 +29,7 @@
   prefersdark: true;
   color-scheme: "dark";
 
-  --color-brand-deep: oklch(38.91% 0.209 273.30);
+  --color-brand-deep: oklch(58% 0.15 273.30);
   --color-brand-gray: oklch(25% 0.01 286.32);
 
   --floor-lynx: oklch(27.62% 0.076 279.17);

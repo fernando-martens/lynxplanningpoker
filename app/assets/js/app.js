@@ -9,7 +9,8 @@
 //
 //     import "../vendor/some-package.js"
 //
-// Alternatively, you can `npm install some-package --prefix assets` and import
+// Alternatively, you can `pnpm add some-package` (from a directory with a
+// package.json) and import them using a path starting with the package name:
 // them using a path starting with the package name:
 //
 //     import "some-package"
@@ -67,6 +68,20 @@ window.addEventListener("click", (e) => {
   if (el && typeof el.select === "function") el.select()
 })
 
+// Focus an input and select its text: `JS.dispatch("phx:select", to: "#input")`.
+// Used when the "Tell us your name" modal opens so the temporary name is
+// pre-selected and a single keystroke replaces it.
+window.addEventListener("phx:select", (event) => {
+  const el = event.target
+  if (!el || typeof el.focus !== "function") return
+  // Defer to the next frame: the modal's `display` was just flipped in the
+  // same JS chain, so the input isn't focusable until layout settles.
+  requestAnimationFrame(() => {
+    el.focus()
+    if (typeof el.select === "function") el.select()
+  })
+})
+
 // Tree easter egg: clicking a forest tree makes it sway for half a second.
 // Pure client-side — no roundtrip to the server.
 window.addEventListener("click", (e) => {
@@ -78,28 +93,120 @@ window.addEventListener("click", (e) => {
 })
 
 // Cloudflare Turnstile (room-creation form): the submit button is rendered
-// disabled and only enabled once the challenge passes (Turnstile calls
-// `data-callback`). This stops an early click from submitting an unverified
-// form, which the server would bounce back with a full page reload. If
-// Turnstile never loads (blocked, offline) a timeout re-enables the button so
-// the user is never stuck — the server still verifies the token.
+// disabled by the server and only enabled once a verified token exists.
+//
+// Race-condition-safe: `api.js` (loaded `async defer` inline in the form) can
+// resolve before this `defer` script runs, so we CANNOT rely on the
+// `data-callback` being defined in time — Turnstile would call
+// `window.lynxTurnstileEnable` while it's still `undefined` and the captcha
+// would show checked with the button stuck disabled.
+//
+// The single source of truth is the token in `input[name="cf-turnstile-response"]`
+// (the exact field the server verifies in `room_controller.ex`). We mirror its
+// presence to the button's `disabled` state via a short poll (covers the race
+// when the token settles before this script runs) and a `MutationObserver`
+// (covers the interactive case where the user completes the challenge much
+// later). The three `data-callback` hooks (`data-callback`,
+// `data-error-callback`, `data-expired-callback`) are kept as instant
+// defense-in-depth, but the token — not the callbacks — drives the state.
+//
+// Fallback: if the Turnstile widget never renders within 8s (blocked, offline),
+// we assume Turnstile is unavailable and enable the button anyway — the server
+// still calls `Turnstile.verify/2` and returns the "please complete the human
+// verification" flash if the token is missing, so we never silently accept an
+// unverified submission.
+const TURNSTILE_FALLBACK_MS = 8000
+
+const turnstileForm = () => document.querySelector(".cf-turnstile")
+  && document.querySelector("#create-room-form")
+
+const turnstileTokenInput = () => {
+  const form = turnstileForm()
+  return form && form.querySelector('input[name="cf-turnstile-response"]')
+}
+
 const turnstileSubmitButton = () => {
-  const widget = document.querySelector(".cf-turnstile")
-  const form = widget && widget.closest("form")
+  const form = turnstileForm()
   return form && form.querySelector("button[type=submit]")
 }
-window.lynxTurnstileEnable = () => {
-  const btn = turnstileSubmitButton()
-  if (btn) btn.disabled = false
+
+const turnstileWidgetRendered = () => {
+  const widget = document.querySelector(".cf-turnstile")
+  return !!widget && widget.children.length > 0
 }
-window.lynxTurnstileDisable = () => {
+
+const syncTurnstileButton = () => {
   const btn = turnstileSubmitButton()
-  if (btn) btn.disabled = true
+  if (!btn) return
+  const input = turnstileTokenInput()
+  const token = input && input.value
+  btn.disabled = !token
 }
-{
-  const btn = turnstileSubmitButton()
-  if (btn && btn.disabled) {
-    setTimeout(() => { btn.disabled = false }, 8000)
+
+window.lynxTurnstileEnable = () => syncTurnstileButton()
+window.lynxTurnstileDisable = () => syncTurnstileButton()
+
+// Only wire this up on the create-room form — elsewhere there's no widget and
+// the button is server-rendered enabled, so we must not touch it.
+if (turnstileForm()) {
+  syncTurnstileButton()
+
+  // 1) Short poll (150ms, up to 8s): covers the case where the token settled
+  //    before this script ran (the race) and the token input didn't fire a
+  //    mutation our observer catches. Cheap and bounded.
+  let polling = true
+  const stopPolling = () => { polling = false }
+  const startedAt = Date.now()
+  const poll = () => {
+    if (!polling) return
+    syncTurnstileButton()
+    const input = turnstileTokenInput()
+    const settled = input && input.value
+    const elapsed = Date.now() - startedAt
+    if (settled) { stopPolling(); return }
+    if (elapsed < TURNSTILE_FALLBACK_MS) {
+      setTimeout(poll, 150)
+    } else {
+      // 2) Fallback: 8s elapsed with no token. If the widget rendered, the
+      //    user is interacting (interactive Turnstile) — keep waiting via the
+      //    MutationObserver below; never force-enable a half-solved
+      //    challenge. Only force-enable if the widget never loaded at all.
+      if (!turnstileWidgetRendered()) {
+        const btn = turnstileSubmitButton()
+        if (btn) btn.disabled = false
+      }
+      stopPolling()
+    }
+  }
+  setTimeout(poll, 150)
+
+  // 3) MutationObserver on the token input: covers the interactive case
+  //    where the user completes the challenge well after the 8s poll ended.
+  //    Attributes mutations (value set via property/attribute by Turnstile)
+  //    are observed. Stops observing once a token is present.
+  const input = turnstileTokenInput()
+  if (input && "MutationObserver" in window) {
+    const observer = new MutationObserver(() => {
+      syncTurnstileButton()
+      if (input.value) observer.disconnect()
+    })
+    observer.observe(input, { attributes: true, attributeFilter: ["value"] })
+    // Some Turnstile builds set `.value` as a property without dispatching an
+    // attribute mutation; also watch the widget subtree for the token input
+    // being added/changed, plus a low-frequency safety poll (1s, capped to
+    // ~120s) so an interactive challenge that takes longer than the initial
+    // 8s poll still flips the button the moment the token shows up.
+    const widget = document.querySelector(".cf-turnstile")
+    if (widget) {
+      observer.observe(widget, { childList: true, subtree: true })
+    }
+    let safetyTicks = 0
+    const safetyPoll = () => {
+      syncTurnstileButton()
+      if (input.value) return
+      if (++safetyTicks < 120) setTimeout(safetyPoll, 1000)
+    }
+    setTimeout(safetyPoll, 1000)
   }
 }
 
