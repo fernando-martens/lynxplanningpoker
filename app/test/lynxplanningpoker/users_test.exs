@@ -191,6 +191,33 @@ defmodule Lynxplanningpoker.UsersTest do
     end
   end
 
+  describe "has_host?/1" do
+    test "is true while a user in the room holds the host role" do
+      room = create_room!()
+      {:ok, _} = Users.create_user(%{room_id: room.id, name: "Alice", is_host: true})
+
+      assert Users.has_host?(room.id)
+    end
+
+    test "is false for a room whose host left" do
+      room = create_room!()
+      {:ok, host} = Users.create_user(%{room_id: room.id, name: "Alice", is_host: true})
+      {:ok, _bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      {:ok, _} = Users.delete_user(host)
+
+      refute Users.has_host?(room.id)
+    end
+
+    test "does not look at other rooms" do
+      room = create_room!()
+      other = create_room!()
+      {:ok, _} = Users.create_user(%{room_id: other.id, name: "Alice", is_host: true})
+
+      refute Users.has_host?(room.id)
+    end
+  end
+
   describe "list_users/0" do
     test "lists all users across rooms" do
       room1 = create_room!()

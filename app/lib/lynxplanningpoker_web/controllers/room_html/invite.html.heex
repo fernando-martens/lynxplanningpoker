@@ -15,7 +15,12 @@
       </p>
     </div>
 
-    <.form for={%{}} action={@action} method="post" class="mt-5 space-y-6">
+    <.form for={%{}} action={@action} method="post" class="mt-5 space-y-6" id="invite-form">
+      <%!-- Filled in by app.js with the name this browser already knows, so a
+      returning player keeps their name — whether they are coming back to a tab
+      the browser discarded or joining a brand new room. Empty for a first-time
+      guest: the server generates one. --%>
+      <input type="hidden" name="user[name]" value="" data-remembered-name />
       <.button type="submit" class="w-full py-5 text-lg font-semibold">
         {gettext("Join the room")}
       </.button>

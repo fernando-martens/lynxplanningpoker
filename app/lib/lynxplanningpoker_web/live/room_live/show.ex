@@ -59,6 +59,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
             |> assign(:show_initial_invite, show_initial_invite)
             |> assign(:show_initial_profile, show_initial_profile)
             |> assign(:rename_form, to_form(User.rename_changeset(current_user, %{}), as: :user))
+            |> remember_name(current_user)
 
           {:ok, socket}
         else
@@ -168,6 +169,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
          |> assign(:users, users)
          |> assign(:rename_form, to_form(User.rename_changeset(updated_user, %{}), as: :user))
          |> assign(:show_initial_profile, false)
+         |> remember_name(updated_user)
          |> put_flash(:info, gettext("Your name has been updated."))}
 
       {:error, changeset} ->
@@ -187,7 +189,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
          socket
          |> assign(:current_user, %{updated_user | has_voted: not is_nil(updated_user.vote)})
          |> assign(:show_initial_profile, false)
-         |> assign(:show_initial_invite, show_invite)}
+         |> assign(:show_initial_invite, show_invite)
+         |> remember_name(updated_user)}
 
       {:error, _changeset} ->
         {:noreply, socket}
@@ -197,9 +200,8 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   # Every LiveView in the room receives `presence_diff`. Cleanup of a vanished
   # participant is deferred by a grace period: switching language or refreshing
   # the page briefly drops the LiveView (and its Presence entry). Acting on that
-  # transient leave at once would delete the user — or, for the host, the whole
-  # room. After the grace, Presence is re-checked, so anyone who came right back
-  # is left untouched.
+  # transient leave at once would delete the user. After the grace, Presence is
+  # re-checked, so anyone who came right back is left untouched.
   @impl true
   def handle_info(
         %Phoenix.Socket.Broadcast{event: "presence_diff", payload: %{leaves: leaves}},
@@ -223,6 +225,14 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
   # still gone — anyone who reconnected (e.g. after a language switch) is
   # skipped. If everyone left at once there is no leader and the room is
   # orphaned, which is acceptable (the periodic sweeper reaps it).
+  #
+  # The host is cleaned up like anyone else: their card leaves the table, the
+  # room stays open for whoever is still in it. Closing the room is an explicit
+  # act ("End planning"), never a side effect of a dropped connection — a host
+  # whose tab was frozen or discarded by the browser must not take the session
+  # down with it. The room is then host-less until the original host comes back
+  # (`RoomController` hands the role back, see `restore_host?/2`), and once the
+  # last participant leaves the periodic sweeper reaps it.
   @impl true
   def handle_info({:cleanup_left_participant, user_id}, socket) do
     room_id = socket.assigns.room.id
@@ -232,16 +242,7 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
     if leader_id == socket.assigns.current_user_id and
          not Map.has_key?(still_present, user_id) do
       try do
-        user = Users.get_user!(user_id)
-
-        if user.is_host do
-          case Rooms.get_room(user.room_id) do
-            nil -> :ok
-            room -> Rooms.delete_room(room)
-          end
-        else
-          Users.delete_user(user)
-        end
+        user_id |> Users.get_user!() |> Users.delete_user()
       rescue
         Ecto.NoResultsError -> :ok
       end
@@ -343,6 +344,20 @@ defmodule LynxplanningpokerWeb.RoomLive.Show do
          )}
     end
   end
+
+  # Mirrors the participant's chosen display name into browser storage (see the
+  # `phx:remember-name` listener in `app.js`). If the browser discards the tab —
+  # Chrome's resource saver unloads background tabs outright — the page comes
+  # back as a fresh load with the user already cleaned out of the room, and the
+  # invite form uses the remembered name to put the same person back at the
+  # table instead of handing them a new random one and reopening the name
+  # prompt. Only a name the person settled on is remembered: while the
+  # onboarding prompt is still pending the generated name means nothing.
+  defp remember_name(socket, %User{name_customized: true, name: name}) do
+    if connected?(socket), do: push_event(socket, "remember-name", %{name: name}), else: socket
+  end
+
+  defp remember_name(socket, _user), do: socket
 
   defp card_selected?(nil, _card), do: false
   defp card_selected?(%{vote: v}, card), do: v == card

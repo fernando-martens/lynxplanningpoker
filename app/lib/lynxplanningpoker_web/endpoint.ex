@@ -14,8 +14,24 @@ defmodule LynxplanningpokerWeb.Endpoint do
     same_site: "Strict"
   ]
 
+  # `timeout` (default 60s) is how long the transport waits for *any* frame from
+  # the client before closing the socket. In a quiet room the only thing the
+  # client sends is the LiveView heartbeat, every 30s — and browsers throttle
+  # timers in a hidden tab: Chrome drops background wake-ups to roughly once a
+  # minute, and once the tab has been hidden for a few minutes ("intensive
+  # throttling", the same resource-saving behaviour as Memory Saver) to about
+  # once every five. With the default timeout the server closes a perfectly
+  # healthy connection while the person is merely on another tab; Presence then
+  # reports a leave and `RoomLive.Show` cleans the participant out of the room.
+  #
+  # 6 minutes clears even the slowest throttled heartbeat, and it does not delay
+  # real departures: closing the tab or navigating away sends a WebSocket close
+  # frame, which is handled at once. The timeout only covers connections that go
+  # silent without closing (network drop, laptop suspend).
+  @socket_timeout_ms 360_000
+
   socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
+    websocket: [connect_info: [session: @session_options], timeout: @socket_timeout_ms],
     longpoll: [connect_info: [session: @session_options]]
 
   # Bounce every non-canonical host (e.g. the Fly *.fly.dev subdomain) to the

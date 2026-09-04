@@ -38,6 +38,52 @@ topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
 window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
+// Browsers put background tabs to sleep and, under Chrome's resource saver,
+// discard them outright — the page is unloaded and comes back as a fresh load
+// with the participant already cleaned out of the room. Two things soften that:
+//
+//   1. As soon as the tab is visible again, reconnect immediately instead of
+//      waiting out the socket's backoff timer, which was itself throttled while
+//      the tab was hidden.
+//   2. Remember the name the person chose (the room pushes `remember-name` once
+//      they have settled on one) so the invite form can put them back at the
+//      table under the same name instead of a fresh random one.
+//
+// Storage access throws in some contexts (private mode, site data blocked), and
+// the app has to work without it, so every access is guarded.
+const DISPLAY_NAME_KEY = "lynx:display-name"
+
+const rememberDisplayName = (name) => {
+  try { window.localStorage.setItem(DISPLAY_NAME_KEY, name) } catch (_e) { /* no storage */ }
+}
+
+const rememberedDisplayName = () => {
+  try { return window.localStorage.getItem(DISPLAY_NAME_KEY) } catch (_e) { return null }
+}
+
+window.addEventListener("phx:remember-name", (event) => {
+  const name = event.detail && event.detail.name
+  if (name) rememberDisplayName(name)
+})
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible" || liveSocket.isConnected()) return
+  // Only the room runs a LiveView; on the plain pages there is no socket to
+  // bring back and `[data-phx-main]` is absent.
+  if (!document.querySelector("[data-phx-main]")) return
+  // `disconnect(callback)` tears the dead socket down and cancels the pending
+  // backoff — without it, `connect()` sees a stale connection object and does
+  // nothing, leaving the room frozen until a throttled retry timer fires.
+  liveSocket.disconnect(() => liveSocket.connect())
+})
+
+const rememberedName = rememberedDisplayName()
+if (rememberedName) {
+  document.querySelectorAll("input[data-remembered-name]").forEach((input) => {
+    input.value = rememberedName
+  })
+}
+
 // Copy-to-clipboard: triggered via `JS.dispatch("phx:copy", to: "#some-input")`.
 // Reads the dispatched element's value/textContent and writes it to the clipboard.
 // If the source element has `data-copy-feedback="some-id"`, shows that element

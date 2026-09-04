@@ -4,6 +4,8 @@ defmodule Lynxplanningpoker.Users.User do
 
   alias Lynxplanningpoker.Decks
 
+  @max_name_length 20
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
@@ -18,6 +20,13 @@ defmodule Lynxplanningpoker.Users.User do
 
     timestamps(type: :utc_datetime)
   end
+
+  @doc """
+  Longest display name a participant may have. Exposed so callers that take a
+  name from elsewhere — the invite form's remembered name, say — can drop an
+  implausible value instead of pushing it into a changeset that will reject it.
+  """
+  def max_name_length, do: @max_name_length
 
   @doc """
   Changeset for updating an existing user. Only permits voting-related fields
@@ -45,20 +54,30 @@ defmodule Lynxplanningpoker.Users.User do
     user
     |> cast(attrs, [:name])
     |> validate_required([:name])
-    |> validate_length(:name, max: 20)
+    |> validate_length(:name, max: @max_name_length)
     |> put_change(:name_customized, true)
   end
 
   @doc """
   Changeset for creating a new user. Permits `:is_host` because the host flag
-  is set by trusted server code (`RoomController.create/2`) when the room is
-  first created.
+  is set by trusted server code (`RoomController.create/2` when the room is
+  first created, `accept_invite/2` when a returning host reclaims a seat no one
+  else holds) — never from a client-supplied value. `:name_customized` is a
+  behavioural flag, not a privilege: it is set when the visitor rejoins under a
+  name they had already chosen, so the room does not ask for it a second time.
   """
   def creation_changeset(user, attrs) do
     user
-    |> cast(attrs, [:room_id, :name, :vote, :vote_changed_after_reveal, :is_host])
+    |> cast(attrs, [
+      :room_id,
+      :name,
+      :vote,
+      :vote_changed_after_reveal,
+      :is_host,
+      :name_customized
+    ])
     |> validate_required([:room_id, :name])
-    |> validate_length(:name, max: 20)
+    |> validate_length(:name, max: @max_name_length)
     |> validate_inclusion(:vote, Decks.labels())
     |> derive_vote_value()
     |> foreign_key_constraint(:room_id)

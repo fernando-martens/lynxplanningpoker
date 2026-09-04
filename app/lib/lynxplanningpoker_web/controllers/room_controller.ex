@@ -5,6 +5,7 @@ defmodule LynxplanningpokerWeb.RoomController do
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Turnstile
   alias Lynxplanningpoker.Users
+  alias Lynxplanningpoker.Users.User
   alias LynxplanningpokerWeb.ClientIP
   alias LynxplanningpokerWeb.Locales
 
@@ -26,7 +27,7 @@ defmodule LynxplanningpokerWeb.RoomController do
 
     case Turnstile.verify(turnstile_token, ClientIP.from_conn(conn)) do
       :ok ->
-        do_create(conn, room_params, user_name)
+        do_create(conn, room_params, params, user_name)
 
       {:error, _reason} ->
         conn
@@ -54,19 +55,23 @@ defmodule LynxplanningpokerWeb.RoomController do
     )
   end
 
-  defp do_create(conn, room_params, user_name) do
+  defp do_create(conn, room_params, params, user_name) do
     case Rooms.create_room(room_params) do
       {:ok, room} ->
         cleanup_previous_session(conn)
 
+        {name, name_customized} = resolve_name(params, user_name)
+
         case Users.create_user(%{
                room_id: room.id,
-               name: user_name,
+               name: name,
+               name_customized: name_customized,
                is_host: true
              }) do
           {:ok, user} ->
             conn
             |> put_session(:current_user_id, user.id)
+            |> put_session(:host_of_room_id, room.id)
             |> redirect(to: ~p"/rooms/#{room}")
 
           {:error, _changeset} ->
@@ -99,7 +104,7 @@ defmodule LynxplanningpokerWeb.RoomController do
     end
   end
 
-  def accept_invite(conn, %{"id" => room_id}) do
+  def accept_invite(conn, %{"id" => room_id} = params) do
     # Persist the URL's locale so the (prefix-free) live room renders in the
     # language the guest went through the invite flow in.
     conn = put_session(conn, :locale, conn.assigns.locale)
@@ -119,7 +124,7 @@ defmodule LynxplanningpokerWeb.RoomController do
           |> put_flash(:error, room_full_message())
           |> redirect(to: home_path(conn))
         else
-          do_accept_invite(conn, room, user_name)
+          do_accept_invite(conn, room, params, user_name)
         end
     end
   end
@@ -130,12 +135,16 @@ defmodule LynxplanningpokerWeb.RoomController do
     )
   end
 
-  defp do_accept_invite(conn, room, user_name) do
+  defp do_accept_invite(conn, room, params, user_name) do
     cleanup_previous_session(conn)
+
+    {name, name_customized} = resolve_name(params, user_name)
 
     case Users.create_user(%{
            room_id: room.id,
-           name: user_name
+           name: name,
+           name_customized: name_customized,
+           is_host: restore_host?(conn, room)
          }) do
       {:ok, user} ->
         conn
@@ -145,6 +154,45 @@ defmodule LynxplanningpokerWeb.RoomController do
       {:error, _changeset} ->
         render_invite(conn, room.id)
     end
+  end
+
+  # Someone who has named themselves once should never be asked again — not when
+  # they come back to a tab the browser discarded, and not when they open a
+  # brand new room months later. A remembered name is therefore taken as already
+  # customized, which is exactly what keeps `RoomLive.Show` from opening the
+  # onboarding prompt. Without one, the visitor is new here: they get the
+  # generated name and the room asks them for a real one.
+  defp resolve_name(params, generated_name) do
+    case remembered_name(params) do
+      nil -> {generated_name, false}
+      remembered -> {remembered, true}
+    end
+  end
+
+  # The display name the browser already knows, submitted as a hidden field by
+  # the room-creation and invite forms (see `app.js`). It is a name the person
+  # chose for themselves, not a privilege, so taking it from the client is safe.
+  # Blank — or longer than a name is allowed to be, which no honest client sends
+  # — means the browser has nothing stored, rather than dead-ending on a
+  # changeset that would reject it.
+  defp remembered_name(%{"user" => %{"name" => name}}) when is_binary(name) do
+    trimmed = String.trim(name)
+
+    if trimmed != "" and String.length(trimmed) <= User.max_name_length() do
+      trimmed
+    end
+  end
+
+  defp remembered_name(_params), do: nil
+
+  # A host who lost their seat — a tab the browser discarded, a disconnect that
+  # outlasted the presence grace — rejoins through this same invite flow. The
+  # room deliberately stays open and host-less in the meantime, so hand the role
+  # back. Only to the visitor whose signed, encrypted session says they opened
+  # this room, and only while the seat is still vacant: nothing here trusts a
+  # value the client could set.
+  defp restore_host?(conn, room) do
+    get_session(conn, :host_of_room_id) == room.id and not Users.has_host?(room.id)
   end
 
   defp already_in_room?(conn, room_id) do
@@ -196,7 +244,7 @@ defmodule LynxplanningpokerWeb.RoomController do
         end
     end
 
-    conn = delete_session(conn, :current_user_id)
+    conn = conn |> delete_session(:current_user_id) |> delete_session(:host_of_room_id)
 
     conn =
       if Phoenix.Flash.get(conn.assigns.flash, :info) do
