@@ -25,7 +25,7 @@ defmodule Lynxplanningpoker.Release do
   defp load_app do
     # Force Erlang to resolve hostnames through the OS resolver. Fly.io's
     # nameserver answers only over IPv6 and Erlang's built-in DNS client
-    # returns :nxdomain for external hosts (e.g. the RDS endpoint). This must
+    # returns :nxdomain for external hosts (e.g. the Neon endpoint). This must
     # run in the real VM — setting it in runtime.exs has no effect because the
     # config provider runs in a throwaway VM that is rebooted before migrate.
     :inet_db.set_lookup([:native])

@@ -61,11 +61,30 @@ if config_env() == :prod do
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
+  # Neon routes each incoming connection to the right compute using the TLS
+  # SNI extension. Postgrex upgrades an already-connected TCP socket, so OTP
+  # has no hostname to infer SNI from and sends none — without this the
+  # handshake fails with "Endpoint ID is not specified".
+  database_host =
+    case URI.parse(database_url) do
+      %URI{host: host} when is_binary(host) and host != "" ->
+        host
+
+      # Deliberately does not echo the URL back — it carries the password.
+      _ ->
+        raise "DATABASE_URL has no host (expected ecto://USER:PASS@HOST/DATABASE)"
+    end
+
   config :lynxplanningpoker, Lynxplanningpoker.Repo,
     url: database_url,
-    # AWS RDS supports TLS on the standard port; `verify_none` encrypts the
-    # connection without shipping the RDS CA bundle into the release image.
-    ssl: [verify: :verify_none],
+    # Neon requires TLS. `verify_none` encrypts the connection without pinning
+    # a CA bundle; Neon's certificate comes from a public CA, so this can be
+    # tightened to `verify: :verify_peer` with a `cacertfile`.
+    ssl: [verify: :verify_none, server_name_indication: String.to_charlist(database_host)],
+    # Neon's free compute caps concurrent connections; 10 is well under it for
+    # a single machine. To run several machines, point DATABASE_URL at Neon's
+    # `-pooler` endpoint and add `prepare: :unnamed` — PgBouncer in transaction
+    # mode cannot hold named prepared statements.
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     # For machines with several cores, consider starting multiple pools of `pool_size`
     # pool_count: 4,
