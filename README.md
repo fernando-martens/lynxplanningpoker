@@ -118,11 +118,11 @@ LiveView entry point for the game room: [`app/lib/lynxplanningpoker_web/live/roo
 
 ## How it works
 
-1. The host creates a room at `/rooms/new` — one click, no name needed. We generate a temporary display name that can be changed inside the room at any time. A `Room` and a host `User` are created.
+1. The host creates a room at `/rooms/new` — one click, no name needed. We generate a temporary display name that can be changed inside the room at any time; once someone has named themselves, the browser remembers it and every later room (created or joined) reuses it without asking again. A `Room` and a host `User` are created.
 2. The host shares the `/rooms/invite/:id` link.
 3. Each guest opens the link and joins with one click — they also get a temporary name to change inside the room — and is created as a `User` in the room.
 4. Everyone lands on `/rooms/:id` (a LiveView). Votes, joins, and reveals broadcast over PubSub in real time.
-5. When the host leaves, the room is closed for everyone (presence-aware).
+5. Only **End planning** closes the room for everyone. A dropped connection never does: someone whose browser froze or discarded their tab just loses their seat (presence-aware, after a grace period), and a host who comes back reclaims the role while nobody else holds it. A room left empty is reaped by a periodic sweeper.
 
 ## Deployment
 

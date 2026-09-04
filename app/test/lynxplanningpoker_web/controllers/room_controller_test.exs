@@ -5,6 +5,7 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
 
   alias Lynxplanningpoker.Rooms
   alias Lynxplanningpoker.Users
+  alias Lynxplanningpoker.Users.User
 
   # Helper: enable Turnstile for a single test with `secret_key: nil` so the
   # verifier returns {:error, :missing_secret} without doing any HTTP.
@@ -30,6 +31,12 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       # No name is collected on the form anymore.
       refute response =~ ~s(name="room[name]")
       refute response =~ ~s(name="room[user_name]")
+    end
+
+    test "carries a hidden field for the name the browser remembers", %{conn: conn} do
+      response = conn |> get(~p"/rooms/new") |> html_response(200)
+      assert response =~ ~s(name="user[name]")
+      assert response =~ "data-remembered-name"
     end
 
     test "is marked noindex so search engines skip the form page", %{conn: conn} do
@@ -82,6 +89,30 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       assert user.is_host
       refute user.name_customized
       assert get_session(conn, :current_user_id) == user.id
+      # Remembered so the creator can reclaim the host seat if their connection
+      # drops and the presence cleanup frees it.
+      assert get_session(conn, :host_of_room_id) == room_id
+    end
+
+    test "creates the host under the name the browser already knows", %{conn: conn} do
+      conn = post(conn, ~p"/rooms", %{"user" => %{"name" => "Fernando"}})
+
+      assert %{id: room_id} = redirected_params(conn)
+      [user] = Users.list_users_by_room(room_id)
+      assert user.name == "Fernando"
+      assert user.is_host
+      # Named once, never asked again: the room skips the onboarding prompt.
+      assert user.name_customized
+    end
+
+    test "ignores an implausible remembered name when creating a room", %{conn: conn} do
+      too_long = String.duplicate("a", User.max_name_length() + 1)
+      conn = post(conn, ~p"/rooms", %{"user" => %{"name" => too_long}})
+
+      assert %{id: room_id} = redirected_params(conn)
+      [user] = Users.list_users_by_room(room_id)
+      refute user.name == too_long
+      refute user.name_customized
     end
   end
 
@@ -130,6 +161,88 @@ defmodule LynxplanningpokerWeb.RoomControllerTest do
       refute user.is_host
       refute user.name_customized
       assert get_session(conn, :current_user_id) == user.id
+    end
+
+    test "reuses the name the browser remembered so a rejoin skips the prompt",
+         %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"user" => %{"name" => "Fernando"}})
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+
+      [user] = Users.list_users_by_room(room.id)
+      assert user.name == "Fernando"
+      # Already customized: the room greets them by name instead of prompting.
+      assert user.name_customized
+    end
+
+    test "falls back to a generated name when the remembered one is blank", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"user" => %{"name" => "   "}})
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+
+      [user] = Users.list_users_by_room(room.id)
+      assert String.trim(user.name) != ""
+      refute user.name_customized
+    end
+
+    test "ignores a remembered name longer than a name is allowed to be", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+      too_long = String.duplicate("a", User.max_name_length() + 1)
+
+      conn = post(conn, ~p"/rooms/invite/#{room.id}", %{"user" => %{"name" => too_long}})
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+
+      [user] = Users.list_users_by_room(room.id)
+      refute user.name == too_long
+      refute user.name_customized
+    end
+
+    test "hands the host role back to the room's creator when the seat is vacant",
+         %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+      {:ok, _bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{host_of_room_id: room.id})
+        |> post(~p"/rooms/invite/#{room.id}", %{"user" => %{"name" => "Fernando"}})
+
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+
+      returning = Enum.find(Users.list_users_by_room(room.id), &(&1.name == "Fernando"))
+      assert returning.is_host
+    end
+
+    test "does not hand the host role to a visitor whose session names another room",
+         %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{host_of_room_id: Ecto.UUID.generate()})
+        |> post(~p"/rooms/invite/#{room.id}", %{})
+
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+      [user] = Users.list_users_by_room(room.id)
+      refute user.is_host
+    end
+
+    test "does not hand out a second host role while the seat is taken", %{conn: conn} do
+      {:ok, room} = Rooms.create_room(%{})
+      {:ok, _host} = Users.create_user(%{room_id: room.id, name: "Alice", is_host: true})
+
+      conn =
+        conn
+        |> Plug.Test.init_test_session(%{host_of_room_id: room.id})
+        |> post(~p"/rooms/invite/#{room.id}", %{"user" => %{"name" => "Fernando"}})
+
+      assert redirected_to(conn) == ~p"/rooms/#{room}"
+
+      returning = Enum.find(Users.list_users_by_room(room.id), &(&1.name == "Fernando"))
+      refute returning.is_host
+      assert Enum.count(Users.list_users_by_room(room.id), & &1.is_host) == 1
     end
 
     test "rejects the 16th player with a flash and does not create the user", %{conn: conn} do

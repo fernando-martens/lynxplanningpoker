@@ -400,7 +400,7 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
       Process.exit(fake_pid, :kill)
     end
 
-    test "presence leave of the host deletes the entire room", %{conn: conn} do
+    test "presence leave of the host frees the seat but keeps the room open", %{conn: conn} do
       {room, host} = setup_room_with_user("Alice", is_host: true)
       {:ok, bob} = Users.create_user(%{room_id: room.id, name: "Bob"})
 
@@ -416,8 +416,15 @@ defmodule LynxplanningpokerWeb.RoomLive.ShowTest do
         }
       )
 
-      assert_redirect(view, "/rooms/leave")
-      assert Rooms.get_room(room.id) == nil
+      _ = render(view)
+
+      # A dropped connection never closes the room — only "End planning" does.
+      assert Rooms.get_room(room.id)
+      assert_raise Ecto.NoResultsError, fn -> Users.get_user!(host.id) end
+      assert [remaining] = Users.list_users_by_room(room.id)
+      assert remaining.id == bob.id
+      # The seat stays vacant until the original host comes back for it.
+      refute Users.has_host?(room.id)
     end
 
     test "presence-leave cleanup is deferred by the grace period", %{conn: conn} do

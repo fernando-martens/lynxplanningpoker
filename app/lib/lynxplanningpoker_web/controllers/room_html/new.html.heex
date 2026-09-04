@@ -16,6 +16,10 @@
     </div>
 
     <.form for={%{}} action={@action} id="create-room-form" method="post" class="mt-5 space-y-6">
+      <%!-- Filled in by app.js with the name this browser already knows, so
+      someone who named themselves once never has to do it again. Empty on a
+      first visit: the server generates a temporary name. --%>
+      <input type="hidden" name="user[name]" value="" data-remembered-name />
       <%= if @turnstile_site_key do %>
         <div class="flex justify-center">
           <div

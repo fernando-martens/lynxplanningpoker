@@ -31,6 +31,19 @@ defmodule Lynxplanningpoker.Users do
   end
 
   @doc """
+  Returns true when the room still has a user holding the host role.
+
+  A room can be host-less for a while: the host's connection dropping only
+  removes them from the table, it never closes the room. `RoomController` uses
+  this to decide whether a returning host may reclaim the seat.
+  """
+  def has_host?(room_id) do
+    User
+    |> where([u], u.room_id == ^room_id and u.is_host)
+    |> Repo.exists?()
+  end
+
+  @doc """
   Lists all users.
   """
   def list_users do
